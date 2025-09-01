@@ -37,7 +37,7 @@
             <a href="#">Contacto</a>
         </div>
     <div class="buttons">
-        <a href="#" class="btn login" onclick="mostrarModalInicial()">Inicio Sesión</a> <a href="#" onclick="abrirRegistroDesdeLogin()" class="btn register">Registrarse</a>
+        <a href="#" class="btn login" onclick="mostrarModalInicial()">Iniciar Sesión</a> <a href="#" onclick="abrirRegistroDesdeLogin()" class="btn register">Registrarse</a>
     </div>
     </div>
 
