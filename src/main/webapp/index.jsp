@@ -112,7 +112,7 @@
             <div class="alert success">¡Registro exitoso! Ya puedes iniciar sesión.</div>
         <% } %>
 
-        <form class="form-registro" action="ClienteServlet" method="post">
+        <form class="form-registro" action="RegistrarServlet" method="post">
             <div class="input-group">
                 <input type="text" name="nombres" placeholder="Nombres" required 
                         pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" title="Solo letras"
