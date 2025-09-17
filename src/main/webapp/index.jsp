@@ -1,4 +1,18 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="jakarta.servlet.http.*,jakarta.servlet.*" %>
+<%
+    String errorLogin = (String) request.getAttribute("errorLogin");
+    String exitoRegistro = (String) request.getAttribute("exitoRegistro");
+    String errorRegistro = (String) request.getAttribute("errorRegistro");
+
+    // valores para repoblar el formulario de registro si hubo error
+    String valNombres = request.getAttribute("valNombres") != null ? (String) request.getAttribute("valNombres") : "";
+    String valApellidos = request.getAttribute("valApellidos") != null ? (String) request.getAttribute("valApellidos") : "";
+    String valDni = request.getAttribute("valDni") != null ? (String) request.getAttribute("valDni") : "";
+    String valTelefono = request.getAttribute("valTelefono") != null ? (String) request.getAttribute("valTelefono") : "";
+    String valCorreo = request.getAttribute("valCorreo") != null ? (String) request.getAttribute("valCorreo") : "";
+    
+%>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -64,89 +78,93 @@
     </div>
 </div>
 
-<div id="modalLogin" class="modal">
-    <div class="modal-content animado">
-        <span class="cerrar" onclick="cerrarModal('modalLogin')">&times;</span>
-        <h2 id="tituloLogin">Iniciar Sesión</h2>
-        <img src="Recursos/IconUser.svg" alt="Icono Usuario" class="icono-usuario">
+<!-- Login -->
+    <div id="modalLogin" class="modal" style="<%= (errorLogin != null) ? "display:flex;" : "" %>">
+        <div class="modal-content animado">
+            <span class="cerrar" onclick="cerrarModal('modalLogin')">&times;</span>
+            <h2 id="tituloLogin">Iniciar Sesión</h2>
+            <img src="Recursos/IconUser.svg" alt="Icono Usuario" class="icono-usuario">
 
-        <form id="formLogin"> 
-            <input type="hidden" name="rol" id="inputRol">
-            <input type="text" name="correo" placeholder="Correo electrónico" required>
-            <input type="password" name="contrasena" placeholder="Contraseña" required>
-            <button type="submit" class="btn1 iniciar-sesion">Ingresar</button>
-        </form>
+            <form id="formLogin" action="LoginServlet" method="post"> 
+                <input type="hidden" name="rol" id="inputRol">
+                <input type="text" name="correo" placeholder="Correo electrónico" required>
+                <input type="password" name="contrasena" placeholder="Contraseña" required>
+                <button type="submit" class="btn1 iniciar-sesion">Ingresar</button>
+            </form>
 
-        <div id="mensajeErrorLogin" style="display: none;">
+            <% if (errorLogin != null) { %>
+                <div id="mensajeErrorLogin" class="alert error">
+                    <%= errorLogin %>
+                </div>
+            <% } %>
+
+            <div id="opcionesRegistro" style="display:none;">
+                <p>¿Aún no tienes una cuenta? <a href="#" onclick="abrirRegistroDesdeLogin()">Regístrate</a></p>
             </div>
-
-        <div id="opcionesRegistro" style="display: none;">
-            <p>¿Aún no tienes una cuenta? <a href="#" onclick="abrirRegistroDesdeLogin()">Regístrate</a></p>
         </div>
     </div>
-</div>
 
 
-<%
-    String errorRegistro = (String) request.getAttribute("error");
-    String exitoRegistro = (String) request.getAttribute("exito");
 
-    String valNombres = request.getParameter("nombres") != null ? request.getParameter("nombres") : "";
-    String valApellidos = request.getParameter("apellidos") != null ? request.getParameter("apellidos") : "";
-    String valDni = request.getParameter("dni") != null ? request.getParameter("dni") : "";
-    String valTelefono = request.getParameter("telefono") != null ? request.getParameter("telefono") : "";
-    String valCorreo = request.getParameter("correo") != null ? request.getParameter("correo") : "";
-%>
 
-<div id="modalRegistro" class="modal" style="<%= (errorRegistro != null || exitoRegistro != null) ? "display:flex;" : "" %>">
+<div id="modalRegistro" class="modal" 
+     style="<%= (request.getAttribute("errorRegistro") != null 
+             || request.getAttribute("exitoRegistro") != null) ? "display:flex;" : "" %>">
     <div class="modal-content animado">
         <span class="cerrar" onclick="cerrarModal('modalRegistro')">&times;</span>
         <img id="logoRegistro" src="Recursos/Logo.png" alt="Logo" class="icono-patita">
         <h2>Registrar Cliente</h2>
 
-        <% if ("general".equals(errorRegistro)) { %>
-            <div class="alert error">Error general al registrar. Intenta nuevamente.</div>
+        <% if ("error".equals(String.valueOf(request.getAttribute("errorRegistro")))) { %>
+        <div class="alert error">Error general al registrar. Intenta nuevamente.</div>
         <% } %>
 
-        <% if (exitoRegistro != null) { %>
+
+        <% if ("dni".equals(request.getAttribute("errorRegistro"))) { %>
+            <div class="alert error">DNI ya registrado.</div>
+        <% } %>
+
+        <% if ("correo".equals(request.getAttribute("errorRegistro"))) { %>
+            <div class="alert error">Correo ya registrado.</div>
+        <% } %>
+
+        <% if ("telefono".equals(request.getAttribute("errorRegistro"))) { %>
+            <div class="alert error">Teléfono ya registrado.</div>
+        <% } %>
+
+        <% if (request.getAttribute("exitoRegistro") != null) { %>
             <div class="alert success">¡Registro exitoso! Ya puedes iniciar sesión.</div>
         <% } %>
 
         <form class="form-registro" action="RegistrarServlet" method="post">
             <div class="input-group">
                 <input type="text" name="nombres" placeholder="Nombres" required 
-                        pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" title="Solo letras"
-                        value="<%= valNombres %>">
+                       pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" title="Solo letras"
+                       value="<%= request.getAttribute("valNombres") != null ? request.getAttribute("valNombres") : "" %>">
 
                 <input type="text" name="apellidos" placeholder="Apellidos" required 
-                        pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" title="Solo letras"
-                        value="<%= valApellidos %>">
+                       pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" title="Solo letras"
+                       value="<%= request.getAttribute("valApellidos") != null ? request.getAttribute("valApellidos") : "" %>">
             </div>
 
             <div class="input-group">
                 <div style="width: 100%;">
-                    <input type="text" name="dni" placeholder="DNI" required 
-                            minlength="8" maxlength="8" title="8 dígitos exactos"
-                            value="<%= valDni %>"
-                            class="<%= "dni".equals(errorRegistro) ? "campo-error" : "" %>">
-                    <% if ("dni".equals(errorRegistro)) { %>
-                        <div style="color: red; font-size: 13px;">DNI ya registrado.</div>
-                    <% } %>
+                    <input type="text" name="dni" placeholder="DNI" required minlength="8" maxlength="8"
+                           value="<%= request.getAttribute("valDni") != null ? request.getAttribute("valDni") : "" %>"
+                           class="<%= "dni".equals(request.getAttribute("errorRegistro")) ? "campo-error" : "" %>">
                 </div>
 
                 <div style="width: 100%;">
                     <input type="tel" name="telefono" placeholder="Número telefónico" required 
-                            pattern="9[0-9]{8}" title="Debe empezar con 9 y tener 9 dígitos"
-                            value="<%= valTelefono %>"
-                            class="<%= "telefono".equals(errorRegistro) ? "campo-error" : "" %>">
-                    <% if ("telefono".equals(errorRegistro)) { %>
-                        <div style="color: red; font-size: 13px;">Número ya registrado.</div>
-                    <% } %>
+                           pattern="9[0-9]{8}" title="Debe empezar con 9 y tener 9 dígitos"
+                           value="<%= request.getAttribute("valTelefono") != null ? request.getAttribute("valTelefono") : "" %>"
+                           class="<%= "telefono".equals(request.getAttribute("errorRegistro")) ? "campo-error" : "" %>">
                 </div>
             </div>
 
             <input type="email" name="correo" placeholder="Correo Electrónico" required maxlength="100"
-                    value="<%= valCorreo %>">
+                   value="<%= request.getAttribute("valCorreo") != null ? request.getAttribute("valCorreo") : "" %>"
+                   class="<%= "correo".equals(request.getAttribute("errorRegistro")) ? "campo-error" : "" %>">
 
             <input type="password" name="contrasena" placeholder="Contraseña" required minlength="8" maxlength="45">
 
@@ -155,6 +173,7 @@
         </form>
     </div>
 </div>
+
 
 
 <div class="overlay" id="overlay"></div>
@@ -401,144 +420,147 @@
     <script src="Js/ModoNocheIndex.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const formLogin = document.getElementById('formLogin');
-            const mensajeErrorLogin = document.getElementById('mensajeErrorLogin');
+         // Funciones para abrir y cerrar modales
+function abrirModal(idModal) {
+    document.getElementById(idModal).style.display = 'flex';
+    // Opcional: Si usas un overlay, descomentar la siguiente línea
+    // document.getElementById('overlay').style.display = 'block';
+}
 
-            if (formLogin) {
-                formLogin.addEventListener('submit', function(event) {
-                    event.preventDefault(); // Previene el envío normal del formulario
+function cerrarModal(idModal) {
+    document.getElementById(idModal).style.display = 'none';
+    // Opcional: Si usas un overlay, descomentar la siguiente línea
+    // document.getElementById('overlay').style.display = 'none';
+}
 
-                    const formData = new FormData(formLogin);
-                    const params = new URLSearchParams(formData);
+// Función principal para abrir el modal de login
+function abrirLogin(rol) {
+    // Cierra todos los modales para evitar solapamiento
+    cerrarModal('modalSeleccionInicial');
+    cerrarModal('modalEquipo');
+    cerrarModal('modalRegistro');
 
-                    // Oculta y limpia cualquier mensaje de error previo
-                    mensajeErrorLogin.style.display = 'none';
-                    mensajeErrorLogin.textContent = '';
+    // Configura el modal de login
+    document.getElementById('inputRol').value = rol;
+    document.getElementById('tituloLogin').textContent = 'Iniciar Sesión como ' + rol;
 
-                    fetch('LoginServlet', {
-                        method: 'POST',
-                        body: params
-                    })
-                    .then(response => {
-                        // Verifica si la respuesta es JSON antes de intentar parsearla
-                        const contentType = response.headers.get("content-type");
-                        if (contentType && contentType.indexOf("application/json") !== -1) {
-                            return response.json();
-                        } else {
-                            // Si no es JSON, lanza un error para el catch
-                            throw new TypeError("La respuesta del servidor no es JSON. Contenido: " + response.text());
-                        }
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            // Login exitoso, redirige
-                            window.location.href = data.redirect;
-                        } else {
-                            // Login fallido, muestra el mensaje de error
-                            mensajeErrorLogin.textContent = data.message || "Intento de loguearse fallido. Verifique su correo, contraseña y rol.";
-                            mensajeErrorLogin.style.display = 'block'; // Muestra el mensaje de error
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error durante la petición AJAX:', error);
-                        mensajeErrorLogin.textContent = "Ocurrió un error de conexión. Intente de nuevo más tarde.";
-                        mensajeErrorLogin.style.display = 'block'; // Muestra el mensaje de error
-                    });
-                });
-            }
+    // Muestra u oculta la opción de registro dependiendo del rol
+    const opcionesRegistro = document.getElementById('opcionesRegistro');
+    if (opcionesRegistro) {
+        opcionesRegistro.style.display = (rol === "Cliente") ? "block" : "none";
+    }
 
-            // Opcional: Limpiar el mensaje de error cuando el modal de login se cierra
-            // Asumo que tienes una función global o manejador para cerrar modales.
-            // Si tus modales se manejan directamente con CSS display, puedes
-            // usar un MutationObserver o añadir la limpieza a tu función 'cerrarModal'.
-            const modalLogin = document.getElementById('modalLogin');
-            if (modalLogin) {
-                // Si usas tu propia función cerrarModal:
-                // Asegúrate de que tu función cerrarModal('modalLogin') también limpie el mensaje:
-                // document.getElementById('mensajeErrorLogin').style.display = 'none';
-                // document.getElementById('mensajeErrorLogin').textContent = '';
+    // Limpia el formulario y los mensajes de error
+    const formLogin = document.getElementById('formLogin');
+    if (formLogin) {
+        formLogin.reset();
+    }
+    const mensajeErrorLogin = document.getElementById('mensajeErrorLogin');
+    if (mensajeErrorLogin) {
+        mensajeErrorLogin.style.display = 'none';
+        mensajeErrorLogin.textContent = '';
+    }
 
-                // Una forma más robusta si el modal se cierra de otras maneras:
-                const observer = new MutationObserver((mutationsList, observer) => {
-                    for (const mutation of mutationsList) {
-                        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                            if (modalLogin.style.display === 'none') {
-                                mensajeErrorLogin.style.display = 'none';
-                                mensajeErrorLogin.textContent = '';
-                                formLogin.reset(); // Opcional: resetear los campos del formulario
-                            }
-                        }
+    // Abre el modal de login
+    abrirModal('modalLogin');
+}
+
+// Funciones de navegación entre modales
+function abrirRegistroDesdeLogin() {
+    cerrarModal('modalLogin');
+    abrirModal('modalRegistro');
+}
+
+function abrirLoginDesdeRegistro() {
+    cerrarModal('modalRegistro');
+    // Por defecto, abre el login para el rol de Cliente
+    abrirLogin('Cliente');
+}
+
+function mostrarModalEquipo() {
+    cerrarModal('modalSeleccionInicial');
+    abrirModal('modalEquipo');
+}
+
+function mostrarModalInicial() {
+    // Cierra cualquier modal abierto antes de mostrar el inicial
+    cerrarModal('modalLogin');
+    cerrarModal('modalRegistro');
+    cerrarModal('modalEquipo');
+    abrirModal('modalSeleccionInicial');
+}
+
+// Lógica de carga del DOM
+document.addEventListener('DOMContentLoaded', function() {
+    const formLogin = document.getElementById('formLogin');
+    const mensajeErrorLogin = document.getElementById('mensajeErrorLogin');
+    const modalLogin = document.getElementById('modalLogin');
+    const btnLoginNavbar = document.querySelector('.navbar .btn.login');
+
+    if (formLogin && mensajeErrorLogin) {
+        formLogin.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(formLogin);
+            const params = new URLSearchParams(formData);
+
+            mensajeErrorLogin.style.display = 'none';
+            mensajeErrorLogin.textContent = '';
+
+            fetch('LoginServlet', {
+                    method: 'POST',
+                    body: params
+                })
+                .then(response => {
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.indexOf("application/json") !== -1) {
+                        return response.json();
+                    } else {
+                        throw new TypeError("La respuesta del servidor no es JSON.");
                     }
+                })
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = data.redirect;
+                    } else {
+                        mensajeErrorLogin.textContent = data.message || "Intento de loguearse fallido. Verifique su correo, contraseña y rol.";
+                        mensajeErrorLogin.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error durante la petición AJAX:', error);
+                    mensajeErrorLogin.textContent = "Ocurrió un error de conexión. Intente de nuevo más tarde.";
+                    mensajeErrorLogin.style.display = 'block';
                 });
-                observer.observe(modalLogin, { attributes: true });
-            }
+        });
+    }
 
-            // Asegurar que el botón "Inicio Sesión" de la navbar abra el modal inicial
-            const btnLoginNavbar = document.querySelector('.navbar .btn.login');
-            if (btnLoginNavbar) {
-                btnLoginNavbar.onclick = function() {
-                    mostrarModalInicial();
-                    return false; // Previene el comportamiento por defecto del enlace
-                };
+    // Observador para limpiar el formulario al cerrar el modal de login
+    if (modalLogin && formLogin && mensajeErrorLogin) {
+        const observer = new MutationObserver((mutationsList, observer) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    if (modalLogin.style.display === 'none') {
+                        mensajeErrorLogin.style.display = 'none';
+                        mensajeErrorLogin.textContent = '';
+                        formLogin.reset();
+                    }
+                }
             }
         });
+        observer.observe(modalLogin, {
+            attributes: true
+        });
+    }
 
-        // Asegúrate de que tus funciones de apertura y cierre de modal existan y funcionen correctamente
-        // Estas son las que ya tienes o deberías tener en tu 'Js/Index.js'
-        // Ejemplo de cómo podrían ser (si no las tienes ya):
-        function abrirModal(idModal) {
-            document.getElementById(idModal).style.display = 'flex'; // O 'block' según tu CSS
-            document.getElementById('overlay').style.display = 'block';
-        }
-
-        function cerrarModal(idModal) {
-            document.getElementById(idModal).style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-        }
-
-        function mostrarModalInicial() {
-            cerrarModal('modalLogin'); // Asegúrate de cerrar cualquier otro modal abierto
-            cerrarModal('modalRegistro');
-            cerrarModal('modalEquipo');
-            abrirModal('modalSeleccionInicial');
-        }
-
-        function mostrarModalEquipo() {
-            cerrarModal('modalSeleccionInicial');
-            abrirModal('modalEquipo');
-        }
-
-        function abrirLogin(rol) {
-            document.getElementById('inputRol').value = rol;
-            document.getElementById('tituloLogin').textContent = 'Iniciar Sesión como ' + rol;
-            cerrarModal('modalSeleccionInicial');
-            cerrarModal('modalEquipo');
-            cerrarModal('modalRegistro'); // Cierra el modal de registro si está abierto
-            abrirModal('modalLogin');
-            // Opcional: Limpiar el formulario y el mensaje de error al abrir el modal de login
-            document.getElementById('formLogin').reset();
-            document.getElementById('mensajeErrorLogin').style.display = 'none';
-            document.getElementById('mensajeErrorLogin').textContent = '';
-        }
-
-        function abrirRegistroDesdeLogin() {
-            cerrarModal('modalLogin');
-            abrirModal('modalRegistro');
-        }
-
-        function abrirLoginDesdeRegistro() {
-            cerrarModal('modalRegistro');
-            // Al abrir el login desde el registro, no sabemos el rol, así que reseteamos o lo dejamos genérico.
-            // Podrías default a 'Cliente' si es el más común o forzar la selección.
-            document.getElementById('inputRol').value = 'Cliente'; // O un valor por defecto
-            document.getElementById('tituloLogin').textContent = 'Iniciar Sesión como Cliente'; // O genérico "Iniciar Sesión"
-            abrirModal('modalLogin');
-            document.getElementById('formLogin').reset();
-            document.getElementById('mensajeErrorLogin').style.display = 'none';
-            document.getElementById('mensajeErrorLogin').textContent = '';
-        }
-
+    // Asegurar que el botón de la navbar abra el modal inicial
+    if (btnLoginNavbar) {
+        btnLoginNavbar.onclick = function() {
+            mostrarModalInicial();
+            return false;
+        };
+    }
+});
     </script>
 </body>
 </html>

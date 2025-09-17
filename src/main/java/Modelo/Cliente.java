@@ -10,17 +10,20 @@ public class Cliente {
     private int idCliente;
     private int idUsuario;
     private String nombre;
+    private String Apellido;
     private String dni;
     private String telefono;
     private Date fechaRegistro;
 
     public Cliente() {
+        
     }
 
-    public Cliente(int idCliente, int idUsuario, String nombre, String dni, String telefono, Date fechaRegistro) {
+    public Cliente(int idCliente, int idUsuario, String nombre,String Apellido, String dni, String telefono, Date fechaRegistro) {
         this.idCliente = idCliente;
         this.idUsuario = idUsuario;
         this.nombre = nombre;
+        this.Apellido = Apellido;
         this.dni = dni;
         this.telefono = telefono;
         this.fechaRegistro = fechaRegistro;
@@ -73,6 +76,11 @@ public class Cliente {
     public void setFechaRegistro(Date fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
+     public String getApellido() {
+        return Apellido;
+    }
 
-     
+    public void setApellido(String Apellido) {
+        this.Apellido = Apellido;
+    }
 }
