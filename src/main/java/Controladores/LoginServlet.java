@@ -44,7 +44,7 @@ public class LoginServlet extends HttpServlet {
                     break;
                 default:
                     request.setAttribute("errorLogin", "Rol no válido.");
-                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    request.getRequestDispatcher("index.jsp").forward(request, response);
                     break;
             }
 
@@ -52,7 +52,7 @@ public class LoginServlet extends HttpServlet {
         } else {
             // Error en login
             request.setAttribute("errorLogin", "Correo o contraseña incorrectos, o usuario inactivo.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("index.jsp").forward(request, response);
         }
     }
 }
