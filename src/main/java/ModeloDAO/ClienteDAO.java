@@ -1,144 +1,116 @@
 package ModeloDAO;
 
+import Modelo.Conexion;  
 import Modelo.Cliente;
 import java.sql.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClienteDAO {
-    private Connection conexion;
-    private static final Logger LOGGER = Logger.getLogger(ClienteDAO.class.getName());
-
-    public ClienteDAO(Connection conexion) {
-        this.conexion = conexion;
-    }
-
-    // SP: Insertar cliente
-    public boolean insertarCliente(Cliente cliente) throws SQLException {
-        String sql = "{CALL sp_insertar_cliente(?, ?, ?, ?)}";
-
-        try (CallableStatement stmt = conexion.prepareCall(sql)) {
-            stmt.setString(1, cliente.getNombre());
-            stmt.setString(2, cliente.getApellido());
-            stmt.setString(3, cliente.getDni());
-            stmt.setString(4, cliente.getTelefono());
-
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error al insertar cliente", e);
-            throw e;
-        }
-    }
-
-    // SP: Actualizar cliente
-    public boolean actualizarCliente(Cliente cliente) throws SQLException {
-        String sql = "{CALL sp_actualizar_cliente(?, ?, ?, ?, ?)}";
-
-        try (CallableStatement stmt = conexion.prepareCall(sql)) {
-            stmt.setInt(1, cliente.getIdCliente());
-            stmt.setString(2, cliente.getNombre());
-            stmt.setString(3, cliente.getApellido());
-            stmt.setString(4, cliente.getDni());
-            stmt.setString(5, cliente.getTelefono());
-
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error al actualizar cliente", e);
-            throw e;
-        }
-    }
-
-    // SP: Eliminar cliente
-    public boolean eliminarCliente(int id) throws SQLException {
-        String sql = "{CALL sp_eliminar_cliente(?)}";
-
-        try (CallableStatement stmt = conexion.prepareCall(sql)) {
-            stmt.setInt(1, id);
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error al eliminar cliente", e);
-            throw e;
-        }
-    }
-
-    // SP: Buscar clientes
-    public List<Cliente> buscarClientes(String busqueda) throws SQLException {
-        List<Cliente> clientes = new ArrayList<>();
-        String sql = "{CALL sp_buscar_clientes(?)}";
-
-        try (CallableStatement stmt = conexion.prepareCall(sql)) {
-            stmt.setString(1, busqueda);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    clientes.add(mapearCliente(rs));
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error al buscar clientes", e);
-            throw e;
-        }
-
-        return clientes;
-    }
-
-    // SP: Listar todos los clientes
-    public List<Cliente> listarClientes() throws SQLException {
-        List<Cliente> clientes = new ArrayList<>();
-        String sql = "{CALL sp_listar_clientes()}";
-
-        try (CallableStatement stmt = conexion.prepareCall(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                clientes.add(mapearCliente(rs));
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error al listar clientes", e);
-            throw e;
-        }
-
-        return clientes;
-    }
-
-    // Método auxiliar
-    private Cliente mapearCliente(ResultSet rs) throws SQLException {
-        Cliente cliente = new Cliente();
-        cliente.setIdCliente(rs.getInt("idCliente"));
-        cliente.setNombre(rs.getString("Nombre"));
-        cliente.setApellido(rs.getString("Apellido"));
-        cliente.setDni(rs.getString("DNI"));
-        cliente.setTelefono(rs.getString("Telefono"));
-        cliente.setFechaRegistro(rs.getDate("FechaRegistro"));
-        return cliente;
-    }
-
-    // Método directo (sin SP) si deseas obtener un cliente por ID
-    public Cliente obtenerClientePorId(int id) throws SQLException {
-        String sql = "SELECT * FROM Cliente WHERE idCliente = ?";
-        try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next() ? mapearCliente(rs) : null;
-            }
-        }
-    }
-
-    // Clientes recientes (sin SP, puedes convertirlo si quieres)
-    public List<Cliente> listarClientesRecientes(int cantidad) throws SQLException {
-        List<Cliente> clientes = new ArrayList<>();
-        String sql = "SELECT * FROM Cliente ORDER BY idCliente DESC LIMIT ?";
-
-        try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
-            stmt.setInt(1, cantidad);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    clientes.add(mapearCliente(rs));
-                }
-            }
-        }
-        return clientes;
-    }
-  
     
+    Connection con;
+    PreparedStatement ps;
+    ResultSet rs;
+
+    // Método: Listar todos los clientes
+    public List<Cliente> listarCliente() {
+        List<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Cliente";
+        try {
+            con = Conexion.getConnection();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Cliente c = new Cliente();
+                c.setIdCliente(rs.getInt("idCliente"));
+                c.setIdUsuario(rs.getInt("idUsuario"));
+                c.setNombre(rs.getString("nombre"));
+                c.setDni(rs.getString("dni"));
+                c.setTelefono(rs.getString("telefono"));
+                c.setFechaRegistro(rs.getDate("fechaRegistro"));
+                lista.add(c);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    // Método: Buscar cliente por ID
+    public Cliente buscarIdCliente(int id) {
+        Cliente c = null;
+        String sql = "SELECT * FROM Cliente WHERE idCliente = ?";
+        try {
+            con = Conexion.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                c = new Cliente();
+                c.setIdCliente(rs.getInt("idCliente"));
+                c.setIdUsuario(rs.getInt("idUsuario"));
+                c.setNombre(rs.getString("nombre"));
+                c.setDni(rs.getString("dni"));
+                c.setTelefono(rs.getString("telefono"));
+                c.setFechaRegistro(rs.getDate("fechaRegistro"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return c;
+    }
+
+    // Método: Agregar cliente
+    public boolean agregarCliente(Cliente c) {
+        String sql = "INSERT INTO Cliente (idUsuario, nombre, dni, telefono, fechaRegistro) VALUES (?, ?, ?, ?, ?)";
+        try {
+            con = Conexion.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, c.getIdUsuario());
+            ps.setString(2, c.getNombre());
+            ps.setString(3, c.getDni());
+            ps.setString(4, c.getTelefono());
+            ps.setDate(5, c.getFechaRegistro());
+            ps.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Método: Editar cliente
+    public boolean editarCliente(Cliente c) {
+        String sql = "UPDATE Cliente SET idUsuario=?, nombre=?, dni=?, telefono=?, fechaRegistro=? WHERE idCliente=?";
+        try {
+            con = Conexion.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, c.getIdUsuario());
+            ps.setString(2, c.getNombre());
+            ps.setString(3, c.getDni());
+            ps.setString(4, c.getTelefono());
+            ps.setDate(5, c.getFechaRegistro());
+            ps.setInt(6, c.getIdCliente());
+            ps.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Método: Eliminar cliente
+    public boolean eliminarCliente(int id) {
+        String sql = "DELETE FROM Cliente WHERE idCliente=?";
+        try {
+            con = Conexion.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
