@@ -9,18 +9,19 @@ import java.sql.Date;
 public class Cliente {
     private int idCliente;
     private int idUsuario;
+    private int idTipo;
     private String nombre;
+    private String apellido;
     private String dni;
     private String telefono;
     private Date fechaRegistro;
 
-    public Cliente() {
-    }
-
-    public Cliente(int idCliente, int idUsuario, String nombre, String dni, String telefono, Date fechaRegistro) {
+    public Cliente(int idCliente, int idUsuario, int idTipo, String nombre, String apellido, String dni, String telefono, Date fechaRegistro) {
         this.idCliente = idCliente;
         this.idUsuario = idUsuario;
+        this.idTipo = idTipo;
         this.nombre = nombre;
+        this.apellido = apellido;
         this.dni = dni;
         this.telefono = telefono;
         this.fechaRegistro = fechaRegistro;
@@ -42,12 +43,28 @@ public class Cliente {
         this.idUsuario = idUsuario;
     }
 
+    public int getIdTipo() {
+        return idTipo;
+    }
+
+    public void setIdTipo(int idTipo) {
+        this.idTipo = idTipo;
+    }
+
     public String getNombre() {
         return nombre;
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
     }
 
     public String getDni() {
@@ -73,6 +90,8 @@ public class Cliente {
     public void setFechaRegistro(Date fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
+
+    
 
      
 }

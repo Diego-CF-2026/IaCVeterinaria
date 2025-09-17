@@ -2,7 +2,7 @@ package Modelo;
 
 import java.math.BigDecimal;
 
-public class CarritoItem {
+public class Carrito {
 
     private int idCarrito;
     private String nombreProducto;
@@ -10,10 +10,10 @@ public class CarritoItem {
     private int cantidad;
     private BigDecimal subtotal;
 
-    public CarritoItem() {
+    public Carrito() {
     }
 
-    public CarritoItem(int idCarrito, String nombreProducto, BigDecimal precio, int cantidad, BigDecimal subtotal) {
+    public Carrito(int idCarrito, String nombreProducto, BigDecimal precio, int cantidad, BigDecimal subtotal) {
         this.idCarrito = idCarrito;
         this.nombreProducto = nombreProducto;
         this.precio = precio;

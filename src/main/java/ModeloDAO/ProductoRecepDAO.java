@@ -1,6 +1,6 @@
 package ModeloDAO;
 
-import Modelo.CarritoItem;
+import Modelo.Carrito;
 import Modelo.Producto;
 
 import java.math.BigDecimal;
@@ -60,7 +60,7 @@ public class ProductoRecepDAO {
         return null;
     }
 
-    public boolean venderCarrito(int idRecepcionista, List<CarritoItem> carrito) {
+    public boolean venderCarrito(int idRecepcionista, List<Carrito> carrito) {
         boolean exito = false;
         String actualizarStockSQL = "UPDATE Producto SET stock = stock - ? WHERE id_producto = ? AND stock >= ?";
         String insertarHistorialSQL = "INSERT INTO HistorialVentas (idRecepcionista, idCliente, idProducto, cantidad, total, estado, comprobante, tipoVenta)VALUES (?, NULL, ?, ?, ?, 'Completado', NULL, 'Recepcionista')";
@@ -68,7 +68,7 @@ public class ProductoRecepDAO {
         try {
             con.setAutoCommit(false);
 
-            for (CarritoItem item : carrito) {
+            for (Carrito item : carrito) {
                 // Verificar stock
                 Producto p = obtenerPorId(item.getIdCarrito());
                 if (p == null || p.getStock() < item.getCantidad()) {

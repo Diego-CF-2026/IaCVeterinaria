@@ -1,7 +1,7 @@
 package Controladores;
 
 import Modelo.Producto;
-import Modelo.CarritoItem;
+import Modelo.Carrito;
 import Modelo.Recepcionista;
 import ModeloDAO.ProductoRecepDAO;
 import Modelo.Conexion;
@@ -69,7 +69,7 @@ public class ProductoRecepServlet extends HttpServlet {
         List<Producto> productos = productoDAO.listarTodos();
 
         HttpSession session = request.getSession();
-        List<CarritoItem> carrito = (List<CarritoItem>) session.getAttribute("carrito");
+        List<Carrito> carrito = (List<Carrito>) session.getAttribute("carrito");
         if (carrito == null) {
             carrito = new ArrayList<>();
             session.setAttribute("carrito", carrito);
@@ -84,7 +84,7 @@ public class ProductoRecepServlet extends HttpServlet {
     private void agregarAlCarrito(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         HttpSession session = request.getSession();
-        List<CarritoItem> carrito = (List<CarritoItem>) session.getAttribute("carrito");
+        List<Carrito> carrito = (List<Carrito>) session.getAttribute("carrito");
         if (carrito == null) {
             carrito = new ArrayList<>();
         }
@@ -101,7 +101,7 @@ public class ProductoRecepServlet extends HttpServlet {
         int cantidad = 1;
 
         boolean encontrado = false;
-        for (CarritoItem item : carrito) {
+        for (Carrito item : carrito) {
             if (item.getIdCarrito() == idProducto) {
                 item.setCantidad(item.getCantidad() + cantidad);
                 item.setSubtotal(item.getPrecio().multiply(new java.math.BigDecimal(item.getCantidad())));
@@ -113,7 +113,7 @@ public class ProductoRecepServlet extends HttpServlet {
         if (!encontrado) {
             Producto producto = productoDAO.obtenerPorId(idProducto);
             if (producto != null && producto.getStock() >= cantidad) {
-                CarritoItem item = new CarritoItem();
+                Carrito item = new Carrito();
                 item.setIdCarrito(idProducto);
                 item.setNombreProducto(producto.getNombreProducto());
                 item.setPrecio(producto.getPrecio());
@@ -133,7 +133,7 @@ public class ProductoRecepServlet extends HttpServlet {
     private void eliminarDelCarrito(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         HttpSession session = request.getSession();
-        List<CarritoItem> carrito = (List<CarritoItem>) session.getAttribute("carrito");
+        List<Carrito> carrito = (List<Carrito>) session.getAttribute("carrito");
         if (carrito == null) carrito = new ArrayList<>();
 
         int idProducto;
@@ -156,7 +156,7 @@ public class ProductoRecepServlet extends HttpServlet {
             throws IOException {
         HttpSession session = request.getSession();
 
-        List<CarritoItem> carrito = (List<CarritoItem>) session.getAttribute("carrito");
+        List<Carrito> carrito = (List<Carrito>) session.getAttribute("carrito");
         if (carrito == null || carrito.isEmpty()) {
             session.setAttribute("mensaje", "El carrito está vacío.");
             response.sendRedirect("ProductoRecepServlet");

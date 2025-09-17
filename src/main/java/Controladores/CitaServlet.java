@@ -1,6 +1,6 @@
 package Controladores;
 
-import Modelo.Cita;
+import Modelo.Citas;
 import Modelo.Cliente; // Importar para los dropdowns
 import Modelo.Veterinario; // Importar para los dropdowns
 import ModeloDAO.CitaDAO;
@@ -66,13 +66,13 @@ public class CitaServlet extends HttpServlet {
         String accion = request.getParameter("accion");
 
         switch (accion) {
-            case "guardar": // Usado para agregar desde el modal de "Agregar Cita"
+            case "guardar": // Usado para agregar desde el modal de "Agregar Citas"
                 guardarCita(request, response);
                 break;
-            case "actualizar": // Nueva acción para manejar la actualización desde el modal de "Editar Cita"
+            case "actualizar": // Nueva acción para manejar la actualización desde el modal de "Editar Citas"
                 actualizarCita(request, response); // Nuevo método para la actualización
                 break;
-            case "crearCita": // Si tienes un modal de "Crear Cita" en otra JSP (e.g., ClienteRServlet.jsp)
+            case "crearCita": // Si tienes un modal de "Crear Citas" en otra JSP (e.g., ClienteRServlet.jsp)
                 crearCitaDesdeCliente(request, response);
                 break;
             default:
@@ -83,7 +83,7 @@ public class CitaServlet extends HttpServlet {
 
     private void listarCitas(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Cita> listaCitas = citaDAO.listarCitas();
+        List<Citas> listaCitas = citaDAO.listarCitas();
         request.setAttribute("listaCitas", listaCitas);
 
         // Cargar las listas de clientes y veterinarios para los dropdowns en los modales
@@ -96,7 +96,7 @@ public class CitaServlet extends HttpServlet {
     private void verCita(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int idCita = Integer.parseInt(request.getParameter("id"));
-        Cita citaSeleccionada = citaDAO.obtenerCitaPorId(idCita); // Usa obtenerCitaPorId
+        Citas citaSeleccionada = citaDAO.obtenerCitaPorId(idCita); // Usa obtenerCitaPorId
         request.setAttribute("citaSeleccionada", citaSeleccionada);
 
         // Cargar las listas para los dropdowns en el modal de edición
@@ -113,7 +113,7 @@ public class CitaServlet extends HttpServlet {
 
     private void guardarCita(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Cita cita = new Cita();
+        Citas cita = new Citas();
         // NOTA: Para "guardar", idCitaStr SIEMPRE debería ser null o vacío,
         // ya que este método es solo para agregar nuevas citas.
         // He eliminado la lógica de actualización de este método para separarlos.
@@ -157,7 +157,7 @@ public class CitaServlet extends HttpServlet {
     // Nuevo método para manejar SÓLO la actualización de citas
     private void actualizarCita(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Cita cita = new Cita();
+        Citas cita = new Citas();
         String idCitaStr = request.getParameter("idCita");
 
         if (idCitaStr == null || idCitaStr.isEmpty()) {
@@ -204,10 +204,10 @@ public class CitaServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/CitaServlet");
     }
 
-    // Este método es para la acción de "Crear Cita" que podría venir del modal en ClienteRServlet.jsp
+    // Este método es para la acción de "Crear Citas" que podría venir del modal en ClienteRServlet.jsp
     private void crearCitaDesdeCliente(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Cita cita = new Cita();
+        Citas cita = new Citas();
         cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
         cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
 
@@ -273,7 +273,7 @@ public class CitaServlet extends HttpServlet {
     private void buscarCita(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String busqueda = request.getParameter("busqueda");
-        List<Cita> listarCitas;
+        List<Citas> listarCitas;
 
         if (busqueda != null && !busqueda.trim().isEmpty()) {
             listarCitas = citaDAO.buscarCitas(busqueda.trim());
