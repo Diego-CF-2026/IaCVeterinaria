@@ -51,54 +51,31 @@
             <a href="#">Contacto</a>
         </div>
     <div class="buttons">
-        <a href="#" class="btn login" onclick="mostrarModalInicial()">Iniciar Sesión</a> <a href="#" onclick="abrirRegistroDesdeLogin()" class="btn register">Registrarse</a>
+        <a href="#" class="btn login" onclick="abrirLogin()">Iniciar Sesión</a> <a href="#" onclick="abrirRegistroDesdeLogin()" class="btn register">Registrarse</a>
     </div>
     </div>
 
     <button id="modoNocheBtn" class="modo-noche-flotante" aria-label="Cambiar a modo noche">🌙</button>
 </nav>
 
-<div id="modalSeleccionInicial" class="modal">
-    <div class="modal-content animado">
-        <span class="cerrar" onclick="cerrarModal('modalSeleccionInicial')">&times;</span>
-        <img id="logoSeleccionInicial" src="Recursos/Logo.png" alt="Logo" class="icono-patita">
-        <h2>¿Cómo deseas ingresar?</h2>
-        <button class="btn1 rol-btn1" onclick="abrirLogin('Cliente')">Soy cliente</button>
-        <button class="btn1 rol-btn2" onclick="mostrarModalEquipo()">Soy del equipo</button>
-    </div>
-</div>
-
-<div id="modalEquipo" class="modal">
-    <div class="modal-content animado">
-        <span class="cerrar" onclick="cerrarModal('modalEquipo')">&times;</span>
-        <img id="logoModalEquipo" src="Recursos/Logo.png" alt="Logo" class="icono-patita">
-        <h2>Ingreso del equipo</h2>
-        <button class="btn1 rol-btn2" onclick="abrirLogin('Administrador')">Administrador</button>
-        <button class="btn1 rol-btn2" onclick="abrirLogin('Recepcionista')">Recepcionista</button>
-    </div>
-</div>
-
-<!-- Login -->
-    <div id="modalLogin" class="modal" style="<%= (errorLogin != null) ? "display:flex;" : "" %>">
+<!-- ✅ Modal Login -->
+    <div id="modalLogin" class="modal">
         <div class="modal-content animado">
             <span class="cerrar" onclick="cerrarModal('modalLogin')">&times;</span>
-            <h2 id="tituloLogin">Iniciar Sesión</h2>
+            <h2>Iniciar Sesión</h2>
             <img src="Recursos/IconUser.svg" alt="Icono Usuario" class="icono-usuario">
 
-            <form id="formLogin" action="LoginServlet" method="post"> 
-                <input type="hidden" name="rol" id="inputRol">
-                <input type="text" name="correo" placeholder="Correo electrónico" required>
+            <form action="LoginServlet" method="post">
+                <input type="email" name="correo" placeholder="Correo electrónico" required>
                 <input type="password" name="contrasena" placeholder="Contraseña" required>
                 <button type="submit" class="btn1 iniciar-sesion">Ingresar</button>
             </form>
 
-            <% if (errorLogin != null) { %>
-                <div id="mensajeErrorLogin" class="alert error">
-                    <%= errorLogin %>
-                </div>
+            <% if (request.getAttribute("errorLogin") != null) { %>
+                <div class="alert error"><%= request.getAttribute("errorLogin") %></div>
             <% } %>
 
-            <div id="opcionesRegistro" style="display:none;">
+            <div id="opcionesRegistro">
                 <p>¿Aún no tienes una cuenta? <a href="#" onclick="abrirRegistroDesdeLogin()">Regístrate</a></p>
             </div>
         </div>
@@ -420,52 +397,31 @@
     <script src="Js/ModoNocheIndex.js"></script>
 
     <script>
-         // Funciones para abrir y cerrar modales
+     // Funciones para abrir y cerrar modales
 function abrirModal(idModal) {
     document.getElementById(idModal).style.display = 'flex';
-    // Opcional: Si usas un overlay, descomentar la siguiente línea
-    // document.getElementById('overlay').style.display = 'block';
 }
 
 function cerrarModal(idModal) {
     document.getElementById(idModal).style.display = 'none';
-    // Opcional: Si usas un overlay, descomentar la siguiente línea
-    // document.getElementById('overlay').style.display = 'none';
 }
 
-// Función principal para abrir el modal de login
-function abrirLogin(rol) {
-    // Cierra todos los modales para evitar solapamiento
-    cerrarModal('modalSeleccionInicial');
-    cerrarModal('modalEquipo');
-    cerrarModal('modalRegistro');
-
-    // Configura el modal de login
-    document.getElementById('inputRol').value = rol;
-    document.getElementById('tituloLogin').textContent = 'Iniciar Sesión como ' + rol;
-
-    // Muestra u oculta la opción de registro dependiendo del rol
-    const opcionesRegistro = document.getElementById('opcionesRegistro');
-    if (opcionesRegistro) {
-        opcionesRegistro.style.display = (rol === "Cliente") ? "block" : "none";
-    }
-
-    // Limpia el formulario y los mensajes de error
+// ✅ Abre directamente el modal de login
+function abrirLogin() {
+    // Limpia mensajes de error y resetea el formulario
     const formLogin = document.getElementById('formLogin');
-    if (formLogin) {
-        formLogin.reset();
-    }
     const mensajeErrorLogin = document.getElementById('mensajeErrorLogin');
+
+    if (formLogin) formLogin.reset();
     if (mensajeErrorLogin) {
         mensajeErrorLogin.style.display = 'none';
         mensajeErrorLogin.textContent = '';
     }
 
-    // Abre el modal de login
     abrirModal('modalLogin');
 }
 
-// Funciones de navegación entre modales
+// ✅ Navegación entre login y registro
 function abrirRegistroDesdeLogin() {
     cerrarModal('modalLogin');
     abrirModal('modalRegistro');
@@ -473,94 +429,37 @@ function abrirRegistroDesdeLogin() {
 
 function abrirLoginDesdeRegistro() {
     cerrarModal('modalRegistro');
-    // Por defecto, abre el login para el rol de Cliente
-    abrirLogin('Cliente');
+    abrirLogin(); // vuelve al login directo
 }
 
-function mostrarModalEquipo() {
-    cerrarModal('modalSeleccionInicial');
-    abrirModal('modalEquipo');
-}
-
-function mostrarModalInicial() {
-    // Cierra cualquier modal abierto antes de mostrar el inicial
-    cerrarModal('modalLogin');
-    cerrarModal('modalRegistro');
-    cerrarModal('modalEquipo');
-    abrirModal('modalSeleccionInicial');
-}
-
-// Lógica de carga del DOM
-document.addEventListener('DOMContentLoaded', function() {
+// ✅ Cuando el DOM ya cargó
+document.addEventListener('DOMContentLoaded', function () {
+    const modalLogin = document.getElementById('modalLogin');
     const formLogin = document.getElementById('formLogin');
     const mensajeErrorLogin = document.getElementById('mensajeErrorLogin');
-    const modalLogin = document.getElementById('modalLogin');
     const btnLoginNavbar = document.querySelector('.navbar .btn.login');
 
-    if (formLogin && mensajeErrorLogin) {
-        formLogin.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const formData = new FormData(formLogin);
-            const params = new URLSearchParams(formData);
-
-            mensajeErrorLogin.style.display = 'none';
-            mensajeErrorLogin.textContent = '';
-
-            fetch('LoginServlet', {
-                    method: 'POST',
-                    body: params
-                })
-                .then(response => {
-                    const contentType = response.headers.get("content-type");
-                    if (contentType && contentType.indexOf("application/json") !== -1) {
-                        return response.json();
-                    } else {
-                        throw new TypeError("La respuesta del servidor no es JSON.");
-                    }
-                })
-                .then(data => {
-                    if (data.success) {
-                        window.location.href = data.redirect;
-                    } else {
-                        mensajeErrorLogin.textContent = data.message || "Intento de loguearse fallido. Verifique su correo, contraseña y rol.";
-                        mensajeErrorLogin.style.display = 'block';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error durante la petición AJAX:', error);
-                    mensajeErrorLogin.textContent = "Ocurrió un error de conexión. Intente de nuevo más tarde.";
-                    mensajeErrorLogin.style.display = 'block';
-                });
-        });
-    }
-
-    // Observador para limpiar el formulario al cerrar el modal de login
+    // Limpia errores al cerrar el modal
     if (modalLogin && formLogin && mensajeErrorLogin) {
-        const observer = new MutationObserver((mutationsList, observer) => {
-            for (const mutation of mutationsList) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                    if (modalLogin.style.display === 'none') {
-                        mensajeErrorLogin.style.display = 'none';
-                        mensajeErrorLogin.textContent = '';
-                        formLogin.reset();
-                    }
-                }
+        const observer = new MutationObserver(() => {
+            if (modalLogin.style.display === 'none') {
+                mensajeErrorLogin.style.display = 'none';
+                mensajeErrorLogin.textContent = '';
+                formLogin.reset();
             }
         });
-        observer.observe(modalLogin, {
-            attributes: true
-        });
+        observer.observe(modalLogin, { attributes: true });
     }
 
-    // Asegurar que el botón de la navbar abra el modal inicial
+    // Botón de la navbar abre login
     if (btnLoginNavbar) {
-        btnLoginNavbar.onclick = function() {
-            mostrarModalInicial();
+        btnLoginNavbar.onclick = function () {
+            abrirLogin();
             return false;
         };
     }
 });
+
     </script>
 </body>
 </html>
