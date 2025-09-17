@@ -1,24 +1,24 @@
 package Modelo;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 
 public class Carrito {
 
     private int idCarrito;
-    private String nombreProducto;
-    private BigDecimal precio;
-    private int cantidad;
-    private BigDecimal subtotal;
+    private String idCliente;
+    private BigDecimal total;
+    private int idPago;
+    private String estado;
+    private Date fecha;
 
-    public Carrito() {
-    }
-
-    public Carrito(int idCarrito, String nombreProducto, BigDecimal precio, int cantidad, BigDecimal subtotal) {
+    public Carrito(int idCarrito, String idCliente, BigDecimal total, int idPago, String estado, Date fecha) {
         this.idCarrito = idCarrito;
-        this.nombreProducto = nombreProducto;
-        this.precio = precio;
-        this.cantidad = cantidad;
-        this.subtotal = subtotal;
+        this.idCliente = idCliente;
+        this.total = total;
+        this.idPago = idPago;
+        this.estado = estado;
+        this.fecha = fecha;
     }
 
     public int getIdCarrito() {
@@ -29,46 +29,45 @@ public class Carrito {
         this.idCarrito = idCarrito;
     }
 
-    public String getNombreProducto() {
-        return nombreProducto;
+    public String getIdCliente() {
+        return idCliente;
     }
 
-    public void setNombreProducto(String nombreProducto) {
-        this.nombreProducto = nombreProducto;
+    public void setIdCliente(String idCliente) {
+        this.idCliente = idCliente;
     }
 
-    public BigDecimal getPrecio() {
-        return precio;
+    public BigDecimal getTotal() {
+        return total;
     }
 
-    public void setPrecio(BigDecimal precio) {
-        this.precio = precio;
+    public void setTotal(BigDecimal total) {
+        this.total = total;
     }
 
-    public int getCantidad() {
-        return cantidad;
+    public int getIdPago() {
+        return idPago;
     }
 
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
+    public void setIdPago(int idPago) {
+        this.idPago = idPago;
     }
 
-    public BigDecimal getSubtotal() {
-        return subtotal;
+    public String getEstado() {
+        return estado;
     }
 
-    public void setSubtotal(BigDecimal subtotal) {
-        this.subtotal = subtotal;
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
-    @Override
-    public String toString() {
-        return "CarritoItem{" +
-                "idCarrito=" + idCarrito +
-                ", nombreProducto='" + nombreProducto + '\'' +
-                ", precio=" + precio +
-                ", cantidad=" + cantidad +
-                ", subtotal=" + subtotal +
-                '}';
+    public Date getFecha() {
+        return fecha;
     }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
+    
 }
