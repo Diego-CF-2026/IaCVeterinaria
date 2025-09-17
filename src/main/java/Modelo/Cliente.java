@@ -8,31 +8,22 @@ import java.sql.Date;
 
 public class Cliente {
     private int idCliente;
-     private int idVeterinario;
+    private int idUsuario;
     private String nombre;
-    private String apellido;
     private String dni;
     private String telefono;
     private Date fechaRegistro;
 
-   private String nombreVeterinario;
-    private String apellidoVeterinario;
-    private String especialidadVeterinario;
-
     public Cliente() {
     }
 
-    public Cliente(int idCliente, int idVeterinario, String nombre, String apellido, String dni, String telefono, Date fechaRegistro, String nombreVeterinario, String apellidoVeterinario, String especialidadVeterinario) {
+    public Cliente(int idCliente, int idUsuario, String nombre, String dni, String telefono, Date fechaRegistro) {
         this.idCliente = idCliente;
-        this.idVeterinario = idVeterinario;
+        this.idUsuario = idUsuario;
         this.nombre = nombre;
-        this.apellido = apellido;
         this.dni = dni;
         this.telefono = telefono;
         this.fechaRegistro = fechaRegistro;
-        this.nombreVeterinario = nombreVeterinario;
-        this.apellidoVeterinario = apellidoVeterinario;
-        this.especialidadVeterinario = especialidadVeterinario;
     }
 
     public int getIdCliente() {
@@ -43,12 +34,12 @@ public class Cliente {
         this.idCliente = idCliente;
     }
 
-    public int getIdVeterinario() {
-        return idVeterinario;
+    public int getIdUsuario() {
+        return idUsuario;
     }
 
-    public void setIdVeterinario(int idVeterinario) {
-        this.idVeterinario = idVeterinario;
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public String getNombre() {
@@ -57,14 +48,6 @@ public class Cliente {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getApellido() {
-        return apellido;
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
     }
 
     public String getDni() {
@@ -91,28 +74,5 @@ public class Cliente {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public String getNombreVeterinario() {
-        return nombreVeterinario;
-    }
-
-    public void setNombreVeterinario(String nombreVeterinario) {
-        this.nombreVeterinario = nombreVeterinario;
-    }
-
-    public String getApellidoVeterinario() {
-        return apellidoVeterinario;
-    }
-
-    public void setApellidoVeterinario(String apellidoVeterinario) {
-        this.apellidoVeterinario = apellidoVeterinario;
-    }
-
-    public String getEspecialidadVeterinario() {
-        return especialidadVeterinario;
-    }
-
-    public void setEspecialidadVeterinario(String especialidadVeterinario) {
-        this.especialidadVeterinario = especialidadVeterinario;
-    }
-    
+     
 }

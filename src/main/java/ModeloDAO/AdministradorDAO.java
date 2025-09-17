@@ -32,9 +32,6 @@ public class AdministradorDAO {
                     admin.setIdAdmin(rs.getInt("idAdmin"));
                     admin.setNombre(rs.getString("A_Nombre"));
                     admin.setApellido(rs.getString("A_Apellido"));
-                    admin.setNumero(rs.getString("A_Numero"));
-                    admin.setCorreo(rs.getString("A_Correo"));
-                    admin.setContrasena(rs.getString("A_Contrasena"));
                 }
             }
         } catch (SQLException e) {

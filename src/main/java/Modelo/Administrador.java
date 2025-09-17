@@ -2,27 +2,22 @@ package Modelo;
 
 public class Administrador {
     private int idAdmin;
-    private String nombre;
-    private String apellido;
-    private String numero;
-    private String correo;
-    private String contrasena;
+    private int idUsuario;
+    private String nombreAdmin;
+    private String apellidoAdmin;
+
 
     // Constructor vacío
     public Administrador() {
     }
 
-    // Constructor completo
-    public Administrador(int idAdmin, String nombre, String apellido, String numero, String correo, String contrasena) {
+    public Administrador(int idAdmin, int idUsuario, String nombre, String apellido) {
         this.idAdmin = idAdmin;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.numero = numero;
-        this.correo = correo;
-        this.contrasena = contrasena;
+        this.idUsuario = idUsuario;
+        this.nombreAdmin = nombre;
+        this.apellidoAdmin = apellido;
     }
 
-    // Getters y Setters
     public int getIdAdmin() {
         return idAdmin;
     }
@@ -31,43 +26,31 @@ public class Administrador {
         this.idAdmin = idAdmin;
     }
 
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
     public String getNombre() {
-        return nombre;
+        return nombreAdmin;
     }
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.nombreAdmin = nombre;
     }
 
     public String getApellido() {
-        return apellido;
+        return apellidoAdmin;
     }
 
     public void setApellido(String apellido) {
-        this.apellido = apellido;
+        this.apellidoAdmin = apellido;
     }
 
-    public String getNumero() {
-        return numero;
-    }
 
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
 
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
-    public String getContrasena() {
-        return contrasena;
-    }
-
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
-    }
+    
 }
