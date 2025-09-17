@@ -9,17 +9,15 @@ import java.sql.Date;
 public class Cliente {
     private int idCliente;
     private int idUsuario;
-    private int idTipo;
     private String nombre;
     private String apellido;
     private String dni;
     private String telefono;
     private Date fechaRegistro;
 
-    public Cliente(int idCliente, int idUsuario, int idTipo, String nombre, String apellido, String dni, String telefono, Date fechaRegistro) {
+    public Cliente(int idCliente, int idUsuario, String nombre, String apellido, String dni, String telefono, Date fechaRegistro) {
         this.idCliente = idCliente;
         this.idUsuario = idUsuario;
-        this.idTipo = idTipo;
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
@@ -41,14 +39,6 @@ public class Cliente {
 
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
-    }
-
-    public int getIdTipo() {
-        return idTipo;
-    }
-
-    public void setIdTipo(int idTipo) {
-        this.idTipo = idTipo;
     }
 
     public String getNombre() {
@@ -91,7 +81,7 @@ public class Cliente {
         this.fechaRegistro = fechaRegistro;
     }
 
-    
 
+    
      
 }
