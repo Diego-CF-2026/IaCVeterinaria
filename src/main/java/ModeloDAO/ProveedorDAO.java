@@ -36,7 +36,7 @@ public class ProveedorDAO {
     public List<Proveedor> buscarPorNombreODireccion(String filtro) {
         List<Proveedor> lista = new ArrayList<>();
         String sql = "SELECT * FROM Proveedor WHERE estado = 1 AND "
-                + "(razon_social LIKE ? OR direccion LIKE ? OR ruc LIKE ? OR correo LIKE ?)";
+                + "(razonSocial LIKE ? OR direccion LIKE ? OR ruc LIKE ? OR correo LIKE ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             String criterio = "%" + filtro + "%";
@@ -62,7 +62,7 @@ public class ProveedorDAO {
 
     public List<Proveedor> buscarPorNombreODireccionInactivos(String filtro) {
         List<Proveedor> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Proveedor WHERE estado = 0 AND (razon_social LIKE ? OR direccion LIKE ? OR ruc LIKE ? OR correo LIKE ?)";
+        String sql = "SELECT * FROM Proveedor WHERE estado = 0 AND (razonSocial LIKE ? OR direccion LIKE ? OR ruc LIKE ? OR correo LIKE ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             String criterio = "%" + filtro + "%";
@@ -105,7 +105,7 @@ public class ProveedorDAO {
     }
 
     public boolean reactivar(int id) {
-        String sql = "UPDATE Proveedor SET estado = 1 WHERE id_proveedor = ?";
+        String sql = "UPDATE Proveedor SET estado = 1 WHERE idProveedor = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() == 1;
@@ -116,7 +116,7 @@ public class ProveedorDAO {
     }
 
     public Proveedor obtenerPorId(int id) {
-        String sql = "SELECT * FROM Proveedor WHERE id_proveedor = ?";
+        String sql = "SELECT * FROM Proveedor WHERE idProveedor = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -154,7 +154,7 @@ public class ProveedorDAO {
     }
 
     public boolean agregar(Proveedor p) {
-        String sql = "INSERT INTO Proveedor (razon_social, ruc, direccion, correo, estado) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Proveedor (razonSocial, ruc, direccion, correo, estado) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, p.getRazonSocial());
             ps.setString(2, p.getRuc());
@@ -170,7 +170,7 @@ public class ProveedorDAO {
     }
 
     public boolean actualizar(Proveedor p) {
-        String sql = "UPDATE Proveedor SET razon_social=?, ruc=?, direccion=?, correo=?, estado=? WHERE id_proveedor=?";
+        String sql = "UPDATE Proveedor SET razonSocial=?, ruc=?, direccion=?, correo=?, estado=? WHERE idProveedor=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, p.getRazonSocial());
             ps.setString(2, p.getRuc());
@@ -187,7 +187,7 @@ public class ProveedorDAO {
     }
 
     public boolean eliminar(int id) {
-        String sql = "UPDATE Proveedor SET estado = 0 WHERE id_proveedor = ?";
+        String sql = "UPDATE Proveedor SET estado = 0 WHERE idProveedor = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() == 1;
@@ -200,14 +200,14 @@ public class ProveedorDAO {
 
     private Proveedor mapearProveedor(ResultSet rs) throws SQLException {
         Proveedor p = new Proveedor();
-        p.setIdProveedor(rs.getInt("id_proveedor"));
-        p.setRazonSocial(rs.getString("razon_social"));
+        p.setIdProveedor(rs.getInt("idProveedor"));
+        p.setRazonSocial(rs.getString("razonSocial"));
         p.setRuc(rs.getString("ruc"));
         p.setDireccion(rs.getString("direccion"));
         p.setCorreo(rs.getString("correo"));
         p.setEstado(rs.getInt("estado"));
 
-        Timestamp timestamp = rs.getTimestamp("fecha_registro");
+        Timestamp timestamp = rs.getTimestamp("fechaRegistro");
         if (timestamp != null) {
             p.setFechaRegistro(timestamp.toLocalDateTime());
         }
@@ -216,7 +216,7 @@ public class ProveedorDAO {
 
     private List<ContactoProveedor> obtenerContactosProveedor(int idProveedor) {
         List<ContactoProveedor> contactos = new ArrayList<>();
-        String sql = "SELECT * FROM ContactoProveedor WHERE id_proveedor = ?";
+        String sql = "SELECT * FROM ContactoProveedor WHERE idProveedor = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProveedor);
@@ -224,7 +224,7 @@ public class ProveedorDAO {
                 while (rs.next()) {
                     ContactoProveedor c = new ContactoProveedor();
                     c.setIdContacto(rs.getInt("id_contacto"));
-                    c.setIdProveedor(rs.getInt("id_proveedor"));
+                    c.setIdProveedor(rs.getInt("idProveedor"));
                     c.setNombreContacto(rs.getString("nombre_contacto"));
                     c.setCargo(rs.getString("cargo"));
                     c.setTelefono(rs.getString("telefono"));
@@ -241,24 +241,24 @@ public class ProveedorDAO {
 
     private List<Producto> obtenerProductosProveedor(int idProveedor) {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT * FROM Producto WHERE id_proveedor = ? AND estado = 1";
+        String sql = "SELECT * FROM Producto WHERE idProveedor = ? AND estado = 1";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProveedor);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Producto prod = new Producto();
-                    prod.setIdProducto(rs.getInt("id_producto"));
-                    prod.setNombreProducto(rs.getString("nombre_producto"));
+                    prod.setIdProducto(rs.getInt("idProducto"));
+                    prod.setNombreProducto(rs.getString("nombreProducto"));
                     prod.setDescripcion(rs.getString("descripcion"));
                     prod.setPrecio(rs.getBigDecimal("precio"));
                     prod.setStock(rs.getInt("stock"));
-                    prod.setUnidadMedida(rs.getString("unidad_medida"));
+                    prod.setUnidadMedida(rs.getString("unidadMedida"));
                     prod.setImagen(rs.getString("imagen"));
                     prod.setEstado(rs.getInt("estado"));
-                    prod.setIdProveedor(rs.getInt("id_proveedor"));
+                    prod.setIdProveedor(rs.getInt("idProveedor"));
 
-                    Timestamp fecha = rs.getTimestamp("fecha_registro");
+                    Timestamp fecha = rs.getTimestamp("fechaRegistro");
                     if (fecha != null) {
                         prod.setFechaRegistro(fecha); // ✅ ahora correcto
                     }
