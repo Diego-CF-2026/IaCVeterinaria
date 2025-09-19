@@ -1,38 +1,32 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Modelo;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
-public class Cliente {
-    private int idCliente;
+public class UsuarioCliente {
     private int idUsuario;
     private String nombre;
     private String apellido;
     private String dni;
     private String telefono;
-    private Date fechaRegistro;
+    private String correo;
+    private String contrasena;
+    private LocalDateTime fechaRegistro;
 
-    public Cliente(int idCliente, int idUsuario, String nombre, String apellido, String dni, String telefono, Date fechaRegistro) {
-        this.idCliente = idCliente;
-        this.idUsuario = idUsuario;
+    // Constructor vacío
+    public UsuarioCliente() {
+    }
+
+    // Constructor completo sin ID ni fecha (útil para insertar)
+    public UsuarioCliente(String nombre, String apellido, String dni, String telefono, String correo, String contrasena) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
         this.telefono = telefono;
-        this.fechaRegistro = fechaRegistro;
+        this.correo = correo;
+        this.contrasena = contrasena;
     }
 
-    public int getIdCliente() {
-        return idCliente;
-    }
-
-    public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
-    }
-
+    // Getters y Setters
     public int getIdUsuario() {
         return idUsuario;
     }
@@ -73,15 +67,27 @@ public class Cliente {
         this.telefono = telefono;
     }
 
-    public Date getFechaRegistro() {
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
+    }
+
+    public LocalDateTime getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
-
-
-    
-     
 }

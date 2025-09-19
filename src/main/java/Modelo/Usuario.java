@@ -10,18 +10,13 @@ package Modelo;
  */
 public class Usuario {
     private int idUsuario;
-    private int idRol;
+    private String idRol;
     private String correo;
     private String contra;
     private int intentos;
     private boolean Estado;
 
-    private String nombreRol; 
-    public Usuario() {
-    }
-
-    
-    public Usuario(int idUsuario, int idRol, String correo, String contra, int intentos, boolean Estado) {
+    public Usuario(int idUsuario, String idRol, String correo, String contra, int intentos, boolean Estado) {
         this.idUsuario = idUsuario;
         this.idRol = idRol;
         this.correo = correo;
@@ -38,11 +33,11 @@ public class Usuario {
         this.idUsuario = idUsuario;
     }
 
-    public int getIdRol() {
+    public String getIdRol() {
         return idRol;
     }
 
-    public void setIdRol(int idRol) {
+    public void setIdRol(String idRol) {
         this.idRol = idRol;
     }
 
@@ -77,8 +72,8 @@ public class Usuario {
     public void setEstado(boolean Estado) {
         this.Estado = Estado;
     }
-
-    public String getNombreRol() { return nombreRol; }
-    public void setNombreRol(String nombreRol) { this.nombreRol = nombreRol; }
     
+    
+    
+   
 }
