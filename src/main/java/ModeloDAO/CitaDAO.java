@@ -1,7 +1,7 @@
 package ModeloDAO;
 
 import Modelo.Conexion;
-import Modelo.Citas;
+import Modelo.Cita;
 import Modelo.Cliente;
 import static Modelo.Conexion.getConnection; // Importar correctamente si getConnection es estático de Modelo.Conexion
 import Modelo.Veterinario;
@@ -25,8 +25,8 @@ public class CitaDAO {
     PreparedStatement ps;
     ResultSet rs;
 
-    // Método para agregar una nueva Citas
-    public boolean agregarCita(Citas cita) {
+    // Método para agregar una nueva Cita
+    public boolean agregarCita(Cita cita) {
         String sql = "INSERT INTO Citas (idCliente, idVeterinario, fecha, hora, motivo, estado) VALUES (?, ?, ?, ?, ?, ?)";
         try {
             con = Conexion.getConnection();
@@ -52,8 +52,8 @@ public class CitaDAO {
     }
 
     // Método para listar todas las Citas con detalles de cliente y veterinario
-    public List<Citas> listarCitas() {
-        List<Citas> lista = new ArrayList<>();
+    public List<Cita> listarCitas() {
+        List<Cita> lista = new ArrayList<>();
         // CAMBIO CLAVE AQUÍ: Añadir WHERE c.estado != 'Completada'
         String sql = "SELECT c.idCita, c.idCliente, c.idVeterinario, c.fecha, c.hora, c.motivo, c.estado, " +
                      "cl.Nombre AS NombreCliente, cl.Apellido AS ApellidoCliente, cl.DNI AS DniCliente, " +
@@ -73,7 +73,7 @@ public class CitaDAO {
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                Citas cita = new Citas();
+                Cita cita = new Cita();
                 cita.setIdCita(rs.getInt("idCita"));
                 cita.setIdCliente(rs.getInt("idCliente"));
                 cita.setIdVeterinario(rs.getInt("idVeterinario"));
@@ -100,10 +100,10 @@ public class CitaDAO {
         return lista;
     }
 
-    // Método para obtener una Citas por ID con detalles de cliente y veterinario
+    // Método para obtener una Cita por ID con detalles de cliente y veterinario
     // NO SE AGREGA FILTRO DE ESTADO AQUÍ, porque podríamos querer ver una cita completada por su ID
-    public Citas obtenerCitaPorId(int id) {
-        Citas cita = null;
+    public Cita obtenerCitaPorId(int id) {
+        Cita cita = null;
         String sql = "SELECT c.idCita, c.idCliente, c.idVeterinario, c.fecha, c.hora, c.motivo, c.estado, " +
                      "cl.Nombre AS NombreCliente, cl.Apellido AS ApellidoCliente, cl.DNI AS DniCliente, " +
                      "v.V_Nombre AS NombreVeterinario, v.V_Apellido AS ApellidoVeterinario, v.V_Especialidad " +
@@ -121,7 +121,7 @@ public class CitaDAO {
             ps.setInt(1, id);
             rs = ps.executeQuery();
             if (rs.next()) {
-                cita = new Citas();
+                cita = new Cita();
                 cita.setIdCita(rs.getInt("idCita"));
                 cita.setIdCliente(rs.getInt("idCliente"));
                 cita.setIdVeterinario(rs.getInt("idVeterinario"));
@@ -146,8 +146,8 @@ public class CitaDAO {
         return cita;
     }
 
-    // Método para actualizar una Citas existente
-    public boolean actualizarCita(Citas cita) {
+    // Método para actualizar una Cita existente
+    public boolean actualizarCita(Cita cita) {
         String sql = "UPDATE Citas SET idCliente=?, idVeterinario=?, fecha=?, hora=?, motivo=?, estado=? WHERE idCita=?";
         try {
             con = Conexion.getConnection();
@@ -174,7 +174,7 @@ public class CitaDAO {
         }
     }
 
-    // Método para eliminar una Citas con store procedure
+    // Método para eliminar una Cita con store procedure
     public int eliminarCita(int id) {
         String sql = "{CALL sp_eliminar_cita(?, ?)}"; // Llamada al SP
         CallableStatement cs = null;
@@ -294,8 +294,8 @@ public class CitaDAO {
     }
 
     //Buscar cita con store procedure
-    public List<Citas> buscarCitas(String busqueda) {
-        List<Citas> citas = new ArrayList<>();
+    public List<Cita> buscarCitas(String busqueda) {
+        List<Cita> citas = new ArrayList<>();
         String sql = "{CALL sp_buscar_citas(?)}"; // Llamada al SP
 
         try (Connection conn = Conexion.getConnection(); // Usar Conexion.getConnection() consistente
@@ -305,7 +305,7 @@ public class CitaDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Citas cita = new Citas();
+                    Cita cita = new Cita();
                     cita.setIdCita(rs.getInt("idCita"));
                     cita.setIdCliente(rs.getInt("idCliente"));
                     cita.setIdVeterinario(rs.getInt("idVeterinario"));

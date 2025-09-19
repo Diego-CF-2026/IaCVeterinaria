@@ -1,26 +1,29 @@
 package Modelo;
 
-import jakarta.websocket.Decoder.Text;
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Producto {
     private int idProducto;
-    private int idProveeedor;
     private String nombreProducto;
-    private Text descripcion;
+    private String descripcion;
+    private BigDecimal precio;
     private int stock;
     private String unidadMedida;
     private String imagen; // nombre del archivo o ruta relativa
     private int estado;
     private int idProveedor;
-    private Date fechaRegistro;
+    private Timestamp fechaRegistro;
 
-    public Producto(int idProducto, int idProveeedor, String nombreProducto, Text descripcion, int stock, String unidadMedida, String imagen, int estado, int idProveedor, Date fechaRegistro) {
+    // ----- Constructores -----
+    public Producto() {}
+
+    public Producto(int idProducto, String nombreProducto, String descripcion, BigDecimal precio, int stock,
+                    String unidadMedida, String imagen, int estado, int idProveedor, Timestamp fechaRegistro) {
         this.idProducto = idProducto;
-        this.idProveeedor = idProveeedor;
         this.nombreProducto = nombreProducto;
         this.descripcion = descripcion;
+        this.precio = precio;
         this.stock = stock;
         this.unidadMedida = unidadMedida;
         this.imagen = imagen;
@@ -29,20 +32,13 @@ public class Producto {
         this.fechaRegistro = fechaRegistro;
     }
 
+    // ----- Getters y Setters -----
     public int getIdProducto() {
         return idProducto;
     }
 
     public void setIdProducto(int idProducto) {
         this.idProducto = idProducto;
-    }
-
-    public int getIdProveeedor() {
-        return idProveeedor;
-    }
-
-    public void setIdProveeedor(int idProveeedor) {
-        this.idProveeedor = idProveeedor;
     }
 
     public String getNombreProducto() {
@@ -53,12 +49,20 @@ public class Producto {
         this.nombreProducto = nombreProducto;
     }
 
-    public Text getDescripcion() {
+    public String getDescripcion() {
         return descripcion;
     }
 
-    public void setDescripcion(Text descripcion) {
+    public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
     }
 
     public int getStock() {
@@ -101,14 +105,11 @@ public class Producto {
         this.idProveedor = idProveedor;
     }
 
-    public Date getFechaRegistro() {
+    public Timestamp getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(Timestamp fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
-
-
-    
 }

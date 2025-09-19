@@ -1,89 +1,58 @@
-package Controladores; // Asegúrate de que el nombre de tu paquete sea este
+package Controlador;
 
-import Modelo.Administrador;
-import Modelo.Recepcionista;
-import Modelo.UsuarioCliente;
-import ModeloDAO.AdministradorDAO;
-import ModeloDAO.RecepcionistaDAO;
-import ModeloDAO.UsuarioClienteDAO;
-import java.io.IOException;
-import java.io.PrintWriter;
+import Modelo.Usuario;
+import ModeloDAO.UsuarioDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
 
-@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
+@WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
+
+    private UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        PrintWriter out = response.getWriter();
-
         String correo = request.getParameter("correo");
-        String contrasena = request.getParameter("contrasena");
-        String rol = request.getParameter("rol");
+        String contra = request.getParameter("contrasena");
 
-        HttpSession session = request.getSession();
-        String jsonResponseString = ""; 
+        // Busca al usuario en la BD
+        Usuario usuario = usuarioDAO.login(correo, contra);
 
-        try {
-            switch (rol) {
-                case "Administrador":
-                    AdministradorDAO adminDAO = new AdministradorDAO();
-                    Administrador admin = adminDAO.validarAdministrador(correo, contrasena);
-                    if (admin != null) {
-                        session.setAttribute("username", admin);
-                        String redirectUrl = request.getContextPath() + "/VistasWeb/VistasAdmin/AdminDash.jsp";
-                        jsonResponseString = "{\"success\": true, \"redirect\": \"" + redirectUrl + "\"}";
-                    } else {
-                        jsonResponseString = "{\"success\": false, \"message\": \"Correo o contraseña incorrectos para Administrador.\"}";
-                    }
+        if (usuario != null && usuario.isEstado()) {
+            // Crear sesión
+            HttpSession sesion = request.getSession();
+            sesion.setAttribute("usuario", usuario);
+
+           String contextPath = request.getContextPath();
+
+            switch (usuario.getIdRol()) {
+                case 1: // Administrador
+                    response.sendRedirect(contextPath + "/VistasWeb/VistasAdmin/AdminDash.jsp");
                     break;
-
-                case "Recepcionista":
-                    RecepcionistaDAO recepDAO = new RecepcionistaDAO();
-                    Recepcionista recepcionista = recepDAO.validarRecepcionista(correo, contrasena);
-                    if (recepcionista != null) {
-                        session.setAttribute("recepcionista", recepcionista);
-                        session.setAttribute("idRecepcionista", recepcionista.getIdRecepcionista());
-                        String redirectUrl = request.getContextPath() + "/ClienteRServlet";
-                        jsonResponseString = "{\"success\": true, \"redirect\": \"" + redirectUrl + "\"}";
-                    } else {
-                        jsonResponseString = "{\"success\": false, \"message\": \"Correo o contraseña incorrectos para Recepcionista.\"}";
-                    }
+                case 2: // Recepcionista
+                    response.sendRedirect(contextPath + "/CitaServlet");
                     break;
-
-                case "Cliente":
-                    UsuarioClienteDAO usuarioClienteDAO = new UsuarioClienteDAO(); // Renombrado a minusculas por convencion
-                    UsuarioCliente cliente = usuarioClienteDAO.validarUsuario(correo, contrasena);
-                    if (cliente != null) {
-                        session.setAttribute("usuario", cliente);
-                        // ¡LA LÍNEA QUE FALTABA!
-                        session.setAttribute("idUsuario", cliente.getIdUsuario()); 
-                        String redirectUrl = request.getContextPath() + "/VistasWeb/VistasCliente/indexCliente.jsp";
-                        jsonResponseString = "{\"success\": true, \"redirect\": \"" + redirectUrl + "\"}";
-                    } else {
-                        jsonResponseString = "{\"success\": false, \"message\": \"Correo o contraseña incorrectos para Cliente.\"}";
-                    }
+                case 3: // Cliente
+                    response.sendRedirect(contextPath + "/VistasWeb/VistasCliente/Nosotros.jsp");
                     break;
-
                 default:
-                    jsonResponseString = "{\"success\": false, \"message\": \"Rol no válido seleccionado.\"}";
+                    request.setAttribute("errorLogin", "Rol no válido.");
+                    request.getRequestDispatcher("index.jsp").forward(request, response);
                     break;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            jsonResponseString = "{\"success\": false, \"message\": \"Ocurrió un error en el servidor. Intente de nuevo.\"}";
-        } finally {
-            out.print(jsonResponseString);
-            out.flush();
+
+
+        } else {
+            // Error en login
+            request.setAttribute("errorLogin", "Correo o contraseña incorrectos, o usuario inactivo.");
+            request.getRequestDispatcher("index.jsp").forward(request, response);
         }
     }
 }
