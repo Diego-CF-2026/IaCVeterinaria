@@ -113,4 +113,28 @@ public class ClienteDAO {
         }
         return false;
     }
+    
+    // Buscar cliente a partir de su idUsuario
+    public Cliente buscarPorIdUsuario(int idUsuario) {
+        Cliente c = null;
+        String sql = "SELECT * FROM Cliente WHERE idUsuario = ?";
+        try {
+            con = Conexion.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, idUsuario);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                c = new Cliente();
+                c.setIdCliente(rs.getInt("idCliente"));
+                c.setIdUsuario(rs.getInt("idUsuario"));
+                c.setNombre(rs.getString("nombre"));
+                c.setDni(rs.getString("dni"));
+                c.setTelefono(rs.getString("telefono"));
+                c.setFechaRegistro(rs.getDate("fechaRegistro"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return c;
+    }
 }

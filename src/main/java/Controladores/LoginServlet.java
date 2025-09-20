@@ -1,6 +1,8 @@
 package Controlador;
 
+import Modelo.Cliente;
 import Modelo.Usuario;
+import ModeloDAO.ClienteDAO;
 import ModeloDAO.UsuarioDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,6 +16,7 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
     private UsuarioDAO usuarioDAO = new UsuarioDAO();
+    private ClienteDAO clienteDAO = new ClienteDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -40,7 +43,13 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect(contextPath + "/CitaServlet");
                     break;
                 case 3: // Cliente
-                    response.sendRedirect(contextPath + "/VistasWeb/VistasCliente/Nosotros.jsp");
+                    // Buscar idCliente asociado a este usuario
+                    Cliente cliente = clienteDAO.buscarPorIdUsuario(usuario.getIdUsuario());
+                    if (cliente != null) {
+                        sesion.setAttribute("idCliente", cliente.getIdCliente());
+                        sesion.setAttribute("nombreCliente", cliente.getNombre());
+                    }
+                    response.sendRedirect(contextPath + "/ProductoServlet?accion=listarCliente");
                     break;
                 default:
                     request.setAttribute("errorLogin", "Rol no válido.");

@@ -43,6 +43,9 @@ public class ProductoServlet extends HttpServlet {
             case "listar":
                 listarProductos(request, response);
                 break;
+            case "listarCliente":
+                listarProductosCliente(request, response); // ahora llama al método
+                break;
             case "listarInactivos":
                 listarProductosInactivos(request, response);
                 break;
@@ -257,4 +260,18 @@ public class ProductoServlet extends HttpServlet {
             response.sendRedirect("error.jsp");
         }
     }
+    
+    private void listarProductosCliente(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            List<Producto> productosCliente = productoDAO.listarTodos(); // puedes filtrar solo activos si quieres
+            request.setAttribute("productos", productosCliente);
+
+            request.getRequestDispatcher("VistasWeb/VistasCliente/Productos.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
+        }
+    }
+    
 }

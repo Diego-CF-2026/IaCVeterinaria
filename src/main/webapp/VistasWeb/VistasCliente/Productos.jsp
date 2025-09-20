@@ -1,5 +1,7 @@
 <%@ include file="/proteger.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -199,7 +201,7 @@
         <div class="center-links">
             <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Nosotros.jsp" id="link-nosotros">Nosotros</a>
             <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/servicios.jsp" id="link-servicios">Servicios</a>
-            <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Productos.jsp" id="link-productos" class="active-link">Productos</a>
+            <a href="${pageContext.request.contextPath}/ProductoServlet?accion=listarCliente" id="link-productos" class="active-link">Productos</a>
             <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Contacto.jsp" id="link-contacto">Contacto</a>
         </div>
         <div class="buttons">
@@ -228,98 +230,50 @@
         <p>Alimentos, medicamentos, accesorios y mucho más para perros, gatos y otras mascotas.</p>
     </div>
 </section>
-
-<!-- Categorías de Productos -->
-<section class="categorias container">
-    <h3>Categorías</h3>
-    <div class="categorias-grid">
-        <div class="categoria-card">
-            <img src="${pageContext.request.contextPath}/Recursos/Accesorios.png" alt="Accesorios" />
-            <h4>Accesorios</h4>
-            <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Accesorios.jsp" class="btn-categoria">Ver Accesorios</a>
-        </div>
-        <div class="categoria-card">
-            <img src="${pageContext.request.contextPath}/Recursos/comida.png" alt="Alimentos" />
-            <h4>Alimentos</h4>
-            <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Alimentos.jsp" class="btn-categoria">Ver Alimentos</a>
-        </div>
-        <div class="categoria-card">
-            <img src="${pageContext.request.contextPath}/Recursos/medicamentos.png" alt="Medicamentos" />
-            <h4>Medicamentos</h4>
-            <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Medicamentos.jsp" class="btn-categoria">Ver Medicamentos</a>
-        </div>
-        <div class="categoria-card">
-            <img src="${pageContext.request.contextPath}/Recursos/juguetes.png" alt="Juguetes" />
-            <h4>Juguetes</h4>
-            <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Juguetes.jsp" class="btn-categoria">Ver Juguetes</a>
-        </div>
-    </div>
-</section>
-
-<!-- Productos dentro de cuadros -->
+    
+    
 <section class="productos container">
-    <article class="producto-card">
-        <div class="producto-img">
-            <img src="${pageContext.request.contextPath}/Recursos/comidadeperro.png" alt="Alimento para perro" />
+    <c:forEach var="p" items="${productos}">
+        <div class="producto-card">
+            <div class="producto-img">
+                <img src="${pageContext.request.contextPath}/${p.imagen}"
+                     alt="${p.nombreProducto}"/>
+            </div>
+            <h4>${p.nombreProducto}</h4>
+            <p>${p.descripcion}</p>
+            <span class="precio">S/. ${p.precio}</span>
+            <button type="button" class="btn-agregar"
+                    data-id="${p.idProducto}"
+                    data-nombre="${p.nombreProducto}"
+                    data-precio="${p.precio}"
+                    data-img="${pageContext.request.contextPath}/${p.imagen}">
+                Agregar al carrito
+            </button>
         </div>
-        <h3>Alimento Premium para Perros</h3>
-        <p>Nutrición completa para perros adultos de todas las razas.</p>
-        <p class="precio">$25.000</p>
-        <button data-nombre="Alimento Premium para Perros" data-precio="$25.000" data-img="${pageContext.request.contextPath}/Recursos/comidadeperro.png">Agregar al carrito</button>
-    </article>
+    </c:forEach>
+</section>  
 
-    <article class="producto-card">
-        <div class="producto-img">
-            <img src="${pageContext.request.contextPath}/Recursos/juguetegato.png" alt="Juguete para gato" />
-        </div>
-        <h3>Juguete Interactivo para Gatos</h3>
-        <p>Estimula la actividad y el juego de tu gato con este divertido juguete.</p>
-        <p class="precio">$12.000</p>
-        <button data-nombre="Juguete Interactivo para Gatos" data-precio="$12.000" data-img="${pageContext.request.contextPath}/Recursos/juguetegato.png">Agregar al carrito</button>
-    </article>
-        
-        <article class="producto-card">
-        <div class="producto-img">
-            <img src="${pageContext.request.contextPath}/Recursos/Medicamento.png" alt="Medicamento antipulgas" />
-        </div>
-        <h3>Medicamento Antipulgas</h3>
-        <p>Protección efectiva contra pulgas y garrapatas para perros y gatos.</p>
-        <p class="precio">$18.000</p>
-        <button data-nombre="Medicamento Antipulgas" data-precio="$18.000" data-img="${pageContext.request.contextPath}/Recursos/Medicamento.png">Agregar al carrito</button>
-    </article>
-
-    <article class="producto-card">
-        <div class="producto-img">
-            <img src="${pageContext.request.contextPath}/Recursos/cama ortopedica.png" alt="Cama para mascota" />
-        </div>
-        <h3>Cama Ortopédica para Mascotas</h3>
-        <p>Comodidad y soporte ideal para mascotas mayores o con problemas articulares.</p>
-        <p class="precio">$45.000</p>
-        <button data-nombre="Cama Ortopédica para Mascotas" data-precio="$45.000" data-img="${pageContext.request.contextPath}/Recursos/cama ortopedica.png">Agregar al carrito</button>
-    </article>
-</section>
-
-<!-- MODAL PRINCIPAL (CONFIRMACIÓN) -->
+<!-- MODAL PRINCIPAL (CANTIDAD Y CONFIRMACIÓN) -->
 <div id="modalConfirmar" class="modal">
     <div class="modal-content">
-        <h2 class="modal-title">¿Agregar <span id="nombreProducto"></span> al carrito?</h2>
+        <h2>Agregar <span id="nombreProducto"></span></h2>
+        <img id="imgProducto" src="" alt="" style="width:100px; height:100px; margin:10px auto; display:block;">
+        <p>Precio: S/. <span id="precioProducto"></span></p>
+        <label for="cantidadProducto">Cantidad:</label>
+        <input type="number" id="cantidadProducto" min="1" value="1"
+               style="width:80px; margin:10px auto; display:block;">
         <div class="modal-buttons">
-            <button class="modal-btn" id="confirmarAgregar">Confirmar</button>
+            <button class="modal-btn btn-ok" id="confirmarAgregar">Agregar</button>
             <button class="modal-btn btn-cancelar" id="cancelarAgregar">Cancelar</button>
         </div>
     </div>
 </div>
 
-<!-- MODAL DEL CARRITO (EXISTENTE) -->
-<div id="modalCarrito" class="modal-carrito" aria-modal="true" role="dialog">
-    <div class="modal-contenido">
-        <span class="cerrar-modal" id="cerrarModalCarrito">&times;</span>
-        <h2 style="margin-top:0;">Productos agregados al carrito</h2>
-        <ul id="listaCarrito"></ul>
-        <div class="botones-carrito">
-            <button id="finalizarCompra" class="btn-finalizar">Finalizar compra</button>
-            <button id="regresarCarrito" class="btn-regresar">Regresar</button>
-        </div>
+<!-- Modal éxito -->
+<div id="modalExito" class="modal">
+    <div class="modal-content">
+        <h3>✅ Producto agregado al carrito</h3>
+        <button class="modal-btn btn-ok" id="cerrarExito">Aceptar</button>
     </div>
 </div>
 
@@ -385,94 +339,78 @@
     });
 
     // --- Modales y Carrito ---
-    const carrito = [];
-    let productoSeleccionado = null;
+    const modal = document.getElementById('modalConfirmar');
+    const btnCancelar = document.getElementById('cancelarAgregar');
+    const btnConfirmar = document.getElementById('confirmarAgregar');
 
-    // Elementos de los modales
-    const modalConfirmar = document.getElementById('modalConfirmar');
-    const modalCarrito = document.getElementById('modalCarrito');
+    let productoSeleccionado = {};
 
-    // Funciones para abrir y cerrar modales
-    function abrirModal(modal) {
-        modal.classList.add('active');
-    }
-    function cerrarModal(modal) {
-        modal.classList.remove('active');
-    }
-
-    // Eventos de los botones "Agregar al carrito"
-    document.querySelectorAll('.producto-card button').forEach((btn) => {
-        btn.addEventListener('click', function() {
+    // Abrir modal al hacer clic en un botón
+    document.querySelectorAll('.btn-agregar').forEach(btn => {
+        btn.addEventListener('click', () => {
             productoSeleccionado = {
-                nombre: this.dataset.nombre,
-                precio: this.dataset.precio,
-                img: this.dataset.img
+                id: btn.dataset.id,
+                nombre: btn.dataset.nombre,
+                precio: btn.dataset.precio,
+                img: btn.dataset.img
             };
-            document.getElementById('nombreProducto').textContent = productoSeleccionado.nombre; // Actualiza el nombre en el modal
+            document.getElementById('nombreProducto').textContent = productoSeleccionado.nombre;
+            document.getElementById('precioProducto').textContent = productoSeleccionado.precio;
+            document.getElementById('imgProducto').src = productoSeleccionado.img;
 
-            abrirModal(modalConfirmar); // Muestra el modal de confirmación
+            modal.style.display = 'flex';
         });
     });
 
-    // Eventos del modal de confirmación
-    document.getElementById('confirmarAgregar').addEventListener('click', function() {
-        carrito.push(productoSeleccionado); // Agrega al carrito
-        actualizarModalCarrito(); // Actualiza el modal del carrito
-        cerrarModal(modalConfirmar); // Cierra el modal de confirmación
-        abrirModal(modalCarrito); // Abre directamente el modal del carrito
-    });
-    document.getElementById('cancelarAgregar').addEventListener('click', function() {
-        cerrarModal(modalConfirmar); // Cierra el modal de confirmación
+    // Cancelar
+    btnCancelar.addEventListener('click', () => {
+        modal.style.display = 'none';
     });
 
-    // Funciones del modal del carrito (existentes)
-    function actualizarModalCarrito() {
-        const lista = document.getElementById('listaCarrito');
-        lista.innerHTML = '';
-        if (carrito.length === 0) {
-            lista.innerHTML = '<li style="text-align:center;color:#888;">El carrito está vacío.</li>';
-            return;
-        }
-        carrito.forEach((prod, idx) => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-                
-                <strong>${prod.nombre}</strong> - <span>${prod.precio}</span>
-                <button class="btn-eliminar" title="Quitar del carrito">&times;</button>
-            `;
-            li.querySelector('.btn-eliminar').onclick = function() {
-                carrito.splice(idx, 1);
-                actualizarModalCarrito();
-            };
-            lista.appendChild(li);
+    // Confirmar y enviar al backend
+    btnConfirmar.addEventListener('click', () => {
+        const cantidad = parseInt(document.getElementById('cantidadProducto').value) || 1;
+
+        console.log("DEBUG → Enviando:", {
+            idProducto: productoSeleccionado.id,
+            cantidad: cantidad
         });
-    }
 
-    document.getElementById('cerrarModalCarrito').onclick = function() {
-        cerrarModal(modalCarrito);
-    };
-    document.getElementById('regresarCarrito').onclick = function() {
-        cerrarModal(modalCarrito);
-    };
+        fetch('${pageContext.request.contextPath}/CarritoServlet', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                accion: 'agregar',
+                idProducto: productoSeleccionado.id,
+                cantidad: cantidad
+            })
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("Error HTTP: " + res.status);
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data.exito) {
+                document.getElementById('modalExito').style.display = 'flex';
+            } else {
+                alert(data.mensaje || "Error al agregar al carrito");
+            }
+        })
+        .catch(err => console.error("Error en fetch:", err));
 
-    document.getElementById('finalizarCompra').onclick = function() {
-        if(carrito.length === 0){
-            alert('¡El carrito está vacío!');
-            return;
-        }
-        alert('¡Gracias por tu compra! ');
-        cerrarModal(modalCarrito);
-        carrito.length = 0; // Vacía el carrito
-        actualizarModalCarrito();
-    };
+        modal.style.display = 'none';
+    });
+
+    document.getElementById('cerrarExito').addEventListener('click', () => {
+        document.getElementById('modalExito').style.display = 'none';
+    });
 
     // Cerrar modales al hacer clic fuera del contenido
     window.addEventListener('click', function(e) {
         if (e.target == modalConfirmar) {
             cerrarModal(modalConfirmar);
-        }
-        if (e.target == modalCarrito) {
-            cerrarModal(modalCarrito);
         }
     });
 </script>
