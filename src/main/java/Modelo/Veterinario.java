@@ -1,14 +1,40 @@
 package Modelo;
 
+import Modelo.Especialidad;
+
 public class Veterinario {
     private int idVeterinario;
-    private String nombre; // Este es el campo que usaremos para el nombre completo
-    private String apellido; // Puedes mantenerlo si lo necesitas para otras operaciones
-    private String numero;
-    private String dni;
-    private String especialidad;
+    private String nombreVeterianrio; // Este es el campo que usaremos para el nombre completo
+    private String apellidoVeterinario; // Puedes mantenerlo si lo necesitas para otras operaciones
+    private String telefonoVeterinario;
+    private String correoVeterinario;
+    private int idEspecialidad;
+    private String nombreEspecialidad;
 
-    // Getters y Setters
+    public Veterinario() {
+    }
+
+    public Veterinario(String nombreEspecialidad) {
+        this.nombreEspecialidad = nombreEspecialidad;
+    }
+
+    public String getNombreEspecialidad() {
+        return nombreEspecialidad;
+    }
+
+    public void setNombreEspecialidad(String nombreEspecialidad) {
+        this.nombreEspecialidad = nombreEspecialidad;
+    }
+
+    public Veterinario(int idVeterinario, String nombreVeterianrio, String apellidoVeterinario, String telefonoVeterinario, String correoVeterinario, int idEspecialidad) {
+        this.idVeterinario = idVeterinario;
+        this.nombreVeterianrio = nombreVeterianrio;
+        this.apellidoVeterinario = apellidoVeterinario;
+        this.telefonoVeterinario = telefonoVeterinario;
+        this.correoVeterinario = correoVeterinario;
+        this.idEspecialidad = idEspecialidad;
+    }
+
     public int getIdVeterinario() {
         return idVeterinario;
     }
@@ -17,43 +43,45 @@ public class Veterinario {
         this.idVeterinario = idVeterinario;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreVeterianrio() {
+        return nombreVeterianrio;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreVeterianrio(String nombreVeterianrio) {
+        this.nombreVeterianrio = nombreVeterianrio;
     }
 
-    public String getApellido() {
-        return apellido;
+    public String getApellidoVeterinario() {
+        return apellidoVeterinario;
     }
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
+    public void setApellidoVeterinario(String apellidoVeterinario) {
+        this.apellidoVeterinario = apellidoVeterinario;
     }
 
-    public String getNumero() {
-        return numero;
+    public String getTelefonoVeterinario() {
+        return telefonoVeterinario;
     }
 
-    public void setNumero(String numero) {
-        this.numero = numero;
+    public void setTelefonoVeterinario(String telefonoVeterinario) {
+        this.telefonoVeterinario = telefonoVeterinario;
     }
 
-    public String getDni() {
-        return dni;
+    public String getCorreoVeterinario() {
+        return correoVeterinario;
     }
 
-    public void setDni(String dni) {
-        this.dni = dni;
+    public void setCorreoVeterinario(String correoVeterinario) {
+        this.correoVeterinario = correoVeterinario;
     }
 
-    public String getEspecialidad() {
-        return especialidad;
+    public int getIdEspecialidad() {
+        return idEspecialidad;
     }
 
-    public void setEspecialidad(String especialidad) {
-        this.especialidad = especialidad;
+    public void setIdEspecialidad(int idEspecialidad) {
+        this.idEspecialidad = idEspecialidad;
     }
+    
+    
 }

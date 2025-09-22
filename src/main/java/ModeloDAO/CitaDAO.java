@@ -253,9 +253,9 @@ public class CitaDAO {
             while (rs.next()) {
                 Veterinario vet = new Veterinario();
                 vet.setIdVeterinario(rs.getInt("IdVeterinario"));
-                vet.setNombre(rs.getString("V_Nombre"));
-                vet.setApellido(rs.getString("V_Apellido"));
-                vet.setEspecialidad(rs.getString("V_Especialidad"));
+                vet.setNombreVeterianrio(rs.getString("V_Nombre"));
+                vet.setApellidoVeterinario(rs.getString("V_Apellido"));
+                vet.setIdEspecialidad(rs.getInt("V_Especialidad"));
                 lista.add(vet);
             }
         } catch (SQLException e) {

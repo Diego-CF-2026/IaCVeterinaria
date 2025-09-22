@@ -24,7 +24,7 @@ public class VeterinarioDAO {
         List<Veterinario> listaVeterinarios = new ArrayList<>();
         // Asegúrate de que los nombres de las columnas en tu DB son exactos:
         // idVeterinario, V_Nombre, V_Apellido, V_Numero, V_Dni, V_Especialidad
-        String sql = "SELECT idVeterinario, V_Nombre, V_Apellido, V_Numero, V_Dni, V_Especialidad FROM veterinario ORDER BY V_Nombre, V_Apellido";
+        String sql = "SELECT idVeterinario, nombreVeterinario, apellidoVeterinario, telefonoVeterinario, correoVeterinario, idEspecialidad FROM veterinario ORDER BY nombreVeterinario, apellidoVeterinario";
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -45,11 +45,11 @@ public class VeterinarioDAO {
                 
                 // **** CLAVE: Concatenar nombre y apellido para el setter 'nombre' ****
                 // También establecemos el apellido y la especialidad por separado si se necesitan
-                vet.setNombre(rs.getString("V_Nombre")); 
-                vet.setApellido(rs.getString("V_Apellido")); 
-                vet.setNumero(rs.getString("V_Numero"));
-                vet.setDni(rs.getString("V_Dni"));
-                vet.setEspecialidad(rs.getString("V_Especialidad"));
+                vet.setNombreVeterianrio(rs.getString("nombreVeterinario")); 
+                vet.setApellidoVeterinario(rs.getString("apellidoVeterinario")); 
+                vet.setTelefonoVeterinario(rs.getString("telefonoVeterinario"));
+                vet.setCorreoVeterinario(rs.getString("correoVeterinario"));
+                vet.setIdEspecialidad(rs.getInt("idEspecialidad"));
                 
                 listaVeterinarios.add(vet);
             }
@@ -73,7 +73,7 @@ public class VeterinarioDAO {
 
     public Veterinario obtenerVeterinarioPorId(int id) {
         Veterinario vet = null;
-        String sql = "SELECT idVeterinario, V_Nombre, V_Apellido, V_Numero, V_Dni, V_Especialidad FROM veterinario WHERE idVeterinario = ?";
+        String sql = "SELECT idVeterinario, nombreVeterinario, apellidoVeterinario, telefonoVeterinario, correoVeterinario, idEspecialidad FROM veterinario WHERE idVeterinario = ?";
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -92,11 +92,11 @@ public class VeterinarioDAO {
             if (rs.next()) {
                 vet = new Veterinario();
                 vet.setIdVeterinario(rs.getInt("idVeterinario"));
-                vet.setNombre(rs.getString("V_Nombre")); 
-                vet.setApellido(rs.getString("V_Apellido")); 
-                vet.setNumero(rs.getString("V_Numero"));
-                vet.setDni(rs.getString("V_Dni"));
-                vet.setEspecialidad(rs.getString("V_Especialidad"));
+                vet.setNombreVeterianrio(rs.getString("nombreVeterinario")); 
+                vet.setApellidoVeterinario(rs.getString("apellidoVeterinario")); 
+                vet.setTelefonoVeterinario(rs.getString("telefonoVeterinario"));
+                vet.setCorreoVeterinario(rs.getString("correoVeterinario"));
+                vet.setIdEspecialidad(rs.getInt("idEspecialidad"));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error SQL al obtener veterinario por ID: " + e.getMessage(), e);
@@ -117,7 +117,7 @@ public class VeterinarioDAO {
     }
 
     public boolean agregarVeterinario(Veterinario vet) {
-        String sql = "INSERT INTO veterinario (V_Nombre, V_Apellido, V_Numero, V_Dni, V_Especialidad) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO veterinario (nombreVeterinario, apellidoVeterinario, telefonoVeterinario, correoVeterinario, idEspecialidad) VALUES (?, ?, ?, ?, ?)";
         Connection conn = null;
         PreparedStatement ps = null;
         boolean exito = false;
@@ -130,11 +130,11 @@ public class VeterinarioDAO {
             }
 
             ps = conn.prepareStatement(sql);
-            ps.setString(1, vet.getNombre()); 
-            ps.setString(2, vet.getApellido()); 
-            ps.setString(3, vet.getNumero());
-            ps.setString(4, vet.getDni());
-            ps.setString(5, vet.getEspecialidad());
+            ps.setString(1, vet.getNombreVeterianrio()); 
+            ps.setString(2, vet.getApellidoVeterinario()); 
+            ps.setString(3, vet.getTelefonoVeterinario());
+            ps.setString(4, vet.getCorreoVeterinario());
+            ps.setInt(5, vet.getIdEspecialidad());
 
             int filasAfectadas = ps.executeUpdate();
             if (filasAfectadas > 0) {
@@ -158,7 +158,7 @@ public class VeterinarioDAO {
     }
 
     public boolean actualizarVeterinario(Veterinario vet) {
-        String sql = "UPDATE veterinario SET V_Nombre=?, V_Apellido=?, V_Numero=?, V_Dni=?, V_Especialidad=? WHERE idVeterinario=?";
+        String sql = "UPDATE veterinario SET nombreVeterinario=?, apellidoVeterinario=?, telefonoVeterinario=?, correoVeterinario=?, idEspecialidad=? WHERE idVeterinario=?";
         Connection conn = null;
         PreparedStatement ps = null;
         boolean exito = false;
@@ -171,11 +171,11 @@ public class VeterinarioDAO {
             }
 
             ps = conn.prepareStatement(sql);
-            ps.setString(1, vet.getNombre()); 
-            ps.setString(2, vet.getApellido()); 
-            ps.setString(3, vet.getNumero());
-            ps.setString(4, vet.getDni());
-            ps.setString(5, vet.getEspecialidad());
+            ps.setString(1, vet.getNombreVeterianrio()); 
+            ps.setString(2, vet.getApellidoVeterinario()); 
+            ps.setString(3, vet.getTelefonoVeterinario());
+            ps.setString(4, vet.getCorreoVeterinario());
+            ps.setInt(5, vet.getIdEspecialidad());
             ps.setInt(6, vet.getIdVeterinario());
 
             int filasAfectadas = ps.executeUpdate();
@@ -199,7 +199,7 @@ public class VeterinarioDAO {
         return exito;
     }
 
-    public boolean eliminarVeterinario(int id) {
+    public boolean eliminarVeterinario(int idVeterinario) {
         String sql = "DELETE FROM veterinario WHERE idVeterinario = ?";
         Connection conn = null;
         PreparedStatement ps = null;
@@ -213,7 +213,7 @@ public class VeterinarioDAO {
             }
 
             ps = conn.prepareStatement(sql);
-            ps.setInt(1, id);
+            ps.setInt(1, idVeterinario);
 
             int filasAfectadas = ps.executeUpdate();
             if (filasAfectadas > 0) {
