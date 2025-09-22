@@ -16,19 +16,19 @@ public class ContactoProveedorDAO {
     // Listar contactos por proveedor
     public List<ContactoProveedor> listarPorProveedor(int idProveedor) {
         List<ContactoProveedor> lista = new ArrayList<>();
-        String sql = "SELECT * FROM ContactoProveedor WHERE id_proveedor = ?";
+        String sql = "SELECT * FROM contactoproveedor WHERE idProveedor = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProveedor);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     ContactoProveedor c = new ContactoProveedor();
-                    c.setIdContacto(rs.getInt("id_contacto"));
-                    c.setIdProveedor(rs.getInt("id_proveedor"));
-                    c.setNombreContacto(rs.getString("nombre_contacto"));
+                    c.setIdContacto(rs.getInt("idContacto"));
+                    c.setIdProveedor(rs.getInt("idProveedor"));
+                    c.setNombreContacto(rs.getString("nombreContacto"));
                     c.setCargo(rs.getString("cargo"));
                     c.setTelefono(rs.getString("telefono"));
-                    c.setCorreoContacto(rs.getString("correo_contacto"));
+                    c.setCorreoContacto(rs.getString("correoContacto"));
                     lista.add(c);
                 }
             }
@@ -41,7 +41,7 @@ public class ContactoProveedorDAO {
 
     // Agregar contacto
     public boolean agregarContacto(ContactoProveedor c) {
-        String sql = "INSERT INTO ContactoProveedor (id_proveedor, nombre_contacto, cargo, telefono, correo_contacto) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO contactoproveedor (idProveedor, nombreContacto, cargo, telefono, correoContacto) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, c.getIdProveedor());
@@ -59,7 +59,7 @@ public class ContactoProveedorDAO {
 
     // Actualizar contacto
     public boolean actualizarContacto(ContactoProveedor c) {
-        String sql = "UPDATE ContactoProveedor SET nombre_contacto = ?, cargo = ?, telefono = ?, correo_contacto = ? WHERE id_contacto = ?";
+        String sql = "UPDATE contactoproveedor SET nombreContacto = ?, cargo = ?, telefono = ?, correoContacto = ? WHERE idContacto = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, c.getNombreContacto());
@@ -77,7 +77,7 @@ public class ContactoProveedorDAO {
 
     // Eliminar contacto por ID
     public boolean eliminarContacto(int idContacto) {
-        String sql = "DELETE FROM ContactoProveedor WHERE id_contacto = ?";
+        String sql = "DELETE FROM contactoproveedor WHERE idContacto = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idContacto);
