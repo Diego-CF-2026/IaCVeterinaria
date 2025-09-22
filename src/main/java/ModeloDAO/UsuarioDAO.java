@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+
+
 public class UsuarioDAO {
     Connection con;
     PreparedStatement ps;
@@ -15,6 +17,30 @@ public class UsuarioDAO {
 
     // Retorna "ok" si todo salió bien o "dni"/"correo"/"telefono"/"error"
     public String insertarCliente(Usuario usuario, Cliente cliente) {
+        if (usuario == null || cliente == null) {
+            throw new IllegalArgumentException("Usuario y Cliente no pueden ser null");
+        }
+
+        // Validación de correo
+        if (usuario.getCorreo() == null || usuario.getCorreo().isEmpty() || !usuario.getCorreo().matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+            throw new IllegalArgumentException("Correo no válido");
+        }
+
+        // Validación de contraseña
+        if (usuario.getContra() == null || usuario.getContra().isEmpty() || usuario.getContra().length() < 8) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
+        }
+
+        // Validación DNI (ejemplo: 8 dígitos)
+        if (cliente.getDni() == null || cliente.getDni().isEmpty() || !cliente.getDni().matches("^\\d{8}$")) {
+            throw new IllegalArgumentException("DNI no válido, debe tener 8 dígitos");
+        }
+
+        // Validación teléfono (ejemplo: 9 dígitos)
+        if (cliente.getTelefono() == null || cliente.getTelefono().isEmpty() || !cliente.getTelefono().matches("^9\\d{8}$")) {
+            throw new IllegalArgumentException("Teléfono no válido, debe empezar con 9 y tener 9 dígitos");
+        }
+        
         String sqlUsuario = "INSERT INTO Usuario(idRol, correo, contra, intentos, Estado) VALUES (?, ?, ?, ?, ?)";
         String sqlCliente = "INSERT INTO Cliente(idUsuario, nombre, apellido, dni, telefono) VALUES (?, ?, ?, ?, ?)";
         try {
@@ -67,6 +93,16 @@ public class UsuarioDAO {
     }
     
    public Usuario login(String correo, String contra) {
+    // Validación de correo
+    if (correo == null || correo.isEmpty() || !correo.matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+        throw new IllegalArgumentException("Correo no válido");
+    }
+
+    // Validación de contraseña
+    if (contra == null || contra.length() < 8) {
+        throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
+    }
+    
     String sql = "SELECT u.*, r.nombreRol FROM Usuario u " +
                  "INNER JOIN Rol r ON u.idRol = r.idRol " +
                  "WHERE u.correo = ? AND u.contra = ?";
