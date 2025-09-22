@@ -153,21 +153,34 @@ public class ProveedorDAO {
         return null;
     }
 
-    public boolean agregar(Proveedor p) {
-        String sql = "INSERT INTO Proveedor (razonSocial, ruc, direccion, correo, estado) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, p.getRazonSocial());
-            ps.setString(2, p.getRuc());
-            ps.setString(3, p.getDireccion());
-            ps.setString(4, p.getCorreo());
-            ps.setInt(5, p.getEstado());
-            return ps.executeUpdate() == 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+   public boolean agregar(Proveedor p) {
+    if (p == null) {
+        throw new IllegalArgumentException("El proveedor no puede ser null");
+    }
 
+    if (p.getRuc() == null || !p.getRuc().matches("^(10|15|20)\\d{9}$")) {
+        throw new IllegalArgumentException("El RUC debe tener 11 dígitos y empezar con 10, 15 o 20.");
+    }
+
+    // Validación de correo (estructura básica con @ y dominio)
+    if (p.getCorreo() == null || !p.getCorreo().matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+        throw new IllegalArgumentException("El correo no es válido");
+    }
+
+    String sql = "INSERT INTO Proveedor (razonSocial, ruc, direccion, correo, estado) VALUES (?, ?, ?, ?, ?)";
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, p.getRazonSocial());
+        ps.setString(2, p.getRuc());
+        ps.setString(3, p.getDireccion());
+        ps.setString(4, p.getCorreo());
+        ps.setInt(5, p.getEstado());
+        return ps.executeUpdate() == 1;
+    } catch (Exception e) {
+        e.printStackTrace();
         return false;
     }
+}
+
 
     public boolean actualizar(Proveedor p) {
         String sql = "UPDATE Proveedor SET razonSocial=?, ruc=?, direccion=?, correo=?, estado=? WHERE idProveedor=?";

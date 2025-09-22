@@ -1,6 +1,7 @@
 package ModeloDAO;
 
 import Modelo.Producto;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +98,27 @@ public class ProductoDAO {
         return null;
     }
 
-    public boolean agregar(Producto producto) {
+    public boolean agregar(Producto producto) {       
+        // 1. Validar que el precio no sea nulo y sea un número.
+        // El tipo BigDecimal ya asegura que no contendrá letras, pero hay que validar que no sea null.
+        if (producto.getPrecio() == null || producto.getPrecio().compareTo(BigDecimal.ZERO) < 0) {
+            System.err.println("Error: El precio no puede ser nulo o negativo.");
+            return false;
+        }
+
+        // 2. Validar que la unidad de medida solo contenga letras.
+        // Usamos una expresión regular (regex) para verificar que solo sean letras.
+        if (producto.getUnidadMedida() == null || !producto.getUnidadMedida().matches("^[a-zA-Z]+$")) {
+            System.err.println("Error: La unidad de medida debe contener solo letras.");
+            return false;
+        }
+
+        // 3. Validar otros campos clave (buena práctica)
+        if (producto.getNombreProducto() == null || producto.getNombreProducto().trim().isEmpty()) {
+            System.err.println("Error: El nombre del producto no puede estar vacío.");
+            return false;
+        }
+
         String sql = "INSERT INTO Producto (nombreProducto, descripcion, precio, stock, unidadMedida, estado, fechaRegistro, idProveedor, imagen) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -109,8 +130,11 @@ public class ProductoDAO {
             ps.setInt(6, producto.getEstado());
             ps.setInt(7, producto.getIdProveedor());
             ps.setString(8, producto.getImagen());
+            
             return ps.executeUpdate() == 1;
+
         } catch (SQLException e) {
+            System.err.println("Error al agregar producto en la base de datos.");
             e.printStackTrace();
         }
 

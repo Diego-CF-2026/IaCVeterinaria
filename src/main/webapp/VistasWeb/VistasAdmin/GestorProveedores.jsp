@@ -158,7 +158,13 @@
                         <div class="form-grid">
                             <div>
                                 <label>RUC:</label>
-                                <input type="text" name="ruc" value="<%= proveedorSel.getRuc()%>" required maxlength="11">
+                                <input type="number" 
+                                       name="ruc" 
+                                       value="<%= proveedorSel.getRuc()%>" 
+                                       required 
+                                       maxlength="11" 
+                                       oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+
                             </div>
                             <div>
                                 <label>Dirección:</label>
