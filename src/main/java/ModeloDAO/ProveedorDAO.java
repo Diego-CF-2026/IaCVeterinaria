@@ -236,12 +236,12 @@ public class ProveedorDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     ContactoProveedor c = new ContactoProveedor();
-                    c.setIdContacto(rs.getInt("id_contacto"));
+                    c.setIdContacto(rs.getInt("idContacto"));
                     c.setIdProveedor(rs.getInt("idProveedor"));
-                    c.setNombreContacto(rs.getString("nombre_contacto"));
+                    c.setNombreContacto(rs.getString("nombreContacto"));
                     c.setCargo(rs.getString("cargo"));
                     c.setTelefono(rs.getString("telefono"));
-                    c.setCorreoContacto(rs.getString("correo_contacto"));
+                    c.setCorreoContacto(rs.getString("correoContacto"));
                     contactos.add(c);
                 }
             }
