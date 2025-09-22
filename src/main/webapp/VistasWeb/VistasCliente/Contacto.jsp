@@ -13,7 +13,6 @@
 </head>
 <body>
 
-<!-- Barra de Navegación -->
 <nav class="navbar">
     <div class="logo-container">
         <a href="${pageContext.request.contextPath}/index.jsp">
@@ -27,7 +26,7 @@
         <div class="center-links">
             <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Nosotros.jsp" id="link-nosotros">Nosotros</a>
             <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/servicios.jsp" id="link-servicios">Servicios</a>
-            <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Productos.jsp" id="link-productos">Productos</a>
+            <a href="${pageContext.request.contextPath}/ProductoServlet?accion=listarCliente" id="link-productos">Productos</a>
             <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Contacto.jsp" id="link-contacto" class="active-link">Contacto</a>
         </div>
         <div class="buttons">
@@ -40,13 +39,12 @@
 <div id="sidebarPerfil" class="sidebar-perfil" role="dialog" aria-modal="true" aria-labelledby="perfilTitle">
     <h2 id="perfilTitle">Mi Perfil</h2>
     <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/MiPerfil.jsp">Mi perfil</a>
-    <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/historialdecompras.jsp">Historial de compras/servicios</a>
+    <a href="${pageContext.request.contextPath}/HistorialComprasServlet">Historial de compras/servicios</a>
     <a href="${pageContext.request.contextPath}/UsuarioMisCitasServlet">Citas agendadas</a>
     <a href="${pageContext.request.contextPath}/LogoutServlet">Cerrar sesión</a>
 </div>
 <div id="sidebarOverlay"></div>
 
-<!-- Contenido de contacto solo texto -->
 <main class="contacto-texto">
     <h1>Contacto</h1>
     <p>
@@ -67,7 +65,6 @@
     </div>
 </main>
 
-<!-- Footer mejorado -->
 <footer>
     <div class="footer-container">
         <div class="footer-section">
@@ -92,19 +89,19 @@
 
 
 <script>
-    // Abrir sidebar perfil
+    
     document.getElementById('verPerfilBtn').addEventListener('click', function() {
         document.getElementById('sidebarPerfil').classList.add('active');
         document.getElementById('sidebarOverlay').classList.add('active');
     });
 
-    // Cerrar sidebar perfil al hacer click en overlay
+    
     document.getElementById('sidebarOverlay').addEventListener('click', function() {
         document.getElementById('sidebarPerfil').classList.remove('active');
         this.classList.remove('active');
     });
 
-    // Menú hamburguesa
+    
     document.getElementById('hamburger').addEventListener('click', function() {
         this.classList.toggle('active');
         document.getElementById('nav-links').classList.toggle('active');

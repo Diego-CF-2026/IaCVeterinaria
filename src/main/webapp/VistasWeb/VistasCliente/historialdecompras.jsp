@@ -15,7 +15,7 @@
   <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    /* Puedes mantener los mismos estilos que en accesorios.jsp */
+
     .historial-container {
       max-width: 700px;
       margin: 40px auto 0 auto;
@@ -71,7 +71,7 @@
     .btn-regresar:hover {
       background: #444;
     }
-    /* Sidebar y navbar igual que accesorios.jsp */
+
     .sidebar-perfil {
       display: none;
       position: fixed;
@@ -121,7 +121,7 @@
     }
     
     .modal {
-    display: none; /* oculto por defecto */
+    display: none; 
     position: fixed;
     z-index: 3000;
     left: 0;
@@ -129,9 +129,9 @@
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.4); /* fondo oscuro */
-    justify-content: center; /* centra horizontal */
-    align-items: center;     /* centra vertical */
+    background-color: rgba(0,0,0,0.4); 
+    justify-content: center;
+    align-items: center;    
   }
 
   .modal-content {
@@ -194,7 +194,7 @@
       <div class="center-links">
         <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Nosotros.jsp">Nosotros</a>
         <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/servicios.jsp">Servicios</a>
-        <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Productos.jsp">Productos</a>
+        <a href="${pageContext.request.contextPath}/ProductoServlet?accion=listarCliente">Productos</a>
         <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Contacto.jsp">Contacto</a>
       </div>
       <div class="buttons">
@@ -206,7 +206,7 @@
     </div>
   </nav>
 
-  <!-- CONTENIDO PRINCIPAL: HISTORIAL -->
+  <!-- HISTORIAL -->
   <div class="historial-container">
     <h2>Historial de Compras</h2>
 
@@ -216,7 +216,7 @@
       if (historial != null && !historial.isEmpty()) {
         for (Carrito carrito : historial) {
     %>
-      <h3>Compra #<%= carrito.getIdCarrito() %> - <%= carrito.getFecha() %></h3>
+
       <table>
         <thead>
           <tr>
@@ -233,7 +233,6 @@
               <td><%= (p != null ? p.getNombreProducto() : "Producto ID " + det.getIdProducto()) %></td>
               
               
-            <!-- 🔹 Botones + y - junto a la cantidad -->
             <td>
               <form action="${pageContext.request.contextPath}/ActualizarCantidadServlet" method="post" style="display:inline;">
                 <input type="hidden" name="idDetalleCarrito" value="<%= det.getIdDetalleCarrito() %>">
@@ -279,7 +278,6 @@
         </tbody>
       </table>
 
-      <!-- Botón confirmar -->
       <button class="btn-confirmar" onclick="abrirModal(<%= carrito.getIdCarrito() %>, <%= carrito.getTotal() %>)">
         Confirmar compra
       </button>
@@ -293,12 +291,11 @@
       }
     %>
 
-    <button class="btn-regresar" onclick="window.location.href='${pageContext.request.contextPath}/VistasWeb/VistasCliente/Productos.jsp'">
+    <button class="btn-regresar" onclick="window.location.href='${pageContext.request.contextPath}/ProductoServlet?accion=listarCliente'">
       Regresar a productos
     </button>
   </div>    
 
-  <!-- Modal -->
   <div id="modalCompra" class="modal">
     <div class="modal-content">
       <div class="modal-header">Confirmar compra</div>
@@ -326,7 +323,6 @@
     </div>
   </div>  
         
-    <!-- Modal de éxito -->
     <div id="modalExito" class="modal">
       <div class="modal-content">
         <div class="modal-header">✅ Compra exitosa</div>
@@ -337,20 +333,17 @@
       </div>
     </div>
 
-  <!-- Sidebar perfil -->
   <div id="sidebarPerfil" class="sidebar-perfil" role="dialog" aria-modal="true" aria-labelledby="perfilTitle">
     <h2 id="perfilTitle">Mi Perfil</h2>
     <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/MiPerfil.jsp">Mi perfil</a>
-    <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/historialdecompras.jsp">Historial de compras/servicios</a>
+    <a href="${pageContext.request.contextPath}/HistorialComprasServlet">Historial de compras/servicios</a>
     <a href="${pageContext.request.contextPath}/UsuarioMisCitasServlet">Citas agendadas</a>
     <a href="${pageContext.request.contextPath}/LogoutServlet">Cerrar sesión</a>
   </div>
 
-  <!-- Overlay para cerrar sidebar -->
   <div id="sidebarOverlay"></div>
 
   <script>
-    // Sidebar perfil
     document.getElementById('verPerfilBtn').addEventListener('click', function() {
       document.getElementById('sidebarPerfil').classList.add('active');
       document.getElementById('sidebarOverlay').classList.add('active');
@@ -360,12 +353,10 @@
       this.classList.remove('active');
     });
 
-    // Menú hamburguesa
     document.getElementById('hamburger-menu').onclick = function () {
       document.querySelector('.nav-links').classList.toggle('active');
     };
 
-    // Subrayado en barra de navegación para la página activa
     window.addEventListener('DOMContentLoaded', () => {
       const navLinks = document.querySelectorAll('.center-links a');
       const currentPath = window.location.pathname;
@@ -376,7 +367,6 @@
       });
     });
     
-        // 🔹 Funciones para el modal de confirmación
     function abrirModal(idCarrito, total) {
       document.getElementById("idCarrito").value = idCarrito;
       document.getElementById("montoTotal").innerText = total;
@@ -397,7 +387,6 @@
     
   </script>
 
-  <%-- 🔹 Aquí va la verificación de éxito --%>
   <%
     Boolean compraExitosa = (Boolean) request.getAttribute("compraExitosa");
     if (compraExitosa != null && compraExitosa) {

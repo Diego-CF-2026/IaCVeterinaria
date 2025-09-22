@@ -37,7 +37,6 @@ public class ActualizarCantidadServlet extends HttpServlet {
 
         carritoDAO.actualizarCantidad(idDetalleCarrito, idCarrito, accion);
 
-        // redirigir de nuevo al historial
         response.sendRedirect(request.getContextPath() + "/HistorialComprasServlet");
     }
 }

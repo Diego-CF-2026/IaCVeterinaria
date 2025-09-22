@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/index.css"> <%-- Ajusta la ruta a tu CSS --%>
     <style>
-        /* Estilos generales (mantener los de antes) */
+        
         body { font-family: 'Poppins', Arial, sans-serif; background: #f8f8f8; margin: 0; }
         .navbar {
             display: flex; align-items: center; justify-content: space-between;
@@ -64,27 +64,26 @@
         .hora-am-pm { text-transform: lowercase; }
         .hora-pasada { color: red; }
 
-        /* Estilos del Modal */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1001; /* High z-index to be on top */
+            display: none; 
+            position: fixed; 
+            z-index: 1001; 
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.6); /* Black w/ more opacity */
-            padding-top: 60px; /* Location of the box */
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.6); 
+            padding-top: 60px; 
         }
 
         .modal-content {
             background-color: #fefefe;
-            margin: 5% auto; /* 5% from the top and centered */
+            margin: 5% auto; 
             padding: 30px;
             border: 1px solid #888;
-            width: 90%; /* Responsive width */
-            max-width: 500px; /* Max width */
+            width: 90%; 
+            max-width: 500px; 
             border-radius: 10px;
             position: relative;
             box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
@@ -92,7 +91,6 @@
             animation-duration: 0.4s
         }
 
-        /* Add Animation */
         @-webkit-keyframes animatetop {
             from {top:-300px; opacity:0}  
             to {top:0; opacity:1}
@@ -131,46 +129,45 @@
         .modal-content input[type="text"],
         .modal-content textarea,
         .modal-content select {
-            width: calc(100% - 20px); /* Adjusting for padding */
+            width: calc(100% - 20px); 
             padding: 10px;
             margin-bottom: 20px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            box-sizing: border-box; /* Include padding in width */
+            box-sizing: border-box; 
             font-size: 1rem;
         }
         .modal-content textarea {
-            resize: vertical; /* Allow vertical resize only */
+            resize: vertical; 
         }
 
         .modal-content button.btn {
-            background-color: #3aafa9; /* Coincide con la navbar */
+            background-color: #3aafa9; 
             color: white;
             padding: 12px 20px;
             border: none;
-            border-radius: 25px; /* Más redondeado */
+            border-radius: 25px; 
             cursor: pointer;
             font-size: 1.1rem;
             font-weight: 600;
-            width: auto; /* Ajustar al contenido */
-            display: block; /* Para centrar si quieres */
-            margin: 0 auto; /* Para centrar el botón */
+            width: auto; 
+            display: block; 
+            margin: 0 auto; 
             transition: background-color 0.2s;
         }
 
         .modal-content button.btn:hover {
-            background-color: #2b7a78; /* Un tono más oscuro para el hover */
+            background-color: #2b7a78; 
         }
-
-        /* --- ESTILOS PARA LOS BOTONES DE ACCIÓN (EDITAR Y ELIMINAR) --- */
+   
         .btn-accion {
             display: inline-block;
             padding: 8px 15px;
-            margin: 3px; /* Reducido un poco el margen para que no se separen tanto si están juntos */
+            margin: 3px; 
             border: none;
             border-radius: 5px;
             text-align: center;
-            text-decoration: none; /* Quita el subrayado */
+            text-decoration: none; 
             font-size: 14px;
             cursor: pointer;
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -182,26 +179,23 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
-        /* Estilos específicos para el botón EDITAR */
         .btn-editar {
-            background-color: #007bff; /* Azul estándar (Bootstrap's primary color) */
+            background-color: #007bff;
             color: white;
         }
 
         .btn-editar:hover {
-            background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+            background-color: #0056b3; 
         }
 
-        /* Estilos específicos para el botón ELIMINAR */
         .btn-eliminar {
-            background-color: #dc3545; /* Rojo (Bootstrap's danger color) */
+            background-color: #dc3545; 
             color: white;
         }
 
         .btn-eliminar:hover {
-            background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
+            background-color: #c82333; 
         }
-        /* --- FIN ESTILOS PARA LOS BOTONES DE ACCIÓN --- */
 
     </style>
 </head>
@@ -217,12 +211,11 @@
             <div class="center-links">
                 <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Nosotros.jsp" id="link-nosotros">Nosotros</a>
                 <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/servicios.jsp" id="link-servicios">Servicios</a>
-                <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Productos.jsp" id="link-productos">Productos</a>
+                <a href="${pageContext.request.contextPath}/ProductoServlet?accion=listarCliente" id="link-productos">Productos</a>
                 <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Contacto.jsp" id="link-contacto">Contacto</a>
             </div>
             <div class="buttons">
                 <%
-                    // Obtener el objeto UsuarioCliente de la sesión
                     UsuarioCliente clienteLogueado = (UsuarioCliente) session.getAttribute("usuario");
                     if (clienteLogueado != null) {
                 %>
@@ -248,9 +241,8 @@
     </nav>
 
     <%
-        // Obtener mensajes del request (si vienen de una redirección después de una acción)
         String mensajeExito = (String) request.getAttribute("mensajeExito");  
-        String mensajeError = (String) request.getAttribute("mensajeError"); // Si el Servlet envía un mensaje de error específico
+        String mensajeError = (String) request.getAttribute("mensajeError"); 
         
         if (mensajeExito != null) {
     %>
@@ -298,7 +290,7 @@
                     <th>Veterinario</th>
                     <th>Motivo</th>
                     <th>Estado</th>
-                    <th>Acciones</th> <%-- Columna de acciones (editar/eliminar) --%>
+                    <th>Acciones</th> 
                 </tr>
             </thead>
             <tbody>
@@ -312,11 +304,9 @@
                             String horaFormateada = "";
                             boolean esHoraPasada = false;
                             try {
-                                // Convertir java.sql.Time a LocalTime para formato y comparación
                                 LocalTime horaCita = c.getHora().toLocalTime();
                                 horaFormateada = horaCita.format(timeFormatter12h).toLowerCase();
 
-                                // Comparar java.sql.Date con LocalDate
                                 LocalDate fechaCita = c.getFecha().toLocalDate();
                                 if (fechaCita.isBefore(fechaActual)) {
                                     esHoraPasada = true;
@@ -324,9 +314,9 @@
                                     esHoraPasada = horaCita.isBefore(horaActual);
                                 }
                             } catch (Exception e) {
-                                horaFormateada = c.getHora() != null ? c.getHora().toString() : ""; // Manejo de nulo
-                                System.err.println("Error al formatear hora/fecha en JSP: " + e.getMessage()); // Log para depuración
-                                esHoraPasada = false; // Por defecto no es pasada si hay error de formato
+                                horaFormateada = c.getHora() != null ? c.getHora().toString() : ""; 
+                                System.err.println("Error al formatear hora/fecha en JSP: " + e.getMessage());
+                                esHoraPasada = false; 
                             }
                 %>
                             <tr>
@@ -339,7 +329,7 @@
                                 <td><%= c.getMotivo() %></td>
                                 <td><%= c.getEstado() %></td>
                                 <td>
-                                    <%-- Enlace "Editar" para abrir el modal --%>
+
                                     <% if (!"Completada".equals(c.getEstado()) && !esHoraPasada) { %>
                                         <a href="javascript:void(0);" class="btn-accion btn-editar editar-cita-btn"
                                            data-id="<%= c.getIdCita() %>"
@@ -374,9 +364,9 @@
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2>Editar Cita</h2>
-            <%-- El action del formulario apunta al UsuarioMisCitasServlet --%>
+
             <form id="editarCitaForm" action="${pageContext.request.contextPath}/UsuarioMisCitasServlet" method="post">
-                <input type="hidden" name="accion" value="actualizarCita"> <%-- Acción para el Servlet --%>
+                <input type="hidden" name="accion" value="actualizarCita"> 
                 <input type="hidden" id="editIdCita" name="idCita">
 
                 <label for="editFecha">Fecha:</label>
@@ -404,7 +394,7 @@
     <div id="sidebarPerfil" class="sidebar-perfil" role="dialog" aria-modal="true" aria-labelledby="perfilTitle">
         <h2 id="perfilTitle">Mi Perfil</h2>
         <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/MiPerfil.jsp">Mi perfil</a>
-        <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/historialdecompras.jsp">Historial de compras/servicios</a>
+        <a href="${pageContext.request.contextPath}/HistorialComprasServlet">Historial de compras/servicios</a>
         <a href="${pageContext.request.contextPath}/UsuarioMisCitasServlet">Citas agendadas</a> <%-- Enlaza al Servlet --%>
         <a href="${pageContext.request.contextPath}/LogoutServlet">Cerrar sesión</a>
     </div>
@@ -412,7 +402,7 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- Lógica del sidebar de perfil (mantener la misma) ---
+
         const verPerfilBtn = document.getElementById('verPerfilBtn');
         if (verPerfilBtn) {
             verPerfilBtn.addEventListener('click', function() {
@@ -428,12 +418,10 @@
             });
         }
 
-        // --- Lógica del Modal de Edición de Cita ---
         const editarCitaModal = document.getElementById('editarCitaModal');
-        const closeButton = document.querySelector('.modal .close-button'); // Más específico para no afectar otros
-        const editarCitaBtns = document.querySelectorAll('.editar-cita-btn'); // Botones "Editar" de la tabla
+        const closeButton = document.querySelector('.modal .close-button'); 
+        const editarCitaBtns = document.querySelectorAll('.editar-cita-btn'); 
 
-        // Campos del formulario del modal
         const editIdCitaInput = document.getElementById('editIdCita');
         const editFechaInput = document.getElementById('editFecha');
         const editHoraInput = document.getElementById('editHora');
@@ -443,16 +431,16 @@
 
         editarCitaBtns.forEach(btn => {
             btn.addEventListener('click', function() {
-                // Obtener los datos de los atributos data- del botón
+
                 const idCita = this.dataset.id;
                 const fecha = this.dataset.fecha;
-                // Ajustar la hora: data-hora trae "HH:mm:ss", el input type="time" necesita "HH:mm"
+
                 const hora = this.dataset.hora.substring(0, 5);  
                 const veterinario = this.dataset.veterinario;
                 const motivo = this.dataset.motivo;
                 const estado = this.dataset.estado;
 
-                // Llenar el formulario del modal
+
                 editIdCitaInput.value = idCita;
                 editFechaInput.value = fecha;
                 editHoraInput.value = hora;
@@ -460,24 +448,22 @@
                 editMotivoInput.value = motivo;
                 editEstadoSelect.value = estado;
 
-                // Mostrar el modal
+
                 editarCitaModal.style.display = 'block';
             });
         });
 
-        // Cerrar el modal al hacer clic en la "x"
+
         closeButton.addEventListener('click', function() {
             editarCitaModal.style.display = 'none';
         });
 
-        // Cerrar el modal al hacer clic fuera del contenido del modal
         window.addEventListener('click', function(event) {
             if (event.target == editarCitaModal) {
                 editarCitaModal.style.display = 'none';
             }
         });
 
-        // Subrayado en barra de navegación para la página activa
         const navLinks = document.querySelectorAll('.center-links a');
         const path = window.location.pathname.toLowerCase();
         navLinks.forEach(link => {

@@ -131,38 +131,38 @@
     </div>
 </div>
 
-<!-- Sidebar perfil -->
+
 <div id="sidebarPerfil" class="sidebar-perfil" role="dialog" aria-modal="true" aria-labelledby="perfilTitle">
     <h2 id="perfilTitle">Mi Perfil</h2>
     <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/MiPerfil.jsp">Mi perfil</a>
-    <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/historialdecompras.jsp">Historial de compras/servicios</a>
+    <a href="${pageContext.request.contextPath}/HistorialComprasServlet">Historial de compras/servicios</a>
     <a href="${pageContext.request.contextPath}/UsuarioMisCitasServlet">Citas agendadas</a>
     <a href="${pageContext.request.contextPath}/LogoutServlet">Cerrar sesión</a>
 </div>
 
-<!-- Overlay para cerrar sidebar -->
+
 <div id="sidebarOverlay"></div>
 
 <script>
-    // Abrir sidebar perfil
+
     document.getElementById('verPerfilBtn').addEventListener('click', function() {
         document.getElementById('sidebarPerfil').classList.add('active');
         document.getElementById('sidebarOverlay').classList.add('active');
     });
 
-    // Cerrar sidebar perfil al hacer click en overlay
+
     document.getElementById('sidebarOverlay').addEventListener('click', function() {
         document.getElementById('sidebarPerfil').classList.remove('active');
         this.classList.remove('active');
     });
 
-    // Menú hamburguesa
+
     document.getElementById('hamburger').addEventListener('click', function() {
         this.classList.toggle('active');
         document.getElementById('nav-links').classList.toggle('active');
     });
 
-    // Subrayado en barra de navegación para la página activa
+
     window.addEventListener('DOMContentLoaded', () => {
         const navLinks = document.querySelectorAll('.center-links a');
         navLinks.forEach(link => {

@@ -87,7 +87,7 @@
 <div id="sidebarPerfil" class="sidebar-perfil" role="dialog" aria-modal="true" aria-labelledby="perfilTitle">
     <h2 id="perfilTitle">Mi Perfil</h2>
     <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/MiPerfil.jsp">Mi perfil</a>
-    <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/historialdecompras.jsp">Historial de compras/servicios</a>
+    <a href="${pageContext.request.contextPath}/HistorialComprasServlet">Historial de compras/servicios</a>
     <a href="${pageContext.request.contextPath}/UsuarioMisCitasServlet">Citas agendadas</a>
     <a href="${pageContext.request.contextPath}/LogoutServlet">Cerrar sesión</a>
 </div>
@@ -144,7 +144,7 @@
             <img src="${pageContext.request.contextPath}/Recursos/FIzquierda.svg" alt="Flecha Izquierda" />
         </button>
         <div class="slider-contenedor">
-            <!-- Tarjetas de servicios aquí -->
+            
             ...
         </div>
         <button class="flecha derecha">
@@ -159,32 +159,29 @@
     </div>
     <div class="div-slider-tienda">
         <div class="slider-tienda-contenedor">
-            <!-- Tarjetas de tienda aquí -->
+
             ...
         </div>
     </div>
 </section>
 
 <script>
-    // Abrir sidebar perfil
+
     document.getElementById('verPerfilBtn').addEventListener('click', function() {
         document.getElementById('sidebarPerfil').classList.add('active');
         document.getElementById('sidebarOverlay').style.display = 'block';
     });
 
-    // Cerrar sidebar perfil al hacer click en overlay
     document.getElementById('sidebarOverlay').addEventListener('click', function() {
         document.getElementById('sidebarPerfil').classList.remove('active');
         this.style.display = 'none';
     });
 
-    // Menú hamburguesa
     document.getElementById('hamburger').addEventListener('click', function() {
         this.classList.toggle('active');
         document.getElementById('nav-links').classList.toggle('active');
     });
 
-    // Slider flechas
     const slider = document.querySelector('.slider-contenedor');
     const flechaIzq = document.querySelector('.flecha.izquierda');
     const flechaDer = document.querySelector('.flecha.derecha');
@@ -197,7 +194,6 @@
         });
     }
 
-    // Marcar enlace activo en la barra de navegación
     window.addEventListener('DOMContentLoaded', () => {
         const path = window.location.pathname;
         const navLinks = document.querySelectorAll('.center-links a');

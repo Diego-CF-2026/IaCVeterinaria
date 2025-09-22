@@ -57,7 +57,7 @@
             display: block;
             opacity: 1;
         }
-        /* Botón flotante Crear cita */
+
         .flotante-cita {
             position: fixed;
             bottom: 30px;
@@ -100,7 +100,7 @@
         <div class="center-links">
              <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Nosotros.jsp" id="link-nosotros">Nosotros</a>
             <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/servicios.jsp" id="link-servicios">Servicios</a>
-            <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Productos.jsp" id="link-productos">Productos</a>
+            <a href="${pageContext.request.contextPath}/ProductoServlet?accion=listarCliente" id="link-productos">Productos</a>
              <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Contacto.jsp"  id="link-contacto">Contacto</a>
         </div>
         <div class="buttons">
@@ -117,7 +117,7 @@
     </div>
 </section>
 
-<!-- Servicios Grid -->
+
 <section class="servicios-grid">
     <!-- Peluquería -->
     <div class="servicio-card">
@@ -145,7 +145,7 @@
         </ul>
         <a href="#contacto" class="btn-servicio">Más información</a>
     </div>
-    <!-- Juegos -->
+
     <div class="servicio-card">
         <div class="servicio-icon">
             <img src="${pageContext.request.contextPath}/Recursos/ImgJuguetes 1.svg" alt="Juegos">
@@ -158,7 +158,7 @@
         </ul>
         <a href="#contacto" class="btn-servicio">Más información</a>
     </div>
-    <!-- Revisión Médica -->
+
     <div class="servicio-card">
         <div class="servicio-icon">
             <img src="${pageContext.request.contextPath}/Recursos/Vacunacion.svg" alt="Médico">
@@ -173,7 +173,7 @@
     </div>
 </section>
 
-<!-- Sección CTA (sin botón) -->
+        
 <section class="cta-section">
     <div class="cta-content">
         <h2>¿Listo para cuidar de tu mascota?</h2>
@@ -181,24 +181,24 @@
     </div>
 </section>
 
-<!-- Footer -->
+
 <footer class="footer-servicios">
     <p>© 2025 Veterinaria Santa Cruz - Todos los derechos reservados</p>
 </footer>
 
-<!-- Sidebar perfil -->
+
 <div id="sidebarPerfil" class="sidebar-perfil" role="dialog" aria-modal="true" aria-labelledby="perfilTitle">
     <h2 id="perfilTitle">Mi Perfil</h2>
     <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/MiPerfil.jsp">Mi perfil</a>
-    <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/historialdecompras.jsp">Historial de compras/servicios</a>
+    <a href="${pageContext.request.contextPath}/HistorialComprasServlet">Historial de compras/servicios</a>
     <a href="${pageContext.request.contextPath}/UsuarioMisCitasServlet">Citas agendadas</a>
     <a href="${pageContext.request.contextPath}/LogoutServlet">Cerrar sesión</a>
 </div>
 
-<!-- Overlay para cerrar sidebar -->
+
 <div id="sidebarOverlay"></div>
 
-<!-- Botón flotante que redirige a Citas.jsp -->
+
 <div class="flotante-cita">
     <a href="${pageContext.request.contextPath}/UsuarioCitasServlet" class="btn-cita-flotante" title="Crear cita">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -210,19 +210,17 @@
 </div>
 
 <script>
-    // Abrir sidebar perfil
+
     document.getElementById('verPerfilBtn').addEventListener('click', function() {
         document.getElementById('sidebarPerfil').classList.add('active');
         document.getElementById('sidebarOverlay').classList.add('active');
     });
 
-    // Cerrar sidebar perfil al hacer click en overlay
     document.getElementById('sidebarOverlay').addEventListener('click', function() {
         document.getElementById('sidebarPerfil').classList.remove('active');
         this.classList.remove('active');
     });
 
-    // Menú hamburguesa
     document.getElementById('hamburger').addEventListener('click', function() {
         this.classList.toggle('active');
         document.getElementById('nav-links').classList.toggle('active');

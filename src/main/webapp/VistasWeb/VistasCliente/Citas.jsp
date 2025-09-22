@@ -9,17 +9,14 @@
 <%-- <%@ page import="Modelo.UsuarioCitas" %> --%>
 
 <%
-    // Obtener el objeto usuario de la sesión
+    
     UsuarioCliente usuarioObj = (UsuarioCliente) session.getAttribute("usuario");
     String usuarioNombre = (usuarioObj != null && usuarioObj.getNombre() != null) ? usuarioObj.getNombre() : ""; // Renombrado para claridad
     String mensaje = request.getParameter("mensaje");
-
-    // Fecha y hora actuales para validación en el cliente y valores mínimos
+    
     LocalDate fechaActual = LocalDate.now();
     LocalTime horaActual = LocalTime.now();
 
-    // Obtener la lista de veterinarios del request (pasada por el servlet)
-    // Asegúrate del cast correcto si el tipo genérico es importante
     List<Veterinario> listaVeterinarios = (List<Veterinario>) request.getAttribute("listaVeterinarios");
 %>
 <!DOCTYPE html>
@@ -89,7 +86,7 @@
         <div class="center-links">
             <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Nosotros.jsp" id="link-nosotros">Nosotros</a>
             <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/servicios.jsp" id="link-servicios">Servicios</a>
-            <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Productos.jsp" id="link-productos">Productos</a>
+            <a href="${pageContext.request.contextPath}/ProductoServlet?accion=listarCliente" id="link-productos">Productos</a>
             <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Contacto.jsp" id="link-contacto">Contacto</a>
         </div>
         <div class="buttons">
@@ -108,7 +105,7 @@
 %>
             <div class="alert-error">Error al registrar la cita. Por favor, inténtalo de nuevo.</div>
 <%
-        } else if ("veterinario_no_encontrado".equals(mensaje)) { // Mensaje corregido
+        } else if ("veterinario_no_encontrado".equals(mensaje)) { 
 %>
             <div class="alert-error">Error: No se pudo encontrar el veterinario seleccionado. Por favor, intente de nuevo.</div>
 <%
@@ -195,7 +192,7 @@
 <div id="sidebarPerfil" class="sidebar-perfil" role="dialog" aria-modal="true" aria-labelledby="perfilTitle">
     <h2 id="perfilTitle">Mi Perfil</h2>
     <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/MiPerfil.jsp">Mi perfil</a>
-    <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/historialdecompras.jsp">Historial de compras/servicios</a>
+    <a href="${pageContext.request.contextPath}/HistorialComprasServlet">Historial de compras/servicios</a>
     <a href="${pageContext.request.contextPath}/UsuarioMisCitasServlet">Citas agendadas</a>
     <a href="${pageContext.request.contextPath}/LogoutServlet">Cerrar sesión</a>
 </div>

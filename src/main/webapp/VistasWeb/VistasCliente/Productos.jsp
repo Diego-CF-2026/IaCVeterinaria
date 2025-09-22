@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/productos.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
     <style>
-        /* --- Estilos generales del modal --- */
         .modal {
             display: none;
             position: fixed;
@@ -51,7 +50,7 @@
             margin-top: 2rem;
         }
         .modal-btn {
-            background: #5cb85c; /* Verde */
+            background: #5cb85c; 
             color: #fff;
             border: none;
             padding: .9rem 1.5rem;
@@ -65,12 +64,12 @@
             background: #449d44;
         }
         .btn-cancelar {
-            background: #d9534f; /* Rojo */
+            background: #d9534f; 
         }
         .btn-cancelar:hover {
             background: #c9302c;
         }
-        /* --- Estilos del modal del carrito (existentes) --- */
+
         .modal-carrito {
             display: none;
             position: fixed;
@@ -220,7 +219,7 @@
 </div>
 <div id="sidebarOverlay"></div>
 
-<!-- Hero Section -->
+
 <section class="hero container">
     <div class="hero-img">
         <img src="${pageContext.request.contextPath}/Recursos/perroproducto.png" alt="Mascotas felices" />
@@ -253,7 +252,7 @@
     </c:forEach>
 </section>  
 
-<!-- MODAL PRINCIPAL (CANTIDAD Y CONFIRMACIÓN) -->
+<!-- MODAL PRINCIPAL -->
 <div id="modalConfirmar" class="modal">
     <div class="modal-content">
         <h2>Agregar <span id="nombreProducto"></span></h2>
@@ -277,7 +276,7 @@
     </div>
 </div>
 
-<!-- Consejos para el cuidado -->
+
 <section class="consejos container">
     <h3>Consejos para el cuidado de tu mascota</h3>
     <ul>
@@ -289,7 +288,7 @@
     </ul>
 </section>
 
-<!-- Testimonios -->
+
 <section class="testimonios container">
     <h3>Lo que dicen nuestros clientes</h3>
     <div class="testimonio-card">
@@ -306,7 +305,6 @@
     </div>
 </section>
 
-<!-- Footer -->
 <footer>
     <div class="container footer-container">
         <p>© 2025 Veterinaria PetCare - Todos los derechos reservados</p>
@@ -320,32 +318,28 @@
 </footer>
 
 <script>
-    // Menú hamburguesa
+
     document.getElementById('hamburger').addEventListener('click', function() {
         this.classList.toggle('active');
         document.getElementById('nav-links').classList.toggle('active');
     });
 
-    // Abrir sidebar perfil
     document.getElementById('verPerfilBtn').addEventListener('click', function() {
         document.getElementById('sidebarPerfil').classList.add('active');
         document.getElementById('sidebarOverlay').classList.add('active');
     });
 
-    // Cerrar sidebar perfil al hacer click en overlay
     document.getElementById('sidebarOverlay').addEventListener('click', function() {
         document.getElementById('sidebarPerfil').classList.remove('active');
         this.classList.remove('active');
     });
 
-    // --- Modales y Carrito ---
     const modal = document.getElementById('modalConfirmar');
     const btnCancelar = document.getElementById('cancelarAgregar');
     const btnConfirmar = document.getElementById('confirmarAgregar');
 
     let productoSeleccionado = {};
 
-    // Abrir modal al hacer clic en un botón
     document.querySelectorAll('.btn-agregar').forEach(btn => {
         btn.addEventListener('click', () => {
             productoSeleccionado = {
@@ -362,12 +356,10 @@
         });
     });
 
-    // Cancelar
     btnCancelar.addEventListener('click', () => {
         modal.style.display = 'none';
     });
 
-    // Confirmar y enviar al backend
     btnConfirmar.addEventListener('click', () => {
         const cantidad = parseInt(document.getElementById('cantidadProducto').value) || 1;
 
@@ -407,7 +399,6 @@
         document.getElementById('modalExito').style.display = 'none';
     });
 
-    // Cerrar modales al hacer clic fuera del contenido
     window.addEventListener('click', function(e) {
         if (e.target == modalConfirmar) {
             cerrarModal(modalConfirmar);
