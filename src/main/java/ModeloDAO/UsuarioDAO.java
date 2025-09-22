@@ -128,6 +128,82 @@ public class UsuarioDAO {
     }
     return null;
 }
+   
+   // 🔹 Nuevo: Actualizar perfil (usuario + cliente)
+    public boolean actualizarUsuario(Usuario usuario, Cliente cliente) {
+        String sqlUsuario = "UPDATE Usuario SET correo=? WHERE idUsuario=?";
+        String sqlCliente = "UPDATE Cliente SET nombre=?, apellido=?, dni=?, telefono=? WHERE idUsuario=?";
+        try {
+            con = Conexion.getConnection();
+            con.setAutoCommit(false);
 
+            // Actualizar usuario
+            ps = con.prepareStatement(sqlUsuario);
+            ps.setString(1, usuario.getCorreo());
+            ps.setInt(2, usuario.getIdUsuario());
+            ps.executeUpdate();
+            ps.close();
 
+            // Actualizar cliente
+            ps = con.prepareStatement(sqlCliente);
+            ps.setString(1, cliente.getNombre());
+            ps.setString(2, cliente.getApellido());
+            ps.setString(3, cliente.getDni());
+            ps.setString(4, cliente.getTelefono());
+            ps.setInt(5, usuario.getIdUsuario());
+            ps.executeUpdate();
+            ps.close();
+
+            con.commit();
+            return true;
+        } catch (Exception e) {
+            try { if (con != null) con.rollback(); } catch (Exception ex) {}
+            System.out.println("Error actualizarUsuario: " + e.getMessage());
+            return false;
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (ps != null) ps.close(); } catch (Exception e) {}
+            try { if (con != null) con.close(); } catch (Exception e) {}
+        }
+    }
+
+        // Eliminar usuario
+        public boolean eliminarUsuario(int idUsuario) {
+            String sql = "DELETE FROM Usuario WHERE idUsuario=?";
+            try {
+                con = Conexion.getConnection();
+                ps = con.prepareStatement(sql);
+                ps.setInt(1, idUsuario);
+                ps.executeUpdate();
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try { if (ps != null) ps.close(); } catch (Exception ex) {}
+                try { if (con != null) con.close(); } catch (Exception ex) {}
+            }
+            return false;
+        }
+        // Actualizar correo de usuario
+        public boolean actualizarCorreo(Usuario u) {
+            String sql = "UPDATE Usuario SET correo=? WHERE idUsuario=?";
+            try {
+                con = Conexion.getConnection();
+                ps = con.prepareStatement(sql);
+                ps.setString(1, u.getCorreo());
+                ps.setInt(2, u.getIdUsuario());
+                ps.executeUpdate();
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try { if (ps != null) ps.close(); } catch (Exception ex) {}
+                try { if (con != null) con.close(); } catch (Exception ex) {}
+            }
+            return false;
+        }
 }
+
+
+
+

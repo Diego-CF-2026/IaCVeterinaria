@@ -25,6 +25,7 @@ public class ClienteDAO {
                 c.setIdCliente(rs.getInt("idCliente"));
                 c.setIdUsuario(rs.getInt("idUsuario"));
                 c.setNombre(rs.getString("nombre"));
+                c.setApellido(rs.getString("apellido"));
                 c.setDni(rs.getString("dni"));
                 c.setTelefono(rs.getString("telefono"));
                 c.setFechaRegistro(rs.getDate("fechaRegistro"));
@@ -36,7 +37,7 @@ public class ClienteDAO {
         return lista;
     }
 
-    // Método: Buscar cliente por ID
+    // Método: Buscar cliente por ID de cliente
     public Cliente buscarIdCliente(int id) {
         Cliente c = null;
         String sql = "SELECT * FROM Cliente WHERE idCliente = ?";
@@ -50,6 +51,7 @@ public class ClienteDAO {
                 c.setIdCliente(rs.getInt("idCliente"));
                 c.setIdUsuario(rs.getInt("idUsuario"));
                 c.setNombre(rs.getString("nombre"));
+                c.setApellido(rs.getString("apellido"));
                 c.setDni(rs.getString("dni"));
                 c.setTelefono(rs.getString("telefono"));
                 c.setFechaRegistro(rs.getDate("fechaRegistro"));
@@ -62,15 +64,16 @@ public class ClienteDAO {
 
     // Método: Agregar cliente
     public boolean agregarCliente(Cliente c) {
-        String sql = "INSERT INTO Cliente (idUsuario, nombre, dni, telefono, fechaRegistro) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Cliente (idUsuario, nombre, apellido, dni, telefono, fechaRegistro) VALUES (?, ?, ?, ?, ?)";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, c.getIdUsuario());
             ps.setString(2, c.getNombre());
-            ps.setString(3, c.getDni());
-            ps.setString(4, c.getTelefono());
-            ps.setDate(5, c.getFechaRegistro());
+            ps.setString(3,c.getApellido());
+            ps.setString(4, c.getDni());
+            ps.setString(5, c.getTelefono());
+            ps.setDate(6, c.getFechaRegistro());
             ps.executeUpdate();
             return true;
         } catch (Exception e) {
@@ -79,18 +82,19 @@ public class ClienteDAO {
         return false;
     }
 
-    // Método: Editar cliente
+    // Método: Editar cliente por idCliente
     public boolean editarCliente(Cliente c) {
-        String sql = "UPDATE Cliente SET idUsuario=?, nombre=?, dni=?, telefono=?, fechaRegistro=? WHERE idCliente=?";
+        String sql = "UPDATE Cliente SET idUsuario=?, nombre=?, apellido=?, dni=?, telefono=?, fechaRegistro=? WHERE idCliente=?";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, c.getIdUsuario());
             ps.setString(2, c.getNombre());
-            ps.setString(3, c.getDni());
-            ps.setString(4, c.getTelefono());
-            ps.setDate(5, c.getFechaRegistro());
-            ps.setInt(6, c.getIdCliente());
+            ps.setString(3,c.getApellido());
+            ps.setString(4, c.getDni());
+            ps.setString(5, c.getTelefono());
+            ps.setDate(6, c.getFechaRegistro());
+            ps.setInt(7, c.getIdCliente());
             ps.executeUpdate();
             return true;
         } catch (Exception e) {
@@ -99,13 +103,47 @@ public class ClienteDAO {
         return false;
     }
 
-    // Método: Eliminar cliente
+    // 🔹 Nuevo: Editar cliente por idUsuario (más útil para MiPerfil.jsp)
+    public boolean editarClientePorUsuario(Cliente c) {
+        String sql = "UPDATE Cliente SET nombre=?, apellido=?, dni=?, telefono=? WHERE idUsuario=?";
+        try {
+            con = Conexion.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, c.getNombre());
+            ps.setString(2,c.getApellido());
+            ps.setString(3, c.getDni());
+            ps.setString(4, c.getTelefono());
+            ps.setInt(5, c.getIdUsuario());
+            ps.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Método: Eliminar cliente por idCliente
     public boolean eliminarCliente(int id) {
         String sql = "DELETE FROM Cliente WHERE idCliente=?";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
+            ps.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // 🔹 Nuevo: Eliminar cliente por idUsuario
+    public boolean eliminarClientePorUsuario(int idUsuario) {
+        String sql = "DELETE FROM Cliente WHERE idUsuario=?";
+        try {
+            con = Conexion.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, idUsuario);
             ps.executeUpdate();
             return true;
         } catch (Exception e) {
@@ -128,6 +166,7 @@ public class ClienteDAO {
                 c.setIdCliente(rs.getInt("idCliente"));
                 c.setIdUsuario(rs.getInt("idUsuario"));
                 c.setNombre(rs.getString("nombre"));
+                c.setApellido(rs.getString("apellido"));
                 c.setDni(rs.getString("dni"));
                 c.setTelefono(rs.getString("telefono"));
                 c.setFechaRegistro(rs.getDate("fechaRegistro"));

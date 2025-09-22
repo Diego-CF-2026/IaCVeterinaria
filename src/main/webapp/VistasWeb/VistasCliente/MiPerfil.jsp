@@ -1,9 +1,10 @@
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="Modelo.UsuarioCliente"%>
+<%@page import="Modelo.Cliente"%>
+<%@page import="Modelo.Usuario"%>
 <%
-    UsuarioCliente usuario = (UsuarioCliente) session.getAttribute("usuario");
-    if (usuario == null) {
+    Cliente cliente = (Cliente) session.getAttribute("cliente");
+    Usuario usuario = (Usuario) session.getAttribute("usuario");
+    if (cliente == null && usuario == null) {
         response.sendRedirect(request.getContextPath() + "/index.jsp");
         return;
     }
@@ -38,6 +39,7 @@
             <span></span><span></span><span></span>
         </div>
     </nav>
+
     <!-- Sidebar perfil -->
     <div id="sidebarPerfil" class="sidebar-perfil" role="dialog" aria-modal="true" aria-labelledby="perfilTitle">
         <h2 id="perfilTitle">Mi Perfil</h2>
@@ -58,36 +60,48 @@
                 <img src="${pageContext.request.contextPath}/Recursos/Logo.png" alt="Patita" class="paw-img">
                 <h2>MI PERFIL</h2>
             </div>
-            <form class="perfil-form" id="perfilForm">
+
+            <!-- Formulario editar perfil -->
+            <form class="perfil-form" id="perfilForm" action="${pageContext.request.contextPath}/EditarPerfilServlet" method="post">
                 <div class="perfil-row">
-                    <input type="text" value="<%= usuario.getNombre() %>" readonly>
-                    <input type="text" value="<%= usuario.getApellido() %>" readonly>
+                    <input type="text" name="nombre" value="<%= cliente.getNombre() %>" readonly>
+                    <input type="text" name="apellido" value="<%= cliente.getApellido() %>" readonly>
                 </div>
                 <div class="perfil-row">
-                    <input type="text" value="<%= usuario.getDni() %>" readonly>
-                    <input type="text" value="<%= usuario.getTelefono() %>" readonly>
+                    <input type="text" name="dni" value="<%= cliente.getDni() %>" readonly>
+                    <input type="text" name="telefono" value="<%= cliente.getTelefono() %>" readonly>
                 </div>
                 <div class="perfil-row">
-                    <input type="email" value="<%= usuario.getCorreo() %>" readonly>
+                    <input type="email" name="correo" value="<%= usuario.getCorreo() %>" readonly>
                 </div>
-                <!-- Se elimina el campo usuario porque no existe en la clase -->
+
+                <!-- Campo oculto con ID -->
+                <input type="hidden" name="usuarioId" value="<%= usuario.getIdUsuario() %>">
+
                 <div class="perfil-actions">
                     <button type="button" class="btn-editar" id="btnEditar">
                         <img src="${pageContext.request.contextPath}/Recursos/Logo.png" alt="Patita" class="paw-btn">
                         Editar
+                    </button>
+                    <button type="submit" class="btn-guardar" id="btnGuardar" style="display:none;">
+                        <img src="${pageContext.request.contextPath}/Recursos/Logo.png" alt="Patita" class="paw-btn">
+                        Guardar
                     </button>
                     <button type="button" class="btn-eliminar" id="btnEliminar">
                         <img src="${pageContext.request.contextPath}/Recursos/Logo.png" alt="Patita" class="paw-btn">
                         Eliminar
                     </button>
                 </div>
+            </form>
 
-                <!-- Contenedor para confirmación de eliminación -->
-                <div id="confirmEliminarContainer" style="display:none; margin-top:20px; flex-direction: column; gap: 10px;">
-                    <label for="confirmEliminarInput">Escribe "ELIMINAR" para confirmar:</label>
-                    <input type="text" id="confirmEliminarInput" placeholder="ELIMINAR" style="padding:10px; border-radius:8px; border:1px solid #ccc; font-size:1rem;">
-                    <button type="button" id="confirmEliminarBtn" disabled style="background-color:#ff0000; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:600; cursor:pointer;">Confirmar eliminación</button>
-                </div>
+            <!-- Formulario eliminar perfil -->
+            <form id="eliminarForm" action="${pageContext.request.contextPath}/EliminarPerfilServlet" method="post" style="display:none; margin-top:20px;">
+                <p>Escribe <strong>ELIMINAR</strong> para confirmar:</p>
+                <input type="text" id="confirmEliminarInput" name="confirmText" placeholder="ELIMINAR" style="padding:10px; border-radius:8px; border:1px solid #ccc; font-size:1rem;">
+                <input type="hidden" name="usuarioId" value="<%= usuario.getIdUsuario() %>">
+                <button type="submit" id="confirmEliminarBtn" disabled style="background-color:#ff0000; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:600; cursor:pointer;">
+                    Confirmar eliminación
+                </button>
             </form>
         </div>
     </section>
@@ -113,50 +127,44 @@
             sidebarOverlay.classList.remove('active');
         });
 
-        // Editar y eliminar funcionalidad
+        // Editar / Guardar funcionalidad
         const btnEditar = document.getElementById('btnEditar');
+        const btnGuardar = document.getElementById('btnGuardar');
         const btnEliminar = document.getElementById('btnEliminar');
         const perfilForm = document.getElementById('perfilForm');
         const inputs = perfilForm.querySelectorAll('input[type="text"], input[type="email"]');
-        const confirmEliminarContainer = document.getElementById('confirmEliminarContainer');
-        const confirmEliminarInput = document.getElementById('confirmEliminarInput');
-        const confirmEliminarBtn = document.getElementById('confirmEliminarBtn');
 
         let editando = false;
 
         btnEditar.addEventListener('click', () => {
             if (!editando) {
                 inputs.forEach(input => input.readOnly = false);
-                btnEditar.textContent = 'Guardar';
+                btnEditar.style.display = 'none';
+                btnGuardar.style.display = 'inline-flex';
                 btnEliminar.style.display = 'none';
                 editando = true;
-                confirmEliminarContainer.style.display = 'none';
-            } else {
-                inputs.forEach(input => input.readOnly = true);
-                btnEditar.textContent = 'Editar';
-                btnEliminar.style.display = 'inline-flex';
-                editando = false;
-                alert('Cambios guardados correctamente.');
             }
         });
 
+        btnGuardar.addEventListener('click', () => {
+            inputs.forEach(input => input.readOnly = true);
+            btnEditar.style.display = 'inline-flex';
+            btnGuardar.style.display = 'none';
+            btnEliminar.style.display = 'inline-flex';
+            editando = false;
+        });
+
+        // Eliminar perfil funcionalidad
+        const eliminarForm = document.getElementById('eliminarForm');
+        const confirmEliminarInput = document.getElementById('confirmEliminarInput');
+        const confirmEliminarBtn = document.getElementById('confirmEliminarBtn');
+
         btnEliminar.addEventListener('click', () => {
-            confirmEliminarContainer.style.display = 'flex';
-            if (editando) {
-                inputs.forEach(input => input.readOnly = true);
-                btnEditar.textContent = 'Editar';
-                btnEliminar.style.display = 'inline-flex';
-                editando = false;
-            }
+            eliminarForm.style.display = 'block';
         });
 
         confirmEliminarInput.addEventListener('input', () => {
             confirmEliminarBtn.disabled = confirmEliminarInput.value !== 'ELIMINAR';
-        });
-
-        confirmEliminarBtn.addEventListener('click', () => {
-            alert('Perfil eliminado correctamente.');
-            // Aquí puedes agregar lógica para eliminar el perfil y redirigir
         });
     </script>
 </body>
