@@ -55,7 +55,7 @@ public class LoginServlet extends HttpServlet {
                         sesion.setAttribute("idCliente", cliente.getIdCliente());
                         sesion.setAttribute("nombreCliente", cliente.getNombre());
                     }
-                    response.sendRedirect(contextPath + "/ProductoServlet?accion=listarCliente");
+                    response.sendRedirect(contextPath + "/VistasWeb/VistasCliente/Nosotros.jsp");
                     break;
 
                 default:
