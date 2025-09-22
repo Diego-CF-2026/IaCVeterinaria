@@ -153,14 +153,13 @@ public class ProveedorDAO {
         return null;
     }
 
-    public boolean agregar(Proveedor p) {
+   public boolean agregar(Proveedor p) {
     if (p == null) {
         throw new IllegalArgumentException("El proveedor no puede ser null");
     }
 
-    // Validación de RUC (exactamente 11 dígitos numéricos)
-    if (p.getRuc() == null || !p.getRuc().matches("\\d{11}")) {
-        throw new IllegalArgumentException("El RUC debe tener exactamente 11 dígitos numéricos");
+    if (p.getRuc() == null || !p.getRuc().matches("^(10|15|20)\\d{9}$")) {
+        throw new IllegalArgumentException("El RUC debe tener 11 dígitos y empezar con 10, 15 o 20.");
     }
 
     // Validación de correo (estructura básica con @ y dominio)
