@@ -1,6 +1,11 @@
 <%@ include file="/proteger.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.util.List"%>
+<%@page import="Modelo.Carrito"%>
+<%@page import="Modelo.DetalleCarrito"%>
+<%@page import="Modelo.Producto"%>
+<%@page import="Modelo.TipoDePago"%>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -114,6 +119,66 @@
       border-bottom: 2px solid #000;
       font-weight: 600;
     }
+    
+    .modal {
+    display: none; /* oculto por defecto */
+    position: fixed;
+    z-index: 3000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4); /* fondo oscuro */
+    justify-content: center; /* centra horizontal */
+    align-items: center;     /* centra vertical */
+  }
+
+  .modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #2bb673;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    gap: 10px;
+  }
+
+  .modal-footer button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .modal-footer button[type="button"] {
+    background: #ccc;
+  }
+
+  .modal-footer button[type="submit"] {
+    background: #2bb673;
+    color: white;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
   </style>
 </head>
 <body>
@@ -134,7 +199,7 @@
       </div>
       <div class="buttons">
         <a href="javascript:void(0)" class="btn perfil" id="verPerfilBtn">Ver perfil</a>
-      </div>
+      </div>    
     </div>
     <div class="hamburger" id="hamburger-menu">
       <span></span><span></span><span></span>
@@ -144,24 +209,133 @@
   <!-- CONTENIDO PRINCIPAL: HISTORIAL -->
   <div class="historial-container">
     <h2>Historial de Compras</h2>
-    <ul class="historial-lista">
-      <%
-        List<String> historial = (List<String>) session.getAttribute("historialCompras");
-        if (historial != null && !historial.isEmpty()) {
-          for (String producto : historial) {
-      %>
-            <li><span class="icon">&#128722;</span> <%= producto %></li>
-      <%
-          }
-        } else {
-      %>
-        <li style="text-align:center;color:#888;">No hay compras registradas.</li>
-      <%
+
+    <%
+      List<Carrito> historial = (List<Carrito>) request.getAttribute("historialCompras");
+      List<TipoDePago> tiposPago = (List<TipoDePago>) request.getAttribute("tiposPago"); // viene del servlet
+      if (historial != null && !historial.isEmpty()) {
+        for (Carrito carrito : historial) {
+    %>
+      <h3>Compra #<%= carrito.getIdCarrito() %> - <%= carrito.getFecha() %></h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%
+            if (carrito.getDetalles() != null) {
+              for (DetalleCarrito det : carrito.getDetalles()) {
+                Producto p = det.getProducto();
+          %>
+            <tr>
+              <td><%= (p != null ? p.getNombreProducto() : "Producto ID " + det.getIdProducto()) %></td>
+              
+              
+            <!-- 🔹 Botones + y - junto a la cantidad -->
+            <td>
+              <form action="${pageContext.request.contextPath}/ActualizarCantidadServlet" method="post" style="display:inline;">
+                <input type="hidden" name="idDetalleCarrito" value="<%= det.getIdDetalleCarrito() %>">
+                <input type="hidden" name="idCarrito" value="<%= carrito.getIdCarrito() %>">
+                <input type="hidden" name="accion" value="restar">
+                <button type="submit" style="background:none;border:none;color:blue;cursor:pointer;">➖</button>
+              </form>
+
+              <%= det.getCantidadProducto() %>
+
+              <form action="${pageContext.request.contextPath}/ActualizarCantidadServlet" method="post" style="display:inline;">
+                <input type="hidden" name="idDetalleCarrito" value="<%= det.getIdDetalleCarrito() %>">
+                <input type="hidden" name="idCarrito" value="<%= carrito.getIdCarrito() %>">
+                <input type="hidden" name="accion" value="sumar">
+                <button type="submit" style="background:none;border:none;color:green;cursor:pointer;">➕</button>
+              </form>
+            </td>
+              
+              
+              
+              <td>S/ <%= (p != null ? p.getPrecio() : "0.00") %></td>
+              <td>S/ <%= (p != null ? p.getPrecio().multiply(new java.math.BigDecimal(det.getCantidadProducto())) : "0.00") %></td>
+              
+              <!-- 🔹 Botón eliminar -->
+              <td>
+                  <form action="${pageContext.request.contextPath}/EliminarProductoCarritoServlet" method="post" style="display:inline;">
+                    <input type="hidden" name="idDetalleCarrito" value="<%= det.getIdDetalleCarrito() %>">
+                    <input type="hidden" name="idCarrito" value="<%= carrito.getIdCarrito() %>">
+                    <button type="submit" style="background:none;border:none;color:red;cursor:pointer;font-weight:bold;">
+                      ❌
+                    </button>
+                  </form>
+              </td>
+            </tr>
+          <%
+              }
+            }
+          %>
+          <tr>
+            <td colspan="3" style="text-align:right;font-weight:bold;">Total:</td>
+            <td style="font-weight:bold;">S/ <%= carrito.getTotal() %></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Botón confirmar -->
+      <button class="btn-confirmar" onclick="abrirModal(<%= carrito.getIdCarrito() %>, <%= carrito.getTotal() %>)">
+        Confirmar compra
+      </button>
+
+    <%
         }
-      %>
-    </ul>
-    <button class="btn-regresar" onclick="window.location.href='${pageContext.request.contextPath}/VistasWeb/VistasCliente/Productos.jsp'">Regresar a productos</button>
-  </div>
+      } else {
+    %>
+      <p style="text-align:center;color:#888;">No hay compras registradas.</p>
+    <%
+      }
+    %>
+
+    <button class="btn-regresar" onclick="window.location.href='${pageContext.request.contextPath}/VistasWeb/VistasCliente/Productos.jsp'">
+      Regresar a productos
+    </button>
+  </div>    
+
+  <!-- Modal -->
+  <div id="modalCompra" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">Confirmar compra</div>
+      <form action="${pageContext.request.contextPath}/ConfirmarCompraServlet" method="post">
+        <input type="hidden" id="idCarrito" name="idCarrito">
+        <p><b>Total:</b> S/ <span id="montoTotal"></span></p>
+        <label>Método de pago:</label>
+        <select id="idPago" name="idPago">
+          <option value="">-- Selecciona --</option>
+          <%
+            if (tiposPago != null) {
+              for (TipoDePago tp : tiposPago) {
+          %>
+                <option value="<%= tp.getIdPago() %>"><%= tp.getNombrePago() %></option>
+          <%
+              }
+            }
+          %>
+        </select>
+        <div class="modal-footer">
+          <button type="button" onclick="cerrarModal()">Cancelar</button>
+          <button type="submit">Confirmar</button>
+        </div>
+      </form>
+    </div>
+  </div>  
+        
+    <!-- Modal de éxito -->
+    <div id="modalExito" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">✅ Compra exitosa</div>
+        <p>Tu compra ha sido confirmada correctamente.</p>
+        <div class="modal-footer">
+          <button type="button" onclick="cerrarModalExito()">Cerrar</button>
+        </div>
+      </div>
+    </div>
 
   <!-- Sidebar perfil -->
   <div id="sidebarPerfil" class="sidebar-perfil" role="dialog" aria-modal="true" aria-labelledby="perfilTitle">
@@ -201,6 +375,40 @@
         }
       });
     });
+    
+        // 🔹 Funciones para el modal de confirmación
+    function abrirModal(idCarrito, total) {
+      document.getElementById("idCarrito").value = idCarrito;
+      document.getElementById("montoTotal").innerText = total;
+      document.getElementById("modalCompra").style.display = "flex";
+    }
+
+    function cerrarModal() {
+      document.getElementById("modalCompra").style.display = "none";
+    }
+    
+    function abrirModalExito() {
+        document.getElementById("modalExito").style.display = "flex";
+      }
+
+    function cerrarModalExito() {
+        document.getElementById("modalExito").style.display = "none";
+      }
+    
   </script>
+
+  <%-- 🔹 Aquí va la verificación de éxito --%>
+  <%
+    Boolean compraExitosa = (Boolean) request.getAttribute("compraExitosa");
+    if (compraExitosa != null && compraExitosa) {
+  %>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        abrirModalExito();
+      });
+    </script>
+  <%
+    }
+  %>
 </body>
 </html>

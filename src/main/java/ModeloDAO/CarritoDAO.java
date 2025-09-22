@@ -51,7 +51,7 @@ public class CarritoDAO {
                     if (rs.next()) {
                         idCarrito = rs.getInt(1);
                     }
-                }
+                }   
             }
 
             // Agregar detalle
@@ -149,4 +149,111 @@ public class CarritoDAO {
         }
         return detalles;
     }
+    
+    // ==============================
+    // 🔹 Obtener historial de compras del cliente (ABIERTO)
+    // ==============================
+    public List<Carrito> obtenerHistorial(int idCliente) {
+        List<Carrito> historial = new ArrayList<>();
+        try  {
+            String sql = "SELECT * FROM carrito WHERE idCliente=? AND estado='ABIERTO' ORDER BY fecha DESC";
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, idCliente);
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    Carrito carrito = new Carrito();
+                    carrito.setIdCarrito(rs.getInt("idCarrito"));
+                    carrito.setIdCliente(rs.getInt("idCliente"));
+                    carrito.setTotal(rs.getBigDecimal("total"));
+                    carrito.setEstado(rs.getString("estado"));
+                    carrito.setFecha(rs.getTimestamp("fecha"));
+                    carrito.setIdPago(rs.getInt("idPago"));
+
+                    // 🔹 cargar los detalles del carrito
+                    carrito.setDetalles(obtenerDetalles(carrito.getIdCarrito()));
+
+                    historial.add(carrito);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return historial;
+    }
+    
+    public boolean confirmarCompra(int idCarrito, int idPago) {
+        try {
+            String sql = "UPDATE carrito SET estado='CERRADO', idPago=? WHERE idCarrito=?";
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, idPago);
+                ps.setInt(2, idCarrito);
+                ps.executeUpdate();
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    // 🔹 Eliminar producto del carrito por idDetalleCarrito
+    public boolean eliminarProducto(int idDetalleCarrito, int idCarrito) {
+        try {
+            // eliminar detalle
+            String sql = "DELETE FROM detallecarrito WHERE idDetalleCarrito=?";
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, idDetalleCarrito);
+                ps.executeUpdate();
+            }
+
+            // actualizar total
+            String sqlTotal = "UPDATE carrito c SET c.total = (SELECT IFNULL(SUM(dc.cantidadProducto * p.precio),0) " +
+                              "FROM detallecarrito dc INNER JOIN producto p ON dc.idProducto=p.idProducto WHERE dc.idCarrito=?) " +
+                              "WHERE c.idCarrito=?";
+            try (PreparedStatement ps = con.prepareStatement(sqlTotal)) {
+                ps.setInt(1, idCarrito);
+                ps.setInt(2, idCarrito);
+                ps.executeUpdate();
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    
+    public boolean actualizarCantidad(int idDetalleCarrito, int idCarrito, String accion) {
+        try {
+            // 🔹 Sumar o restar según la acción
+            String sqlUpdate = "";
+            if ("sumar".equals(accion)) {
+                sqlUpdate = "UPDATE detallecarrito SET cantidadProducto = cantidadProducto + 1 WHERE idDetalleCarrito=?";
+            } else if ("restar".equals(accion)) {
+                sqlUpdate = "UPDATE detallecarrito SET cantidadProducto = GREATEST(cantidadProducto - 1, 1) WHERE idDetalleCarrito=?";
+            }
+
+            try (PreparedStatement ps = con.prepareStatement(sqlUpdate)) {
+                ps.setInt(1, idDetalleCarrito);
+                ps.executeUpdate();
+            }
+
+            // 🔹 Recalcular total
+            String sqlTotal = "UPDATE carrito c SET c.total = (SELECT IFNULL(SUM(dc.cantidadProducto * p.precio),0) " +
+                              "FROM detallecarrito dc INNER JOIN producto p ON dc.idProducto=p.idProducto WHERE dc.idCarrito=?) " +
+                              "WHERE c.idCarrito=?";
+            try (PreparedStatement ps = con.prepareStatement(sqlTotal)) {
+                ps.setInt(1, idCarrito);
+                ps.setInt(2, idCarrito);
+                ps.executeUpdate();
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+   
 }
