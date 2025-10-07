@@ -22,11 +22,12 @@
     <link rel="stylesheet" href="css/index.css">
     <style>
         /* Estilos para el mensaje de error */
+        /* Nota: Se usa la clase .alert.error definida en tu CSS para mantener la consistencia */
         #mensajeErrorLogin {
-            color: red;
+            color: red; /* Se asegura de que se vea el color del error */
             font-weight: bold;
             margin-top: 10px;
-            text-align: center; /* Centrar el texto del error */
+            text-align: center;
         }
     </style>
 </head>
@@ -58,21 +59,23 @@
     <button id="modoNocheBtn" class="modo-noche-flotante" aria-label="Cambiar a modo noche">🌙</button>
 </nav>
 
-<!-- ✅ Modal Login -->
-    <div id="modalLogin" class="modal">
+<div id="modalLogin" class="modal">
         <div class="modal-content animado">
             <span class="cerrar" onclick="cerrarModal('modalLogin')">&times;</span>
             <h2>Iniciar Sesión</h2>
             <img src="Recursos/IconUser.svg" alt="Icono Usuario" class="icono-usuario">
 
-            <form action="LoginServlet" method="post">
+            <form id="formLogin" action="LoginServlet" method="post">
                 <input type="email" name="correo" placeholder="Correo electrónico" required>
                 <input type="password" name="contrasena" placeholder="Contraseña" required>
                 <button type="submit" class="btn1 iniciar-sesion">Ingresar</button>
             </form>
 
+            <%-- Bloque para mostrar errores de login (bloqueo/intentos) --%>
             <% if (request.getAttribute("errorLogin") != null) { %>
-                <div class="alert error"><%= request.getAttribute("errorLogin") %></div>
+                <div id="mensajeErrorLogin" class="alert error" style="display: block;"><%= request.getAttribute("errorLogin") %></div>
+            <% } else { %>
+                <div id="mensajeErrorLogin" class="alert error" style="display: none;"></div>
             <% } %>
 
             <div id="opcionesRegistro">
@@ -85,7 +88,7 @@
 
 
 <div id="modalRegistro" class="modal" 
-     style="<%= (request.getAttribute("errorRegistro") != null 
+    style="<%= (request.getAttribute("errorRegistro") != null 
              || request.getAttribute("exitoRegistro") != null) ? "display:flex;" : "" %>">
     <div class="modal-content animado">
         <span class="cerrar" onclick="cerrarModal('modalRegistro')">&times;</span>
@@ -116,32 +119,32 @@
         <form class="form-registro" action="RegistrarServlet" method="post">
             <div class="input-group">
                 <input type="text" name="nombres" placeholder="Nombres" required 
-                       pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" title="Solo letras"
-                       value="<%= request.getAttribute("valNombres") != null ? request.getAttribute("valNombres") : "" %>">
+                        pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" title="Solo letras"
+                        value="<%= request.getAttribute("valNombres") != null ? request.getAttribute("valNombres") : "" %>">
 
                 <input type="text" name="apellidos" placeholder="Apellidos" required 
-                       pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" title="Solo letras"
-                       value="<%= request.getAttribute("valApellidos") != null ? request.getAttribute("valApellidos") : "" %>">
+                        pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" title="Solo letras"
+                        value="<%= request.getAttribute("valApellidos") != null ? request.getAttribute("valApellidos") : "" %>">
             </div>
 
             <div class="input-group">
                 <div style="width: 100%;">
                     <input type="text" name="dni" placeholder="DNI" required minlength="8" maxlength="8"
-                           value="<%= request.getAttribute("valDni") != null ? request.getAttribute("valDni") : "" %>"
-                           class="<%= "dni".equals(request.getAttribute("errorRegistro")) ? "campo-error" : "" %>">
+                            value="<%= request.getAttribute("valDni") != null ? request.getAttribute("valDni") : "" %>"
+                            class="<%= "dni".equals(request.getAttribute("errorRegistro")) ? "campo-error" : "" %>">
                 </div>
 
                 <div style="width: 100%;">
                     <input type="tel" name="telefono" placeholder="Número telefónico" required 
-                           pattern="9[0-9]{8}" title="Debe empezar con 9 y tener 9 dígitos"
-                           value="<%= request.getAttribute("valTelefono") != null ? request.getAttribute("valTelefono") : "" %>"
-                           class="<%= "telefono".equals(request.getAttribute("errorRegistro")) ? "campo-error" : "" %>">
+                            pattern="9[0-9]{8}" title="Debe empezar con 9 y tener 9 dígitos"
+                            value="<%= request.getAttribute("valTelefono") != null ? request.getAttribute("valTelefono") : "" %>"
+                            class="<%= "telefono".equals(request.getAttribute("errorRegistro")) ? "campo-error" : "" %>">
                 </div>
             </div>
 
             <input type="email" name="correo" placeholder="Correo Electrónico" required maxlength="100"
-                   value="<%= request.getAttribute("valCorreo") != null ? request.getAttribute("valCorreo") : "" %>"
-                   class="<%= "correo".equals(request.getAttribute("errorRegistro")) ? "campo-error" : "" %>">
+                    value="<%= request.getAttribute("valCorreo") != null ? request.getAttribute("valCorreo") : "" %>"
+                    class="<%= "correo".equals(request.getAttribute("errorRegistro")) ? "campo-error" : "" %>">
 
             <input type="password" name="contrasena" placeholder="Contraseña" required minlength="8" maxlength="45">
 
@@ -397,7 +400,7 @@
     <script src="Js/ModoNocheIndex.js"></script>
 
     <script>
-     // Funciones para abrir y cerrar modales
+    // Funciones para abrir y cerrar modales
 function abrirModal(idModal) {
     document.getElementById(idModal).style.display = 'flex';
 }
@@ -410,12 +413,13 @@ function cerrarModal(idModal) {
 function abrirLogin() {
     // Limpia mensajes de error y resetea el formulario
     const formLogin = document.getElementById('formLogin');
-    const mensajeErrorLogin = document.getElementById('mensajeErrorLogin');
+    const mensajeErrorLogin = document.getElementById('mensajeErrorLogin'); 
 
     if (formLogin) formLogin.reset();
     if (mensajeErrorLogin) {
+        // Ocultamos el div y limpiamos el texto si se abre sin error
         mensajeErrorLogin.style.display = 'none';
-        mensajeErrorLogin.textContent = '';
+        mensajeErrorLogin.textContent = ''; 
     }
 
     abrirModal('modalLogin');
@@ -435,21 +439,16 @@ function abrirLoginDesdeRegistro() {
 // ✅ Cuando el DOM ya cargó
 document.addEventListener('DOMContentLoaded', function () {
     const modalLogin = document.getElementById('modalLogin');
-    const formLogin = document.getElementById('formLogin');
-    const mensajeErrorLogin = document.getElementById('mensajeErrorLogin');
+    const mensajeErrorLogin = document.getElementById('mensajeErrorLogin'); 
     const btnLoginNavbar = document.querySelector('.navbar .btn.login');
 
-    // Limpia errores al cerrar el modal
-    if (modalLogin && formLogin && mensajeErrorLogin) {
-        const observer = new MutationObserver(() => {
-            if (modalLogin.style.display === 'none') {
-                mensajeErrorLogin.style.display = 'none';
-                mensajeErrorLogin.textContent = '';
-                formLogin.reset();
-            }
-        });
-        observer.observe(modalLogin, { attributes: true });
+    // Mantenemos el modal de Login abierto si hay un error de Login al cargar la página.
+    // Esto asegura que el mensaje del Servlet sea visible inmediatamente.
+    if (mensajeErrorLogin && mensajeErrorLogin.textContent.trim().length > 0) {
+        modalLogin.style.display = 'flex';
+        mensajeErrorLogin.style.display = 'block';
     }
+
 
     // Botón de la navbar abre login
     if (btnLoginNavbar) {

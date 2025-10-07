@@ -16,6 +16,9 @@ public class Usuario {
     private int intentos;
     private boolean Estado;
 
+     
+    private java.sql.Timestamp tiempoBloqueo; // Usar java.sql.Timestamp o LocalDateTime (si usas JPA/Hibernate)
+    
     private String nombreRol; 
     public Usuario() {
     }
@@ -80,5 +83,14 @@ public class Usuario {
 
     public String getNombreRol() { return nombreRol; }
     public void setNombreRol(String nombreRol) { this.nombreRol = nombreRol; }
+    
+    
+    public java.sql.Timestamp getTiempoBloqueo() {
+        return tiempoBloqueo;
+    }
+    
+    public void setTiempoBloqueo(java.sql.Timestamp tiempoBloqueo) {
+        this.tiempoBloqueo = tiempoBloqueo;
+    }
     
 }
