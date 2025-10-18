@@ -36,23 +36,15 @@ public class CitaServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         String accion = request.getParameter("accion");
         if (accion == null) {
-            accion = "listar"; // Acción por defecto
+            accion = "listar";
         }
 
         switch (accion) {
             case "listar":
                 listarCitas(request, response);
-                break;
-            case "ver": // Este caso podría ser útil para pre-seleccionar una cita si se viene de otra página
-                verCita(request, response);
-                break;
-            case "eliminar":
-                eliminarCita(request, response);
-                break;
-            case "buscar":
-                buscarCita(request, response);
                 break;
             default:
                 listarCitas(request, response);
@@ -185,7 +177,7 @@ public class CitaServlet extends HttpServlet {
             LOGGER.log(Level.SEVERE, "Error al parsear fecha/hora al actualizar la cita: " + e.getMessage(), e);
             request.getSession().setAttribute("mensaje", "Error en el formato de fecha/hora al actualizar. Por favor, verifica.");
             request.getSession().setAttribute("tipoMensaje", "error");
-            response.sendRedirect(request.getContextPath() + "/CitaServlet");
+            response.sendRedirect(request.getContextPath() + "/VistasWeb/VistasCliente/Citas.jsp");
             return;
         }
 

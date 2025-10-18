@@ -21,54 +21,37 @@ public class VeterinarioDAO {
     }
 
     public List<Veterinario> listarVeterinarios() {
-        List<Veterinario> listaVeterinarios = new ArrayList<>();
-        // Asegúrate de que los nombres de las columnas en tu DB son exactos:
-        // idVeterinario, V_Nombre, V_Apellido, V_Numero, V_Dni, V_Especialidad
-        String sql = "SELECT idVeterinario, nombreVeterinario, apellidoVeterinario, telefonoVeterinario, correoVeterinario, idEspecialidad FROM veterinario ORDER BY nombreVeterinario, apellidoVeterinario";
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        List<Veterinario> lista = new ArrayList<>();
+        String sql = "SELECT v.idVeterinario, v.nombreVeterinario, v.apellidoVeterinario, "
+                   + "v.telefonoVeterinario, v.correoVeterinario, v.idEspecialidad, "
+                   + "e.nombreEspecialidad "
+                   + "FROM veterinario v "
+                   + "INNER JOIN especialidad e ON v.idEspecialidad = e.idEspecialidad "
+                   + "ORDER BY v.nombreVeterinario";
 
-        try {
-            conn = Conexion.getConnection();
-            if (conn == null) {
-                LOGGER.log(Level.SEVERE, "Error: No se pudo obtener la conexión a la base de datos en listarVeterinarios.");
-                return listaVeterinarios; // Retorna lista vacía si no hay conexión
-            }
-
-            ps = conn.prepareStatement(sql);
-            rs = ps.executeQuery();
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Veterinario vet = new Veterinario();
-                vet.setIdVeterinario(rs.getInt("idVeterinario"));
-                
-                // **** CLAVE: Concatenar nombre y apellido para el setter 'nombre' ****
-                // También establecemos el apellido y la especialidad por separado si se necesitan
-                vet.setNombreVeterianrio(rs.getString("nombreVeterinario")); 
-                vet.setApellidoVeterinario(rs.getString("apellidoVeterinario")); 
-                vet.setTelefonoVeterinario(rs.getString("telefonoVeterinario"));
-                vet.setCorreoVeterinario(rs.getString("correoVeterinario"));
-                vet.setIdEspecialidad(rs.getInt("idEspecialidad"));
-                
-                listaVeterinarios.add(vet);
+                Veterinario v = new Veterinario();
+                v.setIdVeterinario(rs.getInt("idVeterinario"));
+                v.setNombreVeterianrio(rs.getString("nombreVeterinario"));
+                v.setApellidoVeterinario(rs.getString("apellidoVeterinario"));
+                v.setTelefonoVeterinario(rs.getString("telefonoVeterinario"));
+                v.setCorreoVeterinario(rs.getString("correoVeterinario"));
+                v.setIdEspecialidad(rs.getInt("idEspecialidad"));
+                v.setNombreEspecialidad(rs.getString("nombreEspecialidad"));
+                lista.add(v);
             }
+
+            System.out.println("Veterinarios encontrados: " + lista.size());
+
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error SQL al listar veterinarios: " + e.getMessage(), e);
-            e.printStackTrace();
-        } catch (Exception e) { // Captura cualquier otra excepción
-            LOGGER.log(Level.SEVERE, "Error inesperado al listar veterinarios: " + e.getMessage(), e);
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Error al cerrar recursos en listarVeterinarios: " + e.getMessage(), e);
-            }
+            System.out.println("Error en listarVeterinarios(): " + e.getMessage());
         }
-        return listaVeterinarios;
+
+        return lista;
     }
 
     public Veterinario obtenerVeterinarioPorId(int id) {

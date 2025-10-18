@@ -25,29 +25,42 @@ public class CitaDAO {
     PreparedStatement ps;
     ResultSet rs;
 
-    // Método para agregar una nueva Cita
     public boolean agregarCita(Cita cita) {
+        // CORRECCIÓN CLAVE: Usamos 'Citas' con mayúscula para ser consistentes con 'listarCitas'
+        // Si tu tabla se llama 'cita' en la base de datos, cámbialo a minúscula.
         String sql = "INSERT INTO Citas (idCliente, idVeterinario, fecha, hora, motivo, estado) VALUES (?, ?, ?, ?, ?, ?)";
-        try {
-            con = Conexion.getConnection();
+        
+        // Usamos try-with-resources para asegurar que la conexión se cierre automáticamente
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
             if (con == null) {
                 LOGGER.log(Level.SEVERE, "La conexión a la BD es nula. No se pudo agregar la cita.");
                 return false;
             }
-            ps = con.prepareStatement(sql);
+
+            // Validación: los datos esenciales deben estar en el objeto Cita, proviniendo del Servlet.
+            if (cita.getFecha() == null || cita.getHora() == null || cita.getMotivo() == null) {
+                LOGGER.log(Level.WARNING, "Error de datos: La fecha, hora o motivo de la cita son nulos en el objeto Cita.");
+                return false;
+            }
+            
+            // Asignación de parámetros
             ps.setInt(1, cita.getIdCliente());
             ps.setInt(2, cita.getIdVeterinario());
             ps.setDate(3, cita.getFecha());
             ps.setTime(4, cita.getHora());
             ps.setString(5, cita.getMotivo());
-            ps.setString(6, cita.getEstado()); // Establecer el estado
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
+            ps.setString(6, cita.getEstado() != null ? cita.getEstado() : "Pendiente"); 
+
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
+
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error al agregar cita: " + e.getMessage(), e);
+            // Imprime la traza de la BD completa para diagnóstico (claves foráneas, campos obligatorios, etc.)
+            LOGGER.log(Level.SEVERE, "Error SQL al agregar cita. Causa probable: Clave Foránea (idCliente/idVeterinario) no existe o campo obligatorio nulo.", e);
+            e.printStackTrace(); 
             return false;
-        } finally {
-            closeResources();
         }
     }
 
