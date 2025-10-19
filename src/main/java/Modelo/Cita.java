@@ -10,7 +10,8 @@ public class Cita {
     private Date fecha;
     private Time hora;
     private String motivo;
-    private String estado; // Nuevo atributo para el estado de la cita
+    private int idEstado; // Nuevo atributo para el estado de la cita
+    private String estadoNombre;
 
     // Atributos para los detalles del cliente y veterinario (no están en la tabla Citas, pero se obtienen por JOIN)
     private String nombreCliente;
@@ -25,23 +26,22 @@ public class Cita {
     }
 
     // Constructor con todos los parámetros
-    public Cita(int idCita, int idCliente, int idVeterinario, Date fecha, Time hora, String motivo, String estado,
-                String nombreCliente, String apellidoCliente, String dniCliente,
-                String nombreVeterinario, String apellidoVeterinario, String especialidadVeterinario) {
+
+    public Cita(int idCita, int idCliente, int idVeterinario, Date fecha, Time hora, String motivo, int idEstado, String estadoNombre, String nombreCliente, String apellidoCliente, String dniCliente, String nombreVeterinario, String apellidoVeterinario, String especialidadVeterinario) {
         this.idCita = idCita;
         this.idCliente = idCliente;
         this.idVeterinario = idVeterinario;
         this.fecha = fecha;
         this.hora = hora;
         this.motivo = motivo;
-        this.estado = estado;
+        this.idEstado = idEstado;
+        this.estadoNombre = estadoNombre;
         this.nombreCliente = nombreCliente;
         this.apellidoCliente = apellidoCliente;
         this.dniCliente = dniCliente;
         this.nombreVeterinario = nombreVeterinario;
         this.apellidoVeterinario = apellidoVeterinario;
-        // ¡¡¡CORRECCIÓN AQUÍ!!!
-        this.especialidadVeterinario = especialidadVeterinario; // Antes decía 'especialVeterinario'
+        this.especialidadVeterinario = especialidadVeterinario;
     }
 
     // Getters y Setters
@@ -94,15 +94,21 @@ public class Cita {
         this.motivo = motivo;
     }
 
-    public String getEstado() {
-        return estado;
+    public int getIdEstado() {
+        return idEstado;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setIdEstado(int idEstado) {
+        this.idEstado = idEstado;
     }
 
-    // Getters y Setters para los detalles del cliente y veterinario
+    public String getEstadoNombre() {
+        return estadoNombre;
+    }
+
+    public void setEstadoNombre(String estadoNombre) {
+        this.estadoNombre = estadoNombre;
+    }
 
     public String getNombreCliente() {
         return nombreCliente;
@@ -151,4 +157,5 @@ public class Cita {
     public void setEspecialidadVeterinario(String especialidadVeterinario) {
         this.especialidadVeterinario = especialidadVeterinario;
     }
+    
 }

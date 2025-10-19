@@ -30,16 +30,12 @@ public class LoginServlet extends HttpServlet {
         String contra = request.getParameter("contrasena");
         String contextPath = request.getContextPath();
         
-        
         Usuario usuarioInfo = usuarioDAO.obtenerIntentosYBloqueo(correo);
 
         if (usuarioInfo != null) {
             Timestamp tiempoBloqueo = usuarioInfo.getTiempoBloqueo();
             
-           
             if (tiempoBloqueo != null && tiempoBloqueo.getTime() > System.currentTimeMillis()) {
-                
-                
                 long segundosRestantes = (tiempoBloqueo.getTime() - System.currentTimeMillis()) / 1000;
                 long minutosRestantes = segundosRestantes / 60;
                 
@@ -53,9 +49,8 @@ public class LoginServlet extends HttpServlet {
 
         if (usuario != null && usuario.isEstado()) {
             
-            usuarioDAO.reiniciarIntentos(correo); 
+            usuarioDAO.reiniciarIntentos(correo);  
 
-            // Crear sesión
             HttpSession sesion = request.getSession();
             sesion.setAttribute("usuario", usuario);
 
@@ -72,10 +67,17 @@ public class LoginServlet extends HttpServlet {
                     Cliente cliente = clienteDAO.buscarPorIdUsuario(usuario.getIdUsuario());
                     if (cliente != null) {
                         sesion.setAttribute("cliente", cliente);
-                        sesion.setAttribute("idCliente", cliente.getIdCliente());
-                        sesion.setAttribute("nombreCliente", cliente.getNombre());
+                        
+                        // 🟢 CORRECCIÓN CLAVE 1: Usar el nombre de atributo correcto
+                        // que espera el CitaServlet ("idClienteSesion")
+                        sesion.setAttribute("idClienteSesion", cliente.getIdCliente()); 
+                        
+                        sesion.setAttribute("NombreCliente", cliente.getNombre());
                     }
-                    response.sendRedirect(contextPath + "/VistasWeb/VistasCliente/Nosotros.jsp");
+                    
+                    // 🟢 CORRECCIÓN CLAVE 2: Redirigir al CitaServlet
+                    // Esto fuerza la ejecución del Servlet para que liste las citas
+                    response.sendRedirect(contextPath + "/CitaServlet?accion=listar"); 
                     break;
 
                 default:
@@ -85,25 +87,20 @@ public class LoginServlet extends HttpServlet {
             }
 
         } else {
-
-
+            // Lógica de manejo de errores e intentos fallidos
             String mensajeError = "Correo o contraseña incorrectos, o usuario inactivo.";
 
             if (usuarioInfo != null) {
-                
                 int nuevosIntentos = usuarioDAO.incrementarIntentos(correo);
                 
                 if (nuevosIntentos >= MAX_INTENTOS) {
-                    
                     usuarioDAO.bloquearUsuario(correo, TIEMPO_BLOQUEO_MINUTOS);
                     mensajeError = "Demasiados intentos fallidos. Tu cuenta ha sido bloqueada por " + TIEMPO_BLOQUEO_MINUTOS + " minutos.";
-                    
                 } else {
                     mensajeError += " Te quedan " + (MAX_INTENTOS - nuevosIntentos) + " intentos.";
                 }
             }
             
-
             request.setAttribute("errorLogin", mensajeError);
             request.getRequestDispatcher("index.jsp").forward(request, response);
         }
