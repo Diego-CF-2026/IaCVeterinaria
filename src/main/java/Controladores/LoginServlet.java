@@ -29,31 +29,31 @@ public class LoginServlet extends HttpServlet {
         String correo = request.getParameter("correo");
         String contra = request.getParameter("contrasena");
         String contextPath = request.getContextPath();
-        
+
         Usuario usuarioInfo = usuarioDAO.obtenerIntentosYBloqueo(correo);
 
         if (usuarioInfo != null) {
             Timestamp tiempoBloqueo = usuarioInfo.getTiempoBloqueo();
-            
+
             if (tiempoBloqueo != null && tiempoBloqueo.getTime() > System.currentTimeMillis()) {
                 long segundosRestantes = (tiempoBloqueo.getTime() - System.currentTimeMillis()) / 1000;
                 long minutosRestantes = segundosRestantes / 60;
-                
+
                 request.setAttribute("errorLogin", "Tu cuenta está bloqueada temporalmente. Intenta nuevamente en " + (minutosRestantes + 1) + " minutos.");
                 request.getRequestDispatcher("index.jsp").forward(request, response);
-                return; 
+                return;
             }
         }
-        
+
         Usuario usuario = usuarioDAO.login(correo, contra);
 
         if (usuario != null && usuario.isEstado()) {
-            
-            usuarioDAO.reiniciarIntentos(correo);  
+
+            usuarioDAO.reiniciarIntentos(correo);
 
             HttpSession sesion = request.getSession();
             sesion.setAttribute("usuario", usuario);
-
+            sesion.setAttribute("idRol", usuario.getIdRol());
             switch (usuario.getIdRol()) {
                 case 1: // Administrador
                     response.sendRedirect(contextPath + "/VistasWeb/VistasAdmin/AdminDash.jsp");
@@ -67,17 +67,17 @@ public class LoginServlet extends HttpServlet {
                     Cliente cliente = clienteDAO.buscarPorIdUsuario(usuario.getIdUsuario());
                     if (cliente != null) {
                         sesion.setAttribute("cliente", cliente);
-                        
+
                         // 🟢 CORRECCIÓN CLAVE 1: Usar el nombre de atributo correcto
                         // que espera el CitaServlet ("idClienteSesion")
-                        sesion.setAttribute("idClienteSesion", cliente.getIdCliente()); 
-                        
+                        sesion.setAttribute("idClienteSesion", cliente.getIdCliente());
+
                         sesion.setAttribute("NombreCliente", cliente.getNombre());
                     }
-                    
+
                     // 🟢 CORRECCIÓN CLAVE 2: Redirigir al CitaServlet
                     // Esto fuerza la ejecución del Servlet para que liste las citas
-                    response.sendRedirect(contextPath + "/CitaServlet?accion=listar"); 
+                    response.sendRedirect(contextPath + "/CitaServlet?accion=listar");
                     break;
 
                 default:
@@ -92,7 +92,7 @@ public class LoginServlet extends HttpServlet {
 
             if (usuarioInfo != null) {
                 int nuevosIntentos = usuarioDAO.incrementarIntentos(correo);
-                
+
                 if (nuevosIntentos >= MAX_INTENTOS) {
                     usuarioDAO.bloquearUsuario(correo, TIEMPO_BLOQUEO_MINUTOS);
                     mensajeError = "Demasiados intentos fallidos. Tu cuenta ha sido bloqueada por " + TIEMPO_BLOQUEO_MINUTOS + " minutos.";
@@ -100,7 +100,7 @@ public class LoginServlet extends HttpServlet {
                     mensajeError += " Te quedan " + (MAX_INTENTOS - nuevosIntentos) + " intentos.";
                 }
             }
-            
+
             request.setAttribute("errorLogin", mensajeError);
             request.getRequestDispatcher("index.jsp").forward(request, response);
         }
