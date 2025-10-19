@@ -53,6 +53,8 @@ public class LoginServlet extends HttpServlet {
 
             HttpSession sesion = request.getSession();
             sesion.setAttribute("usuario", usuario);
+            //  Guarda el ID de Rol para que el Filtro/JSP de seguridad lo lea.
+            sesion.setAttribute("idRol", usuario.getIdRol());
 
             switch (usuario.getIdRol()) {
                 case 1: // Administrador

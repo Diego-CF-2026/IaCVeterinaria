@@ -1,3 +1,4 @@
+<%@ include file="/proteger.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Modelo.Cliente"%>
 <%@page import="Modelo.Usuario"%>
