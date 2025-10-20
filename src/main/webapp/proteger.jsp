@@ -53,7 +53,7 @@
         // Si el Admin (ID_ADMIN) o el Recepcionista (ID_RECEPCIONISTA) no deben verlas, usa:
         // if (accedeCliente && idRol != ID_CLIENTE) { ...
         // Si deben, añade la excepción:
-        if (accedeCliente && idRol != ID_CLIENTE) {
+        if (accedeCliente && idRol != ID_CLIENTE && idRol != ID_ADMIN) {
             response.sendRedirect(contextPath + "/sin_permisos.jsp");
             return;
         }

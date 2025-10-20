@@ -26,23 +26,24 @@
                 HttpSession sesion = request.getSession(false);
                 String volverUrl = "index.jsp";
                 String btnTexto = "Volver al inicio";
-                
-                if (sesion != null) {
-                    if (sesion.getAttribute("username") != null) {
+
+                // Obtener el ID de Rol (ID_ADMIN=1, ID_RECEPCIONISTA=2, ID_CLIENTE=3)
+                Integer idRol = (sesion != null) ? (Integer) sesion.getAttribute("idRol") : null;
+
+                if (idRol != null) {
+                    if (idRol == 1) { // Asumiendo 1 es ADMIN
                         volverUrl = "VistasWeb/VistasAdmin/AdminDash.jsp";
                         btnTexto = "Volver al Panel de Administración";
-                    } 
-                    else if (sesion.getAttribute("usuario") != null) {
+                    } else if (idRol == 3) { // Asumiendo 3 es CLIENTE
                         volverUrl = "VistasWeb/VistasCliente/indexCliente.jsp";
                         btnTexto = "Volver a Mi Perfil";
-                    }
-                    else if (sesion.getAttribute("recepcionista") != null) {
+                    } else if (idRol == 2) { // Asumiendo 2 es RECEPCIONISTA
                         volverUrl = "VistasWeb/VistasRecep/RecepDash.jsp";
                         btnTexto = "Volver al Panel de Recepción";
                     }
                 }
             %>
-            
+
             <div class="mt-4">
                 <a href="<%= volverUrl %>" class="btn btn-primary btn-lg">
                     <%= btnTexto %>

@@ -79,7 +79,7 @@ public class LoginServlet extends HttpServlet {
                     
                     // 🟢 CORRECCIÓN CLAVE 2: Redirigir al CitaServlet
                     // Esto fuerza la ejecución del Servlet para que liste las citas
-                    response.sendRedirect(contextPath + "/CitaServlet?accion=listar"); 
+                    response.sendRedirect(contextPath + "/VistasWeb/VistasCliente/Nosotros.jsp"); 
                     break;
 
                 default:

@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import org.mindrot.jbcrypt.BCrypt; 
 
 public class UsuarioDAO {
     Connection con;
@@ -43,6 +44,11 @@ public class UsuarioDAO {
             throw new IllegalArgumentException("Teléfono no válido, debe empezar con 9 y tener 9 dígitos");
         }
         
+        // 🔑 Generar el hash de la contraseña usando BCrypt
+        String password_sin_hashear = usuario.getContra();
+        // BCrypt.gensalt() genera un salt aleatorio y BCrypt.hashpw() lo usa para crear el hash
+        String hashedPassword = BCrypt.hashpw(password_sin_hashear, BCrypt.gensalt());
+        
         // Se añade 'tiempo_bloqueo' con NULL por defecto en la inserción
         String sqlUsuario = "INSERT INTO Usuario(idRol, correo, contra, intentos, Estado, tiempo_bloqueo) VALUES (?, ?, ?, ?, ?, NULL)";
         String sqlCliente = "INSERT INTO Cliente(idUsuario, nombre, apellido, dni, telefono) VALUES (?, ?, ?, ?, ?)";
@@ -54,7 +60,10 @@ public class UsuarioDAO {
             ps = con.prepareStatement(sqlUsuario, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setInt(1, 3); // Rol cliente
             ps.setString(2, usuario.getCorreo());
-            ps.setString(3, usuario.getContra());
+            
+            // 🔒 USAR EL HASHED PASSWORD en lugar de la contraseña original
+            ps.setString(3, hashedPassword); 
+            
             ps.setInt(4, usuario.getIntentos()); // Por defecto debe ser 0
             ps.setBoolean(5, usuario.isEstado());
             ps.executeUpdate();
@@ -138,27 +147,33 @@ public class UsuarioDAO {
         
         String sql = "SELECT u.*, r.nombreRol FROM Usuario u " +
                      "INNER JOIN Rol r ON u.idRol = r.idRol " +
-                     "WHERE u.correo = ? AND u.contra = ?";
+                     "WHERE u.correo = ?";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
             ps.setString(1, correo);
-            ps.setString(2, contra);
+            // 🚫 Ya no hay ps.setString(2, contra) porque lo quitamos del SQL
             rs = ps.executeQuery();
             if (rs.next()) {
-                Usuario u = new Usuario();
-                u.setIdUsuario(rs.getInt("idUsuario"));
-                u.setIdRol(rs.getInt("idRol"));
-                u.setCorreo(rs.getString("correo"));
-                u.setContra(rs.getString("contra"));
-                u.setIntentos(rs.getInt("intentos"));
-                u.setEstado(rs.getBoolean("estado"));
-                u.setNombreRol(rs.getString("nombreRol"));
+                // 1. Obtener el hash almacenado
+                String hash_almacenado = rs.getString("contra");
                 
-                // Lectura del Timestamp
-                u.setTiempoBloqueo(rs.getTimestamp("tiempo_bloqueo")); 
+                if (BCrypt.checkpw(contra,hash_almacenado)){
+                    Usuario u = new Usuario();
+                    u.setIdUsuario(rs.getInt("idUsuario"));
+                    u.setIdRol(rs.getInt("idRol"));
+                    u.setCorreo(rs.getString("correo"));
+                    u.setContra(rs.getString("contra"));
+                    u.setIntentos(rs.getInt("intentos"));
+                    u.setEstado(rs.getBoolean("estado"));
+                    u.setNombreRol(rs.getString("nombreRol"));
+                    
+                    // Lectura del Timestamp
+                    u.setTiempoBloqueo(rs.getTimestamp("tiempo_bloqueo")); 
                 
-                return u;
+                    return u;
+                }
+                
             }
         } catch (Exception e) {
             System.out.println("Error login: " + e.getMessage());

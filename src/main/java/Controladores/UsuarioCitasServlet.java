@@ -66,7 +66,7 @@ public class UsuarioCitasServlet extends HttpServlet {
         request.setAttribute("mensaje", mensaje);
 
         // 5. Redirigir al JSP del formulario/listado de citas
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/VistasWeb/VistasCliente/citas.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/VistasWeb/VistasCliente/Citas.jsp");
         dispatcher.forward(request, response);
     }
 
