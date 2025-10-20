@@ -41,12 +41,12 @@ public class HistorialComprasServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("idCliente") == null) {
+        if (session == null || session.getAttribute("idClienteSesion") == null) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
 
-        int idCliente = (int) session.getAttribute("idCliente");
+        int idCliente = (int) session.getAttribute("idClienteSesion");
 
         // 🔹 obtener historial del cliente
         List<Carrito> historial = carritoDAO.obtenerHistorial(idCliente);

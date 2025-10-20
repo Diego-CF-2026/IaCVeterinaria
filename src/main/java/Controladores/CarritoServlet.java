@@ -35,12 +35,12 @@ public class CarritoServlet extends HttpServlet {
         String accion = request.getParameter("accion");
         
         HttpSession sesion = request.getSession(false);
-        if (sesion == null || sesion.getAttribute("idCliente") == null) {
+        if (sesion == null || sesion.getAttribute("idClienteSesion") == null) {
             response.setContentType("application/json");
             response.getWriter().write("{\"exito\": false, \"mensaje\":\"Usuario no logueado\"}");
             return;
         }
-        int idCliente = (int) sesion.getAttribute("idCliente");
+        int idCliente = (int) sesion.getAttribute("idClienteSesion");
 
         switch (accion) {
             case "agregar":
