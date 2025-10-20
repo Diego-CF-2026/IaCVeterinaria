@@ -21,38 +21,21 @@
         /* CONTENEDOR - TAMAÑO ESTÁNDAR */
         /* ======================================= */
         .perfil-container {
-            max-width: 1200px;
+            max-width: 80%;
             margin: 40px auto;
             display: flex;
-            background-color: white; 
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            justify-content: center;
         }
-        
-        .perfil-img {
-            flex: 0 0 40%;
-            max-width: 40%;
-            overflow: hidden;
-            border-radius: 10px 0 0 10px;
-        }
-        
+          
         .perfil-info { 
             flex: 0 0 60%;
-            max-width: 60%;
-            padding: 20px; 
-            background-color: #f7f9fa;
+            max-width: 100%;
+            padding: 10px; 
             border-radius: 0 10px 10px 0;
             padding-top: 20px; 
         }
-        
-        .perfil-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        
-        /* Título de la sección */
+            
         .perfil-title {
             display: flex;
             align-items: center;
@@ -61,7 +44,7 @@
         }
         .paw-img { width: 25px; height: 25px; } 
         
-        /* Contenedor Responsivo de la Tabla */
+
         .tabla-citas-wrapper { 
             overflow-x: auto; 
             width: 100%;
@@ -171,10 +154,7 @@
     <div id="sidebarOverlay"></div>
 
     <section class="perfil-container">
-        
-        <div class="perfil-img">
-            <img src="${pageContext.request.contextPath}/Recursos/perro.jpeg" alt="Foto de perfil">
-        </div>
+
 
         <div class="perfil-info">
             <div class="perfil-title">

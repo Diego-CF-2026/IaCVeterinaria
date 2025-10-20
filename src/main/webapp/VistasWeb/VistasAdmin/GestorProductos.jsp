@@ -45,13 +45,10 @@
                             <i class='bx bx-home-alt icon'></i><span class="text">General</span>
                         </a>
                     </li>
+
                     <li class="nav-link">
-                                <a href="<%= request.getContextPath()%>/AdminClienteServlet"><i class='bx bxs-calendar icon'>                           
-                            </i><span class="text">Clientes</span></a>
-                    </li>   
-     <li class="nav-link">
-    <a href="<%= request.getContextPath()%>/AdminEmpleadoServlet"><i class='bx bx-group icon'></i><span class="text">Empleados</span></a>
-</li>
+                       <a href="<%= request.getContextPath()%>/AdminEmpleadoServlet"><i class='bx bx-group icon'></i><span class="text">Veterinarios</span></a>
+                   </li>
                     <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/ProductoServlet?accion=listar&idProveedor=1">
                             <i class='bx bx-package icon'></i><span class="text">Productos</span>
