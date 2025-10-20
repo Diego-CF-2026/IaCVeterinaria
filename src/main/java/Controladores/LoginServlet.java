@@ -62,7 +62,7 @@ public class LoginServlet extends HttpServlet {
                     break;
 
                 case 2: // Recepcionista
-                    response.sendRedirect(contextPath + "/CitaServlet");
+                    response.sendRedirect(contextPath + "/VistasWeb/VistasRecep/RecepDash.jsp");
                     break;
 
                 case 3: // Cliente
