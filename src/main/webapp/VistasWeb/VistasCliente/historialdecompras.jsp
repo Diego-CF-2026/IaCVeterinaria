@@ -311,7 +311,7 @@
 
   <!-- HISTORIAL -->
   <div class="historial-container">
-    <h2>Carrito</h2>
+    <h2>Carrito de compras</h2>
 
     <%
       List<Carrito> historial = (List<Carrito>) request.getAttribute("historialCompras");
