@@ -44,7 +44,7 @@ public class UsuarioDAO {
             throw new IllegalArgumentException("Teléfono no válido, debe empezar con 9 y tener 9 dígitos");
         }
         
-        // 🔑 Generar el hash de la contraseña usando BCrypt
+        // Generar el hash de la contraseña usando BCrypt
         String password_sin_hashear = usuario.getContra();
         // BCrypt.gensalt() genera un salt aleatorio y BCrypt.hashpw() lo usa para crear el hash
         String hashedPassword = BCrypt.hashpw(password_sin_hashear, BCrypt.gensalt());
@@ -61,7 +61,7 @@ public class UsuarioDAO {
             ps.setInt(1, 3); // Rol cliente
             ps.setString(2, usuario.getCorreo());
             
-            // 🔒 USAR EL HASHED PASSWORD en lugar de la contraseña original
+            // USAR EL HASHED PASSWORD en lugar de la contraseña original
             ps.setString(3, hashedPassword); 
             
             ps.setInt(4, usuario.getIntentos()); // Por defecto debe ser 0
@@ -152,7 +152,6 @@ public class UsuarioDAO {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
             ps.setString(1, correo);
-            // 🚫 Ya no hay ps.setString(2, contra) porque lo quitamos del SQL
             rs = ps.executeQuery();
             if (rs.next()) {
                 // 1. Obtener el hash almacenado
@@ -167,8 +166,6 @@ public class UsuarioDAO {
                     u.setIntentos(rs.getInt("intentos"));
                     u.setEstado(rs.getBoolean("estado"));
                     u.setNombreRol(rs.getString("nombreRol"));
-                    
-                    // Lectura del Timestamp
                     u.setTiempoBloqueo(rs.getTimestamp("tiempo_bloqueo")); 
                 
                     return u;

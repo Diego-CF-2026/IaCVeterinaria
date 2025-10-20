@@ -19,12 +19,7 @@ import java.util.logging.Logger;
 public class CitaDAO {
 
     private static final Logger LOGGER = Logger.getLogger(CitaDAO.class.getName());
-
-    // ⚠️ Importante: Define el ID de estado para "Cancelada" (AJUSTA ESTE VALOR según tu tabla 'estado')
-    // Asumimos que ID_ESTADO_PENDIENTE = 1 y ID_ESTADO_CANCELADA = 3.
-    private static final int ID_ESTADO_CANCELADA = 3; 
-
-    // SQL: Actualiza el estado a Cancelada (ID_ESTADO_CANCELADA) solo si el estado actual es Pendiente (ID 1)
+    private static final int ID_ESTADO_CANCELADA = 3;
     private static final String SQL_CANCELAR_CITA = 
             "UPDATE citas SET idEstado = ? WHERE idCita = ? AND idEstado = 1"; 
     
@@ -82,7 +77,7 @@ public class CitaDAO {
     }
 
     /**
-     * ⚠️ MÉTODO NUEVO: Cambia el estado de una cita de 'Pendiente' a 'Cancelada'.
+     * ️ MÉTODO NUEVO: Cambia el estado de una cita de 'Pendiente' a 'Cancelada'.
      */
     public boolean cancelarCita(int idCita) {
         
@@ -112,7 +107,7 @@ public class CitaDAO {
     }
 
 // ---------------------------------------------------------------------
-// 🎯 SECCIÓN MODIFICADA: listarCitasPorCliente
+//  SECCIÓN MODIFICADA: listarCitasPorCliente
 // ---------------------------------------------------------------------
 
     /**
@@ -149,7 +144,7 @@ public class CitaDAO {
     }
 
 // ---------------------------------------------------------------------
-// 🎯 SECCIÓN MODIFICADA: mapearCita
+//  SECCIÓN MODIFICADA: mapearCita
 // ---------------------------------------------------------------------
 
     /**
@@ -187,7 +182,7 @@ public class CitaDAO {
     }
 
 // ---------------------------------------------------------------------
-// ⚠️ NO MODIFICADA: obtenerCitaPorId (Añade el precio si lo necesitas aquí también)
+// ️ NO MODIFICADA: obtenerCitaPorId (Añade el precio si lo necesitas aquí también)
 // ---------------------------------------------------------------------
 
     /**
