@@ -140,14 +140,6 @@
     </style>
 </head>
 <body>
-    
-    <%-- ********************************************************** --%>
-    <p style="color: blue; font-weight: bold; background-color: #f0f8ff; padding: 10px;">
-        DEBUG: ID Sesión: <c:out value="${sessionScope.idClienteSesion}" default="[ERROR DE SESIÓN]"/> | 
-        ¿Lista Vacía?: ${empty misCitas} | 
-        Tamaño: ${fn:length(misCitas)}
-    </p>
-    <%-- ********************************************************** --%>
 
     <nav class="navbar">
         <div class="logo-container">
@@ -172,7 +164,7 @@
     <div id="sidebarPerfil" class="sidebar-perfil" role="dialog" aria-modal="true" aria-labelledby="perfilTitle">
         <h2 id="perfilTitle">Mi Perfil</h2>
         <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/MiPerfil.jsp">Mi perfil</a>
-        <a href="${pageContext.request.contextPath}/HistorialComprasServlet">Historial de compras/servicios</a>
+        <a href="${pageContext.request.contextPath}/HistorialComprasServlet">Carrito</a>
         <a href="${pageContext.request.contextPath}/CitaServlet?accion=listar" class="active-link">Citas agendadas</a> 
         <a href="${pageContext.request.contextPath}/LogoutServlet">Cerrar sesión</a>
     </div>

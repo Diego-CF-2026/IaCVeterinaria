@@ -135,7 +135,7 @@
 <div id="sidebarPerfil" class="sidebar-perfil" role="dialog" aria-modal="true" aria-labelledby="perfilTitle">
     <h2 id="perfilTitle">Mi Perfil</h2>
     <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/MiPerfil.jsp">Mi perfil</a>
-    <a href="${pageContext.request.contextPath}/HistorialComprasServlet">Historial de compras/servicios</a>
+    <a href="${pageContext.request.contextPath}/HistorialComprasServlet">Carrito</a>
     <a href="${pageContext.request.contextPath}/UsuarioMisCitasServlet">Citas agendadas</a>
     <a href="${pageContext.request.contextPath}/LogoutServlet">Cerrar sesión</a>
 </div>

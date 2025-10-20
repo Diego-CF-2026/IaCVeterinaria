@@ -10,66 +10,136 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Historial de Compras - Veterinaria</title>
+  <title>Carrito - Veterinaria</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/accesorios.css">
   <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
 
     .historial-container {
-      max-width: 700px;
-      margin: 40px auto 0 auto;
-      background: #fff;
+      max-width: 850px;
+      margin: 50px auto;
+      background: #ffffff;
       border-radius: 18px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-      padding: 2.5rem 2.2rem 2rem 2.2rem;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+      padding: 2.5rem 2rem;
+      font-family: "Poppins", sans-serif;
     }
+
     .historial-container h2 {
       text-align: center;
       margin-bottom: 1.8rem;
       font-size: 2rem;
       font-weight: 700;
       color: #2bb673;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
     }
-    .historial-lista {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+
+    /* ======= TABLA DE PRODUCTOS ======= */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.8rem;
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #fefefe;
     }
-    .historial-lista li {
-      background: #f6f6f6;
-      margin-bottom: 15px;
-      border-radius: 9px;
-      padding: 1.1rem 1.4rem;
-      font-size: 1.13rem;
+
+    thead {
+      background: linear-gradient(90deg, #2bb673, #22a164);
+      color: white;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: center;
+      font-size: 0.96rem;
+    }
+
+    th {
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f7f7f7;
+    }
+
+    tbody tr:hover {
+      background-color: #eefaf2;
+      transition: background 0.3s ease;
+    }
+
+    /* Botones de sumar/restar/eliminar */
+    td button {
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      border: none;
+      background: none;
+    }
+
+    td button:hover {
+      transform: scale(1.3);
+    }
+
+    /* ======= TOTAL ======= */
+    tr:last-child td {
+      border-top: 2px solid #2bb673;
+    }
+
+    td[colspan="3"] {
+      text-align: right;
+      font-weight: 600;
       color: #333;
-      font-weight: 500;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-      display: flex;
-      align-items: center;
-      gap: 12px;
     }
-    .historial-lista li .icon {
+
+    td[style*="font-weight:bold;"] {
       color: #2bb673;
-      font-size: 1.3em;
+      font-weight: 700 !important;
     }
-    .btn-regresar {
-      background: #777;
+
+    /* ======= BOTÓN CONFIRMAR ======= */
+    .btn-confirmar {
+      display: block;
+      width: 100%;
+      background: linear-gradient(90deg, #2bb673, #22a164);
       color: #fff;
       border: none;
-      padding: .7rem 1.3rem;
-      border-radius: 7px;
-      cursor: pointer;
+      padding: 0.9rem 1.3rem;
+      border-radius: 10px;
       font-weight: 600;
       font-size: 1rem;
-      margin-top: 1.2rem;
-      transition: background 0.2s;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
+      cursor: pointer;
+      margin-top: 0.8rem;
+      box-shadow: 0 4px 10px rgba(43, 182, 115, 0.25);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
     }
+
+    .btn-confirmar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(43, 182, 115, 0.35);
+    }
+
+    /* ======= BOTÓN REGRESAR ======= */
+    .btn-regresar {
+      display: block;
+      width: fit-content;
+      margin: 2rem auto 0;
+      background: #555;
+      color: #fff;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
     .btn-regresar:hover {
-      background: #444;
+      background: #333;
+      transform: translateY(-2px);
     }
 
     .sidebar-perfil {
@@ -119,66 +189,99 @@
       border-bottom: 2px solid #000;
       font-weight: 600;
     }
-    
+
     .modal {
-    display: none; 
-    position: fixed;
-    z-index: 3000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4); 
-    justify-content: center;
-    align-items: center;    
-  }
+      display: none;
+      position: fixed;
+      z-index: 3000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(2px);
+    }
 
-  .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    width: 400px;
-    max-width: 90%;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    animation: fadeIn 0.3s ease;
-  }
+    .modal-content {
+      background-color: #ffffff;
+      padding: 25px 30px;
+      border-radius: 14px;
+      width: 420px;
+      max-width: 90%;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.35s ease;
+      text-align: center;
+    }
 
-  .modal-header {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #2bb673;
-  }
+    .modal-header {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: #2bb673;
+    }
 
-  .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-    gap: 10px;
-  }
+    .modal p {
+      color: #444;
+      font-size: 1rem;
+    }
 
-  .modal-footer button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-  }
+    .modal select {
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      transition: border-color 0.2s;
+    }
 
-  .modal-footer button[type="button"] {
-    background: #ccc;
-  }
+    .modal select:focus {
+      border-color: #2bb673;
+    }
 
-  .modal-footer button[type="submit"] {
-    background: #2bb673;
-    color: white;
-  }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 25px;
+      gap: 10px;
+    }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+    .modal-footer button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .modal-footer button[type="button"] {
+      background: #ccc;
+      color: #333;
+    }
+
+    .modal-footer button[type="button"]:hover {
+      background: #aaa;
+    }
+
+    .modal-footer button[type="submit"] {
+      background: #2bb673;
+      color: white;
+      box-shadow: 0 3px 10px rgba(43, 182, 115, 0.3);
+    }
+
+    .modal-footer button[type="submit"]:hover {
+      background: #1f9b5e;
+    }
+
+    /* Animación */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -208,7 +311,7 @@
 
   <!-- HISTORIAL -->
   <div class="historial-container">
-    <h2>Historial de Compras</h2>
+    <h2>Carrito</h2>
 
     <%
       List<Carrito> historial = (List<Carrito>) request.getAttribute("historialCompras");
