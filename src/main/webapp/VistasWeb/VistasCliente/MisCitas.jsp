@@ -57,7 +57,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 15px; 
+            margin: 15px; 
         }
         .paw-img { width: 25px; height: 25px; } 
         
@@ -65,7 +65,7 @@
         .tabla-citas-wrapper { 
             overflow-x: auto; 
             width: 100%;
-            margin-top: 15px; 
+            margin-top: 1px; 
         }
         
         /* ======================================= */
@@ -102,9 +102,9 @@
         .citas-listado th:nth-child(2), .citas-listado td:nth-child(2) { width: 10%; } /* Fecha: 10% */
         .citas-listado th:nth-child(3), .citas-listado td:nth-child(3) { width: 7%; text-align: center; } /* Hora: 7% */
         .citas-listado th:nth-child(4), .citas-listado td:nth-child(4) { width: 17%; } /* Motivo: 17% */
-        .citas-listado th:nth-child(5), .citas-listado td:nth-child(5) { width: 17%; } /* Veterinario: 17% */
-        .citas-listado th:nth-child(6), .citas-listado td:nth-child(6) { width: 17%; } /* Precio: 17% */
-        .citas-listado th:nth-child(7), .citas-listado td:nth-child(7) { width: 13%; text-align: center; } /* Estado: 13% */
+        .citas-listado th:nth-child(5), .citas-listado td:nth-child(5) { width: 12%; } /* Veterinario: 17% */
+        .citas-listado th:nth-child(6), .citas-listado td:nth-child(6) { width: 10%; text-align: right; font-weight: bold; } /* 💰 PRECIO: 10% (Cambiado de 17% a 10%) */
+        .citas-listado th:nth-child(7), .citas-listado td:nth-child(7) { width: 10%; text-align: center; } /* Estado: 13% */
         .citas-listado th:nth-child(8), .citas-listado td:nth-child(8) { width: 15%; text-align: center; } /* Acción: 15% */
 
 
@@ -217,27 +217,41 @@
                                     <th>Hora</th>
                                     <th>Motivo</th>
                                     <th>Veterinario</th>
+                                    <th>Precio</th>
                                     <th>Estado</th>
                                     <th>Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach var="cita" items="${misCitas}">
-                                    <tr>
-                                        <td><c:out value="${cita.idCita}" /></td>
-                                        <td><c:out value="${cita.fecha}" /></td>
-                                        <td><c:out value="${fn:substring(cita.hora, 0, 5)}" /></td>
-                                        <td><c:out value="${cita.motivo}" /></td>
-                                        <td>Dr/a. <c:out value="${cita.nombreVeterinario} ${cita.apellidoVeterinario}" /></td> 
-                                        <td>
-                                            <span class="estado-<c:out value="${cita.estadoNombre}" />">
-                                                <c:out value="${cita.estadoNombre}" />
-                                            </span>
+                                    <tr>
+                                        <td><c:out value="${cita.idCita}" /></td>
+                                        <td><c:out value="${cita.fecha}" /></td>
+                                        <td><c:out value="${fn:substring(cita.hora, 0, 5)}" /></td>
+                                        <td><c:out value="${cita.motivo}" /></td>
+                                        <td>Dr/a. <c:out value="${cita.nombreVeterinario} ${cita.apellidoVeterinario}" /></td> 
+                                        <td style="text-align: right;">
+                                            <c:choose>
+                                                <c:when test="${cita.precio > 0}">
+                                                    S/. <c:out value="${cita.precio}" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span style="color: #6c757d;">Consultar</span>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
+                                        <td>
+                                            <span class="estado-<c:out value="${cita.estadoNombre}" />">
+                                                <c:out value="${cita.estadoNombre}" />
+                                            </span>
+                                        </td>
                                         <td>
                                             <c:choose>
+                                                <%-- La condición CLAVE: ¿El estado es EXACTAMENTE 'Pendiente'? --%>
                                                 <c:when test="${cita.estadoNombre eq 'Pendiente'}">
-                                                    <a href="${pageContext.request.contextPath}/CitaServlet?accion=eliminar&id=${cita.idCita}" class="btn-cancelar" onclick="return confirm('¿Estás seguro de que deseas cancelar esta cita?');">
+                                                    <a href="${pageContext.request.contextPath}/CitaServlet?accion=eliminar&id=${cita.idCita}" 
+                                                       class="btn-cancelar" 
+                                                       onclick="return confirm('¿Estás seguro de que deseas cancelar esta cita?');">
                                                         Cancelar
                                                     </a>
                                                 </c:when>
@@ -245,12 +259,12 @@
                                                     <span style="color:#6c757d; font-size: 0.8rem;">No cancelable</span>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <span style="color:#6c757d;">-</span>
+                                                    <span style="color:#6c757d;">-</span> <%-- Para Cancelado / Finalizado --%>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
                                     </tr>
-                                </c:forEach>
+                                </c:forEach>
                             </tbody>
                         </table>
                     </div>

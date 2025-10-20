@@ -12,7 +12,7 @@ public class Cita {
     private String motivo;
     private int idEstado; // Nuevo atributo para el estado de la cita
     private String estadoNombre;
-
+    private double precio;
     // Atributos para los detalles del cliente y veterinario (no están en la tabla Citas, pero se obtienen por JOIN)
     private String nombreCliente;
     private String apellidoCliente;
@@ -158,4 +158,11 @@ public class Cita {
         this.especialidadVeterinario = especialidadVeterinario;
     }
     
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
 }

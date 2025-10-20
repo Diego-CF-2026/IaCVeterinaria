@@ -1,8 +1,8 @@
 package Controladores;
 
 import Modelo.Cita;
-import Modelo.Cliente; 
-import Modelo.Veterinario; 
+import Modelo.Cliente;
+import Modelo.Veterinario;
 import ModeloDAO.CitaDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,15 +10,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Date; 
-import java.sql.Time; 
-import java.text.ParseException; 
+import java.sql.Date;
+import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@WebServlet("/CitaServlet") 
+@WebServlet("/CitaServlet")
 public class CitaServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(CitaServlet.class.getName());
@@ -26,8 +26,8 @@ public class CitaServlet extends HttpServlet {
     CitaDAO citaDAO = new CitaDAO();
 
     // Formateadores para parsear y formatear Date y Time
-    private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd"); 
-    private static final SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("HH:mm");       
+    private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("HH:mm");
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -46,7 +46,8 @@ public class CitaServlet extends HttpServlet {
                 verCita(request, response);
                 break;
             case "eliminar":
-                eliminarCita(request, response);
+                // ⚠️ ESTE MÉTODO AHORA CANCELA LA CITA POR CAMBIO DE ESTADO
+                cancelarCita(request, response); 
                 break;
             case "verCitasCliente": // Usado por el rol Recepcionista
                 verCitasCliente(request, response);
@@ -63,17 +64,17 @@ public class CitaServlet extends HttpServlet {
         String accion = request.getParameter("accion");
 
         switch (accion) {
-            case "guardar": 
+            case "guardar":
                 guardarCita(request, response);
                 break;
-            case "actualizar": 
-                actualizarCita(request, response); 
+            case "actualizar":
+                actualizarCita(request, response);
                 break;
-            case "crearCita": 
+            case "crearCita":
                 crearCitaDesdeCliente(request, response);
                 break;
             default:
-                response.sendRedirect(request.getContextPath() + "/CitaServlet"); 
+                response.sendRedirect(request.getContextPath() + "/CitaServlet");
                 break;
         }
     }
@@ -85,7 +86,7 @@ public class CitaServlet extends HttpServlet {
             throws ServletException, IOException {
 
         Integer idCliente = null;
-        jakarta.servlet.http.HttpSession sesion = request.getSession(false); 
+        jakarta.servlet.http.HttpSession sesion = request.getSession(false);
 
         // 1. OBTENER Y CASTELLAR ID DE SESIÓN
         if (sesion != null) {
@@ -105,10 +106,10 @@ public class CitaServlet extends HttpServlet {
         }
 
         // 2. MANEJAR CASO SIN ID DE CLIENTE
-        if (idCliente == null || idCliente <= 0) { 
+        if (idCliente == null || idCliente <= 0) {
             LOGGER.log(Level.WARNING, "ID de Cliente no disponible o inválido en sesión.");
             request.getSession().setAttribute("mensaje", "⚠️ Debes iniciar sesión para ver tus citas.");
-            response.sendRedirect(request.getContextPath() + "/index.jsp");  
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
         }
 
@@ -123,7 +124,7 @@ public class CitaServlet extends HttpServlet {
             }
 
             // 4. COLOCAR DATOS en el request y hacer el forward
-            request.setAttribute("listaCitas", misCitas); 
+            request.setAttribute("misCitas", misCitas); // ⚠️ CAMBIO: Usamos 'misCitas' para coincidir con el JSP
             String urlVista = "/VistasWeb/VistasCliente/MisCitas.jsp";
 
             request.getRequestDispatcher(urlVista).forward(request, response);
@@ -143,14 +144,12 @@ public class CitaServlet extends HttpServlet {
         if (idStr != null) {
             try {
                 int idCita = Integer.parseInt(idStr);
-                Cita citaSeleccionada = citaDAO.obtenerCitaPorId(idCita);    
+                Cita citaSeleccionada = citaDAO.obtenerCitaPorId(idCita);
                 request.setAttribute("citaSeleccionada", citaSeleccionada);
 
                 request.setAttribute("listaClientes", citaDAO.listarClientesParaDropdown());
                 request.setAttribute("listaVeterinarios", citaDAO.listarVeterinariosParaDropdown());
 
-                // Se asume que redirigirás a una página JSP para ver/editar la cita, 
-                // por lo que se debe usar forward.
                 request.getRequestDispatcher("/VistasWeb/VistasAdmin/editarCita.jsp").forward(request, response);
 
             } catch (NumberFormatException e) {
@@ -175,22 +174,21 @@ public class CitaServlet extends HttpServlet {
 
         try {
             java.util.Date parsedDate = DATE_FORMATTER.parse(fechaStr);
-            cita.setFecha(new Date(parsedDate.getTime())); 
+            cita.setFecha(new Date(parsedDate.getTime()));
 
             java.util.Date parsedTime = TIME_FORMATTER.parse(horaStr);
-            cita.setHora(new Time(parsedTime.getTime())); 
+            cita.setHora(new Time(parsedTime.getTime()));
 
         } catch (ParseException e) {
             LOGGER.log(Level.SEVERE, "Error al parsear fecha/hora al agregar la cita: " + e.getMessage(), e);
             request.getSession().setAttribute("mensaje", "❌ Error en el formato de fecha/hora al agregar.");
             request.getSession().setAttribute("tipoMensaje", "error");
-            response.sendRedirect(request.getContextPath() + "/CitaServlet"); 
+            response.sendRedirect(request.getContextPath() + "/CitaServlet");
             return;
         }
 
         cita.setMotivo(request.getParameter("motivo"));
-        // ❌ CORRECCIÓN CRÍTICA: setEstado se cambia por setEstadoNombre
-        cita.setEstadoNombre(request.getParameter("estado")); 
+        cita.setEstadoNombre(request.getParameter("estado"));
 
         boolean operacionExitosa = citaDAO.agregarCita(cita);
         if (operacionExitosa) {
@@ -238,7 +236,6 @@ public class CitaServlet extends HttpServlet {
         }
 
         cita.setMotivo(request.getParameter("motivo"));
-        // ❌ CORRECCIÓN CRÍTICA: setEstado se cambia por setEstadoNombre
         cita.setEstadoNombre(request.getParameter("estado"));
 
         boolean operacionExitosa = citaDAO.actualizarCita(cita);
@@ -272,14 +269,13 @@ public class CitaServlet extends HttpServlet {
             LOGGER.log(Level.SEVERE, "Error al parsear fecha/hora de la cita desde modal Cliente: " + e.getMessage(), e);
             request.getSession().setAttribute("mensaje", "❌ Error en el formato de fecha/hora de la cita.");
             request.getSession().setAttribute("tipoMensaje", "error");
-            response.sendRedirect(request.getContextPath() + "/ClienteRServlet");  // Asumiendo que ClienteRServlet es la vista de gestión
+            response.sendRedirect(request.getContextPath() + "/ClienteRServlet");
             return;
         }
         cita.setMotivo(request.getParameter("motivo"));
         
-        // ❌ CORRECCIÓN CRÍTICA: setEstado se cambia por setEstadoNombre
         // Se establece el estado inicial por defecto ("Pendiente").
-        cita.setEstadoNombre("Pendiente"); 
+        cita.setEstadoNombre("Pendiente");
 
         boolean agregada = citaDAO.agregarCita(cita);
         if (agregada) {
@@ -289,47 +285,66 @@ public class CitaServlet extends HttpServlet {
             request.getSession().setAttribute("mensaje", "❌ Error al crear la cita. Verifique IDs o conexión.");
             request.getSession().setAttribute("tipoMensaje", "error");
         }
-        response.sendRedirect(request.getContextPath() + "/ClienteRServlet"); 
+        response.sendRedirect(request.getContextPath() + "/ClienteRServlet");
     }
 
-    private void eliminarCita(HttpServletRequest request, HttpServletResponse response)
+    /**
+     * MÉTODO DE CANCELACIÓN (Reemplaza al antiguo 'eliminarCita')
+     * Actualiza el estado de la cita a 'Cancelada' en lugar de eliminar el registro.
+     */
+    private void cancelarCita(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int idCita = Integer.parseInt(request.getParameter("id"));
-        int resultado = citaDAO.eliminarCita(idCita);
+        
+        String idCitaStr = request.getParameter("id");
+        int idCita;
 
-        switch (resultado) {
-            case 1:
-                request.getSession().setAttribute("mensaje", "✅ Cita eliminada con éxito.");
-                request.getSession().setAttribute("tipoMensaje", "exito"); 
-                break;
-            case -1:
-                request.getSession().setAttribute("mensaje", "⚠️ No se encontró la cita a eliminar.");
+        try {
+            idCita = Integer.parseInt(idCitaStr);
+            
+            // ⚠️ Llama al método del DAO que debe actualizar el idEstado a CANCELADA (ej. ID 3)
+            boolean exito = citaDAO.cancelarCita(idCita); 
+            
+            // 2. Prepara el mensaje de respuesta
+            if (exito) {
+                request.getSession().setAttribute("mensaje", "✅ La cita N° " + idCita + " ha sido cancelada correctamente.");
+                request.getSession().setAttribute("tipoMensaje", "exito");
+            } else {
+                // Esto puede ocurrir si la cita no existía, o si el DAO falló, o si ya no estaba "Pendiente".
+                request.getSession().setAttribute("mensaje", "⚠️ No se pudo cancelar la cita N° " + idCita + ". Verifique su estado.");
                 request.getSession().setAttribute("tipoMensaje", "advertencia");
-                break;
-            case 0:
-            case -2:
-            default:
-                request.getSession().setAttribute("mensaje", "❌ Error al eliminar la cita.");
-                request.getSession().setAttribute("tipoMensaje", "error");
-                break;
+            }
+            
+        } catch (NumberFormatException e) {
+            // Manejo de error si el ID no es un número
+            LOGGER.log(Level.WARNING, "ID de cita inválido para cancelar: " + idCitaStr, e);
+            request.getSession().setAttribute("mensaje", "❌ Error: ID de cita no válido.");
+            request.getSession().setAttribute("tipoMensaje", "error");
+        } catch (Exception e) {
+            // Manejo de errores generales del DAO o DB
+            LOGGER.log(Level.SEVERE, "Error al procesar la cancelación de cita ID: " + idCitaStr, e);
+            request.getSession().setAttribute("mensaje", "❌ Error interno al procesar la cancelación.");
+            request.getSession().setAttribute("tipoMensaje", "error");
         }
-        response.sendRedirect(request.getContextPath() + "/CitaServlet"); 
+        
+        // 3. Redireccionar de vuelta a la lista de citas del cliente
+        response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=listar");
     }
-
+    
+    // El método 'verCitasCliente' se deja sin cambios.
     private void verCitasCliente(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         String idClienteStr = request.getParameter("idCliente");
-        String acceso = "/VistasWeb/VistasRecep/CitasCliente.jsp"; 
+        String acceso = "/VistasWeb/VistasRecep/CitasCliente.jsp";
 
         try {
             if (idClienteStr != null && !idClienteStr.isEmpty()) {
                 int idCliente = Integer.parseInt(idClienteStr.trim());
                 
-                List<Cita> citas = citaDAO.listarCitasPorCliente(idCliente); 
+                List<Cita> citas = citaDAO.listarCitasPorCliente(idCliente);
                 
                 request.setAttribute("citasCliente", citas);
-                request.setAttribute("idClienteSeleccionado", idCliente); 
+                request.setAttribute("idClienteSeleccionado", idCliente);
                 
                 // Muestra el nombre del cliente si hay citas
                 if (!citas.isEmpty()) {
@@ -340,7 +355,7 @@ public class CitaServlet extends HttpServlet {
                 }
             } else {
                 request.setAttribute("error", "ID de Cliente no proporcionado.");
-                acceso = "/VistasWeb/VistasRecep/GestionCitas.jsp"; 
+                acceso = "/VistasWeb/VistasRecep/GestionCitas.jsp";
             }
         } catch (NumberFormatException e) {
             request.setAttribute("error", "ID de Cliente inválido.");

@@ -20,9 +20,14 @@ public class CitaDAO {
 
     private static final Logger LOGGER = Logger.getLogger(CitaDAO.class.getName());
 
-    // NOTA IMPORTANTE: Se eliminaron los atributos de clase (con, ps, rs) 
-    // y el método closeResources para asegurar la seguridad en entornos multihilo.
+    // ⚠️ Importante: Define el ID de estado para "Cancelada" (AJUSTA ESTE VALOR según tu tabla 'estado')
+    // Asumimos que ID_ESTADO_PENDIENTE = 1 y ID_ESTADO_CANCELADA = 3.
+    private static final int ID_ESTADO_CANCELADA = 3; 
 
+    // SQL: Actualiza el estado a Cancelada (ID_ESTADO_CANCELADA) solo si el estado actual es Pendiente (ID 1)
+    private static final String SQL_CANCELAR_CITA = 
+            "UPDATE citas SET idEstado = ? WHERE idCita = ? AND idEstado = 1"; 
+    
     /**
      * Registra una nueva cita en la base de datos.
      * Utiliza EstadoDAO para obtener el idEstado "Pendiente".
@@ -77,18 +82,54 @@ public class CitaDAO {
     }
 
     /**
-     * Lista todas las citas de un cliente específico, incluyendo nombre del veterinario y estado.
+     * ⚠️ MÉTODO NUEVO: Cambia el estado de una cita de 'Pendiente' a 'Cancelada'.
+     */
+    public boolean cancelarCita(int idCita) {
+        
+        // Uso de try-with-resources para asegurar el cierre automático
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(SQL_CANCELAR_CITA)) {
+
+            ps.setInt(1, ID_ESTADO_CANCELADA); // Nuevo estado: Cancelada
+            ps.setInt(2, idCita);
+            
+            // executeUpdate devuelve el número de filas afectadas
+            int filasAfectadas = ps.executeUpdate();
+            
+            if (filasAfectadas > 0) {
+                LOGGER.log(Level.INFO, "✅ Éxito: Cita ID {0} cancelada (estado cambiado a {1}).", new Object[]{idCita, ID_ESTADO_CANCELADA});
+            } else {
+                // Esto podría significar que la cita ya estaba Cancelada/Confirmada o que el ID no existe.
+                LOGGER.log(Level.WARNING, "⚠️ Advertencia: No se pudo cancelar la cita ID {0}. 0 filas afectadas.", idCita);
+            }
+            
+            return filasAfectadas > 0;
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "❌ ERROR SQL al intentar cancelar cita ID " + idCita, e);
+            return false;
+        }
+    }
+
+// ---------------------------------------------------------------------
+// 🎯 SECCIÓN MODIFICADA: listarCitasPorCliente
+// ---------------------------------------------------------------------
+
+    /**
+     * Lista todas las citas de un cliente específico, incluyendo nombre del veterinario, estado y precio.
      */
     public List<Cita> listarCitasPorCliente(int idCliente) {
         List<Cita> lista = new ArrayList<>();
         
-        // El SELECT requiere alias y JOINs para obtener los detalles
-        String sql = "SELECT c.*, v.nombreVeterinario, v.apellidoVeterinario, e.tipoEstado "
+        // El SELECT requiere alias y JOINs. Se usa LEFT JOIN para el precio y asegurar que las citas se muestren.
+        String sql = "SELECT c.*, v.nombreVeterinario, v.apellidoVeterinario, e.tipoEstado, " 
+                   + "esp.precio AS precioEspecialidad " 
                    + "FROM citas c " 
                    + "JOIN veterinario v ON c.idVeterinario = v.idVeterinario "
-                   + "JOIN estado e ON c.idEstado = e.idEstado " // Une para obtener el nombre del estado
+                   + "JOIN estado e ON c.idEstado = e.idEstado "
+                   + "LEFT JOIN especialidad esp ON v.idEspecialidad = esp.idEspecialidad " 
                    + "WHERE c.idCliente = ? "
-                   + "ORDER BY c.fecha DESC, c.hora DESC";
+                   + "ORDER BY c.idCita ASC"; // ⬅️ ¡CAMBIO REALIZADO AQUÍ!
 
         try (Connection con = Conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -107,29 +148,35 @@ public class CitaDAO {
         return lista;
     }
 
+// ---------------------------------------------------------------------
+// 🎯 SECCIÓN MODIFICADA: mapearCita
+// ---------------------------------------------------------------------
+
     /**
      * Método auxiliar para mapear un ResultSet a un objeto Cita.
-     * Mapea el nombre del estado a 'estadoNombre'.
+     * Ahora mapea el precio de la especialidad.
      */
     private Cita mapearCita(ResultSet rs) throws SQLException {
         Cita c = new Cita();
 
         try {
-            // Mapeo de columnas de la tabla Citas
+            // ... (Mapeo de Citas, Veterinario y Estado existente)
             c.setIdCita(rs.getInt("idCita"));
             c.setIdCliente(rs.getInt("idCliente"));
             c.setIdVeterinario(rs.getInt("idVeterinario"));
             c.setFecha(rs.getDate("fecha"));
             c.setHora(rs.getTime("hora"));
             c.setMotivo(rs.getString("motivo"));
-            
-            // CORREGIDO: Mapea el idEstado y el nombre del estado
-            c.setIdEstado(rs.getInt("idEstado")); // Se asume que el SELECT tiene c.*
-            c.setEstadoNombre(rs.getString("tipoEstado")); // CORREGIDO: Usa el campo 'tipoEstado' y el setter correcto
 
-            // Mapeo de las columnas del JOIN Veterinario
+            c.setIdEstado(rs.getInt("idEstado"));
+            c.setEstadoNombre(rs.getString("tipoEstado")); 
+
             c.setNombreVeterinario(rs.getString("nombreVeterinario"));    
             c.setApellidoVeterinario(rs.getString("apellidoVeterinario"));    
+
+            // 💡 NUEVO: Mapeo del Precio de la Especialidad
+            // Debe coincidir con el alias en el SELECT: 'precioEspecialidad'
+            c.setPrecio(rs.getDouble("precioEspecialidad")); // ⬅️ Se usa el alias del SELECT
 
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "❌ ERROR FATAL en mapearCita. Revise si las columnas SQL coinciden con el mapeo.", e);
@@ -139,11 +186,16 @@ public class CitaDAO {
         return c;
     }
 
+// ---------------------------------------------------------------------
+// ⚠️ NO MODIFICADA: obtenerCitaPorId (Añade el precio si lo necesitas aquí también)
+// ---------------------------------------------------------------------
+
     /**
      * Obtiene una cita por su ID.
      */
     public Cita obtenerCitaPorId(int id) {
         Cita cita = null;
+        // ⚠️ Si necesitas el precio aquí, debes añadir el LEFT JOIN a especialidad y el campo precio al SELECT.
         String sql = "SELECT c.idCita, c.idCliente, c.idVeterinario, c.fecha, c.hora, c.motivo, c.idEstado, e.tipoEstado, " +
                      "cl.nombre AS nombreCliente, cl.apellido AS apellidoCliente, cl.dni AS dniCliente, " +
                      "v.nombreVeterinario, v.apellidoVeterinario, v.idEspecialidad " +
@@ -168,6 +220,9 @@ public class CitaDAO {
         }
         return cita;
     }
+// ---------------------------------------------------------------------
+// RESTO DE MÉTODOS SIN CAMBIOS
+// ---------------------------------------------------------------------
 
     /**
      * Actualiza una cita existente.
@@ -176,7 +231,7 @@ public class CitaDAO {
     public boolean actualizarCita(Cita cita) {
         
         EstadoDAO estadoDAO = new EstadoDAO();
-        // CORREGIDO: Usamos el getter correcto getEstadoNombre()
+        // Obtiene el ID del estado a partir del nombre
         int idEstado = estadoDAO.obtenerIdEstadoPorNombre(cita.getEstadoNombre()); 
         
         if (idEstado <= 0) {
@@ -195,7 +250,7 @@ public class CitaDAO {
             ps.setDate(3, cita.getFecha());
             ps.setTime(4, cita.getHora());
             ps.setString(5, cita.getMotivo());
-            ps.setInt(6, idEstado);    
+            ps.setInt(6, idEstado);     
             ps.setInt(7, cita.getIdCita());
 
             int rowsAffected = ps.executeUpdate();
@@ -211,7 +266,7 @@ public class CitaDAO {
      * Elimina una cita mediante un Stored Procedure.
      */
     public int eliminarCita(int id) {
-        String sql = "{CALL sp_eliminar_cita(?, ?)}";    
+        String sql = "{CALL sp_eliminar_cita(?, ?)}";       
         int resultado = -2;
 
         try (Connection con = Conexion.getConnection();
@@ -268,11 +323,10 @@ public class CitaDAO {
             while (rs.next()) {
                 Veterinario vet = new Veterinario();
                 vet.setIdVeterinario(rs.getInt("idVeterinario"));
-                // CORREGIDO: Se usa el setter correcto 'setNombreVeterianrio' (con 'a')
-                // aunque el nombre del campo en la BD es 'nombreVeterinario'
+                // Asumiendo que el campo 'nombreVeterinario' de la BD coincide con el getter/setter del modelo
                 vet.setNombreVeterianrio(rs.getString("nombreVeterinario")); 
                 vet.setApellidoVeterinario(rs.getString("apellidoVeterinario"));
-                vet.setIdEspecialidad(rs.getInt("idEspecialidad"));    
+                vet.setIdEspecialidad(rs.getInt("idEspecialidad"));      
                 lista.add(vet);
             }
         } catch (SQLException e) {
@@ -286,16 +340,16 @@ public class CitaDAO {
      */
     public List<Cita> buscarCitas(String busqueda) {
         List<Cita> citas = new ArrayList<>();
-        String sql = "{CALL sp_buscar_citas(?)}";    
+        String sql = "{CALL sp_buscar_citas(?)}";       
 
-        try (Connection con = Conexion.getConnection();    
+        try (Connection con = Conexion.getConnection();     
              CallableStatement stmt = con.prepareCall(sql)) {
 
             stmt.setString(1, busqueda);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    citas.add(mapearCita(rs));    
+                    citas.add(mapearCita(rs));      
                 }
             }
         } catch (SQLException e) {
