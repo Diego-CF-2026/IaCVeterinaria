@@ -319,7 +319,7 @@ public class CitaDAO {
                 Veterinario vet = new Veterinario();
                 vet.setIdVeterinario(rs.getInt("idVeterinario"));
                 // Asumiendo que el campo 'nombreVeterinario' de la BD coincide con el getter/setter del modelo
-                vet.setNombreVeterianrio(rs.getString("nombreVeterinario")); 
+                vet.setNombreVeterinario(rs.getString("nombreVeterinario")); 
                 vet.setApellidoVeterinario(rs.getString("apellidoVeterinario"));
                 vet.setIdEspecialidad(rs.getInt("idEspecialidad"));      
                 lista.add(vet);

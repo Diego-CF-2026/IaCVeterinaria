@@ -136,9 +136,9 @@ public class AdminEmpleadoServlet extends HttpServlet {
         if (searchQuery != null && !searchQuery.trim().isEmpty()) {
             String q = searchQuery.trim().toLowerCase();
             for (Veterinario v : all) {
-                if ((v.getNombreVeterianrio() != null && v.getNombreVeterianrio().toLowerCase().contains(q))
+                if ((v.getNombreVeterinario() != null && v.getNombreVeterinario().toLowerCase().contains(q))
                         || (v.getApellidoVeterinario() != null && v.getApellidoVeterinario().toLowerCase().contains(q))
-                        || (v.getCorreoVeterinario() != null && v.getCorreoVeterinario().toLowerCase().contains(q))
+                        //|| (v.getCorreoVeterinario() != null && v.getCorreoVeterinario().toLowerCase().contains(q)) se tiene q corregir
                         || (v.getTelefonoVeterinario() != null && v.getTelefonoVeterinario().toLowerCase().contains(q))) {
                     filtered.add(v);
                 }
@@ -257,10 +257,10 @@ public class AdminEmpleadoServlet extends HttpServlet {
                 String json = new StringBuilder()
                         .append("{")
                         .append("\"idVeterinario\":").append(vet.getIdVeterinario()).append(",")
-                        .append("\"nombreVeterinario\":\"").append(escapeJsonString(vet.getNombreVeterianrio())).append("\",")
+                        .append("\"nombreVeterinario\":\"").append(escapeJsonString(vet.getNombreVeterinario())).append("\",")
                         .append("\"apellidoVeterinario\":\"").append(escapeJsonString(vet.getApellidoVeterinario())).append("\",")
                         .append("\"telefonoVeterinario\":\"").append(escapeJsonString(vet.getTelefonoVeterinario())).append("\",")
-                        .append("\"correoVeterinario\":\"").append(escapeJsonString(vet.getCorreoVeterinario())).append("\",")
+                        //.append("\"correoVeterinario\":\"").append(escapeJsonString(vet.getCorreoVeterinario())).append("\",") se tiene q corregir
                         .append("\"idEspecialidad\":").append(vet.getIdEspecialidad()).append(",")
                         .append("\"nombreEspecialidad\":\"").append(escapeJsonString(nomEsp)).append("\"")
                         .append("}")
@@ -299,10 +299,10 @@ public class AdminEmpleadoServlet extends HttpServlet {
         try {
             if ("veterinario".equals(tipoEmpleado)) {
                 Veterinario vet = new Veterinario();
-                vet.setNombreVeterianrio(request.getParameter("nombreVeterinario"));
+                vet.setNombreVeterinario(request.getParameter("nombreVeterinario"));
                 vet.setApellidoVeterinario(request.getParameter("apellidoVeterinario"));
                 vet.setTelefonoVeterinario(request.getParameter("telefonoVeterinario"));
-                vet.setCorreoVeterinario(request.getParameter("correoVeterinario"));
+                //vet.setCorreoVeterinario(request.getParameter("correoVeterinario")); se tiene q corregir
                 vet.setIdEspecialidad(Integer.parseInt(request.getParameter("idEspecialidad")));
                 try {
                     vet.setIdEspecialidad(Integer.parseInt(request.getParameter("idEspecialidad")));
@@ -363,10 +363,10 @@ public class AdminEmpleadoServlet extends HttpServlet {
         try {
             Veterinario vet = new Veterinario();
             vet.setIdVeterinario(id);
-            vet.setNombreVeterianrio(request.getParameter("nombreVeterinario"));
+            vet.setNombreVeterinario(request.getParameter("nombreVeterinario"));
             vet.setApellidoVeterinario(request.getParameter("apellidoVeterinario"));
             vet.setTelefonoVeterinario(request.getParameter("telefonoVeterinario"));
-            vet.setCorreoVeterinario(request.getParameter("correoVeterinario"));
+            //vet.setCorreoVeterinario(request.getParameter("correoVeterinario")); se tiene q corregir
             vet.setIdEspecialidad(Integer.parseInt(request.getParameter("idEspecialidad")));
             try {
                 vet.setIdEspecialidad(Integer.parseInt(request.getParameter("idEspecialidad")));

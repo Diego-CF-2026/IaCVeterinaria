@@ -27,19 +27,22 @@
                 String volverUrl = "index.jsp";
                 String btnTexto = "Volver al inicio";
 
-                // Obtener el ID de Rol (ID_ADMIN=1, ID_RECEPCIONISTA=2, ID_CLIENTE=3)
+                // Obtener el ID de Rol (1=ADMIN, 2=RECEPCIONISTA, 3=CLIENTE, 4=VETERINARIO)
                 Integer idRol = (sesion != null) ? (Integer) sesion.getAttribute("idRol") : null;
 
                 if (idRol != null) {
-                    if (idRol == 1) { // Asumiendo 1 es ADMIN
+                    if (idRol == 1) { // ADMIN
                         volverUrl = "VistasWeb/VistasAdmin/AdminDash.jsp";
                         btnTexto = "Volver al Panel de Administración";
-                    } else if (idRol == 3) { // Asumiendo 3 es CLIENTE
+                    } else if (idRol == 3) { // CLIENTE
                         volverUrl = "VistasWeb/VistasCliente/indexCliente.jsp";
                         btnTexto = "Volver a Mi Perfil";
-                    } else if (idRol == 2) { // Asumiendo 2 es RECEPCIONISTA
+                    } else if (idRol == 2) { // RECEPCIONISTA
                         volverUrl = "VistasWeb/VistasRecep/RecepDash.jsp";
                         btnTexto = "Volver al Panel de Recepción";
+                    } else if (idRol == 4) { // VETERINARIO
+                        volverUrl = "VistasWeb/VistasVeterinario/VeterinarioDash.jsp";
+                        btnTexto = "Volver al Panel de Veterinario";
                     }
                 }
             %>
@@ -51,5 +54,6 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

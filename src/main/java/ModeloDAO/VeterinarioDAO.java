@@ -36,10 +36,10 @@ public class VeterinarioDAO {
             while (rs.next()) {
                 Veterinario v = new Veterinario();
                 v.setIdVeterinario(rs.getInt("idVeterinario"));
-                v.setNombreVeterianrio(rs.getString("nombreVeterinario"));
+                v.setNombreVeterinario(rs.getString("nombreVeterinario"));
                 v.setApellidoVeterinario(rs.getString("apellidoVeterinario"));
                 v.setTelefonoVeterinario(rs.getString("telefonoVeterinario"));
-                v.setCorreoVeterinario(rs.getString("correoVeterinario"));
+                //v.setCorreoVeterinario(rs.getString("correoVeterinario"));  se tiene q corregir
                 v.setIdEspecialidad(rs.getInt("idEspecialidad"));
                 v.setNombreEspecialidad(rs.getString("nombreEspecialidad"));
                 lista.add(v);
@@ -75,10 +75,10 @@ public class VeterinarioDAO {
             if (rs.next()) {
                 vet = new Veterinario();
                 vet.setIdVeterinario(rs.getInt("idVeterinario"));
-                vet.setNombreVeterianrio(rs.getString("nombreVeterinario")); 
+                vet.setNombreVeterinario(rs.getString("nombreVeterinario")); 
                 vet.setApellidoVeterinario(rs.getString("apellidoVeterinario")); 
                 vet.setTelefonoVeterinario(rs.getString("telefonoVeterinario"));
-                vet.setCorreoVeterinario(rs.getString("correoVeterinario"));
+                //vet.setCorreoVeterinario(rs.getString("correoVeterinario")); se tiene q corrregir
                 vet.setIdEspecialidad(rs.getInt("idEspecialidad"));
             }
         } catch (SQLException e) {
@@ -113,10 +113,10 @@ public class VeterinarioDAO {
             }
 
             ps = conn.prepareStatement(sql);
-            ps.setString(1, vet.getNombreVeterianrio()); 
+            ps.setString(1, vet.getNombreVeterinario()); 
             ps.setString(2, vet.getApellidoVeterinario()); 
             ps.setString(3, vet.getTelefonoVeterinario());
-            ps.setString(4, vet.getCorreoVeterinario());
+            //ps.setString(4, vet.getCorreoVeterinario()); se tiene q corregir
             ps.setInt(5, vet.getIdEspecialidad());
 
             int filasAfectadas = ps.executeUpdate();
@@ -154,10 +154,10 @@ public class VeterinarioDAO {
             }
 
             ps = conn.prepareStatement(sql);
-            ps.setString(1, vet.getNombreVeterianrio()); 
+            ps.setString(1, vet.getNombreVeterinario()); 
             ps.setString(2, vet.getApellidoVeterinario()); 
             ps.setString(3, vet.getTelefonoVeterinario());
-            ps.setString(4, vet.getCorreoVeterinario());
+            //ps.setString(4, vet.getCorreoVeterinario()); se tiene q corregir
             ps.setInt(5, vet.getIdEspecialidad());
             ps.setInt(6, vet.getIdVeterinario());
 

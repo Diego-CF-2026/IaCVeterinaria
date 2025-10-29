@@ -2,6 +2,7 @@ package Controladores;
 
 import Modelo.Cliente;
 import Modelo.Usuario;
+import Modelo.Veterinario;
 import ModeloDAO.ClienteDAO;
 import ModeloDAO.UsuarioDAO;
 import jakarta.servlet.ServletException;
@@ -85,6 +86,9 @@ public class LoginServlet extends HttpServlet {
                 default:
                     request.setAttribute("errorLogin", "Rol no válido.");
                     request.getRequestDispatcher("index.jsp").forward(request, response);
+                    break;
+                case 4: // Veterinario
+                    response.sendRedirect(contextPath + "/VistasWeb/VistasVeterinario/VeterinarioDash.jsp");
                     break;
             }
 

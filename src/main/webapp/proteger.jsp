@@ -5,6 +5,7 @@
     final int ID_ADMIN = 1;
     final int ID_RECEPCIONISTA = 2;
     final int ID_CLIENTE = 3;
+    final int ID_VETERINARIO = 4; // 🟢 NUEVA CONSTANTE
 
     // Configuración de seguridad de caché (opcional, pero buena práctica)
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -27,13 +28,14 @@
     boolean accedeAdmin = requestURI.contains("/VistasAdmin/");
     boolean accedeCliente = requestURI.contains("/VistasCliente/");
     boolean accedeRecep = requestURI.contains("/VistasRecep/");
+    boolean accedeVeterinario = requestURI.contains("/VistasVeterinario/"); // 🟢 NUEVA RUTA
 
     // ----------------------------------------------------
     // 2. VALIDACIÓN DE SESIÓN (Si no hay sesión, va al inicio)
     // ----------------------------------------------------
     if (idRol == null) {
         // Redirigir a la página de inicio o login si no hay sesión activa
-        response.sendRedirect(contextPath + "/index.jsp"); 
+        response.sendRedirect(contextPath + "/index.jsp");  
         return;
     }
 
@@ -46,13 +48,19 @@
         response.sendRedirect(contextPath + "/sin_permisos.jsp");
         return;
     }
+    
+    // 🟢 Acceso a VistasVeterinario
+    if (accedeVeterinario && idRol != ID_VETERINARIO) {
+        // Permitimos el acceso si es Admin (ID_ADMIN)
+        if (accedeVeterinario && idRol != ID_VETERINARIO && idRol != ID_ADMIN) {
+            response.sendRedirect(contextPath + "/sin_permisos.jsp");
+            return;
+        }
+    }
 
     // Acceso a VistasCliente
     if (accedeCliente && idRol != ID_CLIENTE) {
         // Un caso especial: a menudo el Admin puede ver las vistas del Cliente.
-        // Si el Admin (ID_ADMIN) o el Recepcionista (ID_RECEPCIONISTA) no deben verlas, usa:
-        // if (accedeCliente && idRol != ID_CLIENTE) { ...
-        // Si deben, añade la excepción:
         if (accedeCliente && idRol != ID_CLIENTE && idRol != ID_ADMIN) {
             response.sendRedirect(contextPath + "/sin_permisos.jsp");
             return;
@@ -69,25 +77,30 @@
     }
 
     // ----------------------------------------------------
-    // 4. REDIRECCIÓN A DASHBOARD PROPIO (Opcional, previene que un usuario navegue a la carpeta de otro)
+    // 4. REDIRECCIÓN A DASHBOARD PROPIO
     // ----------------------------------------------------
     
-    // Si un Admin intenta navegar a una ruta de Cliente o Recepcionista
-    if (idRol == ID_ADMIN && (accedeCliente || accedeRecep)) {
+    // Si un Admin intenta navegar a otra ruta de usuario
+    if (idRol == ID_ADMIN && (accedeCliente || accedeRecep || accedeVeterinario)) { // 🟢 Añadida VistasVeterinario
         response.sendRedirect(contextPath + "/VistasWeb/VistasAdmin/AdminDash.jsp");
         return;
     }
     
-    // Si un Cliente intenta navegar a una ruta de Admin o Recepcionista
-    if (idRol == ID_CLIENTE && (accedeAdmin || accedeRecep)) {
+    // Si un Cliente intenta navegar a otra ruta de rol
+    if (idRol == ID_CLIENTE && (accedeAdmin || accedeRecep || accedeVeterinario)) { // 🟢 Añadida VistasVeterinario
         response.sendRedirect(contextPath + "/VistasWeb/VistasCliente/indexCliente.jsp");
         return;
     }
     
-    // Si un Recepcionista intenta navegar a una ruta de Admin o Cliente
-    if (idRol == ID_RECEPCIONISTA && (accedeAdmin || accedeCliente)) {
-        // Asumiendo que existe un RecepDash.jsp
-        response.sendRedirect(contextPath + "/VistasWeb/VistasRecep/RecepDash.jsp"); 
+    // Si un Recepcionista intenta navegar a otra ruta de rol
+    if (idRol == ID_RECEPCIONISTA && (accedeAdmin || accedeCliente || accedeVeterinario)) { // 🟢 Añadida VistasVeterinario
+        response.sendRedirect(contextPath + "/VistasWeb/VistasRecep/RecepDash.jsp");  
+        return;
+    }
+    
+    // 🟢 NUEVA VALIDACIÓN: Si un Veterinario intenta navegar a otra ruta de rol
+    if (idRol == ID_VETERINARIO && (accedeAdmin || accedeCliente || accedeRecep)) {
+        response.sendRedirect(contextPath + "/VistasWeb/VistasVeterinario/VeterinarioDash.jsp");  
         return;
     }
     
