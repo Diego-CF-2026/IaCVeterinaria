@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.HashMap;
 
 @WebServlet(name = "AdminEmpleadoServlet", urlPatterns = {"/AdminEmpleadoServlet"})
-public class AdminEmpleadoServlet extends HttpServlet {
+public class AdminVeterinarioServlet extends HttpServlet {
 
-    private static final Logger LOGGER = Logger.getLogger(AdminEmpleadoServlet.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AdminVeterinarioServlet.class.getName());
 
     @Override
     public void init() throws ServletException {
