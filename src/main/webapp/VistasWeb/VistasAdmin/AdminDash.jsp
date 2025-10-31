@@ -37,6 +37,11 @@
                         <a href="<%= request.getContextPath()%>/AdminEmpleadoServlet"><i class='bx bx-group icon'></i><span class="text">Veterinarios</span></a>
                     </li>
                     <li class="nav-link">
+                        <a href="<%= request.getContextPath()%>/AdminRecepServlet?accion=listar">
+                            <i class='bx bx-user-check icon'></i> <span class="text">Recepcionistas</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/ProductoServlet?accion=listar&idProveedor=1">
                             <i class='bx bx-package icon'></i><span class="text">Productos</span>
                         </a>
