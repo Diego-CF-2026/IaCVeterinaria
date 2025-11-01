@@ -1,87 +1,36 @@
+// Modelo/Veterinario.java
 package Modelo;
 
 public class Veterinario {
     private int idVeterinario;
-    private int idUsuario; //NUEVO CAMPO DE CONEXIÓN
-    private String nombreVeterinario; // Corrección: Coherencia con el getter/setter
+    private int idUsuario;          // FK a usuario (OBLIGATORIO EN BD)
+    private String nombreVeterinario;
     private String apellidoVeterinario;
     private String telefonoVeterinario;
     private int idEspecialidad;
-    private String nombreEspecialidad; // Para joins con la tabla Especialidad
 
-    public Veterinario() {
-    }
-    
+    // Campo de apoyo para la vista (se llena desde JOIN con usuario)
+    private String correoVeterinario;
 
-    public Veterinario(int idVeterinario, int idUsuario, String nombreVeterinario, String apellidoVeterinario, String telefonoVeterinario, int idEspecialidad) {
-        this.idVeterinario = idVeterinario;
-        this.idUsuario = idUsuario; // Incluido
-        this.nombreVeterinario = nombreVeterinario;
-        this.apellidoVeterinario = apellidoVeterinario;
-        this.telefonoVeterinario = telefonoVeterinario;
-        this.idEspecialidad = idEspecialidad;
-    }
-    
-    // Constructor para solo Especialidad
-    public Veterinario(String nombreEspecialidad) {
-        this.nombreEspecialidad = nombreEspecialidad;
-    }
+    // getters/setters
+    public int getIdVeterinario() { return idVeterinario; }
+    public void setIdVeterinario(int idVeterinario) { this.idVeterinario = idVeterinario; }
 
+    public int getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(int idUsuario) { this.idUsuario = idUsuario; }
 
-    public int getIdUsuario() {
-        return idUsuario;
-    }
+    public String getNombreVeterinario() { return nombreVeterinario; }
+    public void setNombreVeterinario(String nombreVeterinario) { this.nombreVeterinario = nombreVeterinario; }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
-    }
+    public String getApellidoVeterinario() { return apellidoVeterinario; }
+    public void setApellidoVeterinario(String apellidoVeterinario) { this.apellidoVeterinario = apellidoVeterinario; }
 
-    public int getIdVeterinario() {
-        return idVeterinario;
-    }
+    public String getTelefonoVeterinario() { return telefonoVeterinario; }
+    public void setTelefonoVeterinario(String telefonoVeterinario) { this.telefonoVeterinario = telefonoVeterinario; }
 
-    public void setIdVeterinario(int idVeterinario) {
-        this.idVeterinario = idVeterinario;
-    }
+    public int getIdEspecialidad() { return idEspecialidad; }
+    public void setIdEspecialidad(int idEspecialidad) { this.idEspecialidad = idEspecialidad; }
 
-    public String getNombreVeterinario() {
-        return nombreVeterinario;
-    }
-
-    public void setNombreVeterinario(String nombreVeterinario) {
-        this.nombreVeterinario = nombreVeterinario;
-    }
-
-    public String getApellidoVeterinario() {
-        return apellidoVeterinario;
-    }
-
-    public void setApellidoVeterinario(String apellidoVeterinario) {
-        this.apellidoVeterinario = apellidoVeterinario;
-    }
-
-    public String getTelefonoVeterinario() {
-        return telefonoVeterinario;
-    }
-
-    public void setTelefonoVeterinario(String telefonoVeterinario) {
-        this.telefonoVeterinario = telefonoVeterinario;
-    }
-    
-  
-    public int getIdEspecialidad() {
-        return idEspecialidad;
-    }
-
-    public void setIdEspecialidad(int idEspecialidad) {
-        this.idEspecialidad = idEspecialidad;
-    }
-
-    public String getNombreEspecialidad() {
-        return nombreEspecialidad;
-    }
-
-    public void setNombreEspecialidad(String nombreEspecialidad) {
-        this.nombreEspecialidad = nombreEspecialidad;
-    }
+    public String getCorreoVeterinario() { return correoVeterinario; }
+    public void setCorreoVeterinario(String correoVeterinario) { this.correoVeterinario = correoVeterinario; }
 }

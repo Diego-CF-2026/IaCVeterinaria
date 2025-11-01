@@ -6,8 +6,7 @@
 <%@page import="Modelo.Especialidad"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
-<%
-    List<Veterinario> listaVeterinarios = (List<Veterinario>) request.getAttribute("listaVeterinarios");
+<%    List<Veterinario> listaVeterinarios = (List<Veterinario>) request.getAttribute("listaVeterinarios");
     List<Especialidad> listaEspecialidades = (List<Especialidad>) request.getAttribute("listaEspecialidades");
     List<Recepcionista> listaRecepcionistas = (List<Recepcionista>) request.getAttribute("listaRecepcionistas");
     Map<Integer, String> mapaEspecialidad = (Map<Integer, String>) request.getAttribute("mapaEspecialidad");
@@ -452,6 +451,11 @@
                         <a href="<%= request.getContextPath()%>/AdminEmpleadoServlet"><i class='bx bx-group icon'></i><span class="text">Veterinarios</span></a>
                     </li>
                     <li class="nav-link">
+                        <a href="<%= request.getContextPath()%>/AdminRecepServlet?accion=listar">
+                            <i class='bx bx-user-check icon'></i> <span class="text">Recepcionistas</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/ProductoServlet?accion=listar&idProveedor=1">
                             <i class='bx bx-package icon'></i><span class="text">Productos</span>
                         </a>
@@ -506,7 +510,7 @@
                     <table class="tabla-empleados">
                         <thead>
                             <tr>
-                                <th>ID</th>
+
                                 <th>Nombre</th>
                                 <th>Apellido</th>
                                 <th>Teléfono</th>
@@ -521,8 +525,8 @@
                                     for (Veterinario v : listaVeterinarios) {
                             %>
                             <tr>
-                                <td><%= v.getIdVeterinario()%></td>
-                                <td><%=escapeHtmlAttribute.apply(v.getNombreVeterianrio())%></td>
+
+                                <td><%=escapeHtmlAttribute.apply(v.getNombreVeterinario())%></td>
                                 <td><%=escapeHtmlAttribute.apply(v.getApellidoVeterinario())%></td>
                                 <td><%=escapeHtmlAttribute.apply(v.getTelefonoVeterinario())%></td>
                                 <td><%=escapeHtmlAttribute.apply(v.getCorreoVeterinario())%></td>
@@ -542,9 +546,12 @@
                                             onclick="event.preventDefault(); mostrarModalEditar(<%= v.getIdVeterinario()%>)">
                                         Editar
                                     </button>O
-                                    <button href="<%= request.getContextPath()%>/AdminEmpleadoServlet?accion=eliminar&tipoEmpleado=veterinario&idEmpleado=<%= v.getIdVeterinario()%>&currentTab=veterinarios"
-                                            class="btn btn-eliminar"
-                                            onclick="return confirm('¿Eliminar este veterinario?');">Eliminar</button>
+                                    <a class="btn btn-eliminar"
+                                       href="<%= request.getContextPath()%>/AdminEmpleadoServlet?accion=eliminar&idVeterinario=<%= v.getIdVeterinario()%>&currentTab=veterinarios"
+                                       onclick="return confirm('¿Eliminar este veterinario?');">
+                                        Eliminar
+                                    </a>
+
 
                                 </td>
                             </tr>
@@ -593,7 +600,8 @@
                                     <button type="button" class="btn btn-editar"
                                             onclick="event.preventDefault(); mostrarModalEditarEspecialidad(<%= e.getIdEspecialidad()%>)">
                                         Editar
-                                    </button>O
+                                    </button>
+                                    O
 
                                     <form action="${pageContext.request.contextPath}/AdminEmpleadoServlet" method="POST" style="display:inline">
                                         <input type="hidden" name="accion" value="eliminarEspecialidad">
@@ -636,6 +644,19 @@
                     <input type="hidden" name="tipoEmpleado" id="tipoEmpleado" value="veterinario">
 
                     <div class="form-group">
+                        <label for="idEspecialidad">Especialidad</label>
+                        <select id="idEspecialidad" name="idEspecialidad" required>
+                            <option value="">-- Seleccione --</option>
+                            <% if (listaEspecialidades != null)
+                                    for (Especialidad e : listaEspecialidades) {%>
+                            <option value="<%= e.getIdEspecialidad()%>">
+                                <%= escapeHtmlAttribute.apply(e.getNombreEspecialidad())%> - S/ <%= e.getPrecio()%>
+                            </option>
+                            <% }%>
+                        </select>
+
+                    </div>
+                    <div class="form-group">
                         <label for="nombreVeterinario">Nombre</label>
                         <input type="text" id="nombreVeterinario" name="nombreVeterinario" required>
                     </div>
@@ -658,17 +679,19 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="idEspecialidad">Especialidad</label>
-                        <select id="idEspecialidad" name="idEspecialidad" required>
-                            <option value="">-- Seleccione --</option>
-                            <% if (listaEspecialidades != null)
-                                    for (Especialidad e : listaEspecialidades) {%>
-                            <option value="<%= e.getIdEspecialidad()%>">
-                                <%= escapeHtmlAttribute.apply(e.getNombreEspecialidad())%> - S/ <%= e.getPrecio()%>
-                            </option>
-                            <% }%>
-                        </select>
-
+                        <label for="contrasenaVeterinario">Contraseña</label>
+                        <input type="password"
+                               id="contrasenaVeterinario"
+                               name="contrasenaVeterinario"
+                               minlength="6"
+                               autocomplete="new-password"
+                               placeholder="Mínimo 6 caracteres">
+                        <label style="display:inline-flex;gap:8px;align-items:center;margin-top:6px;cursor:pointer;">
+                            <input type="checkbox" onchange="
+                                    const p = document.getElementById('contrasenaVeterinario');
+                                    p.type = this.checked ? 'text' : 'password';
+                                   "> Mostrar contraseña
+                        </label>
                     </div>
 
 
@@ -800,54 +823,28 @@
                                 const f = document.getElementById("formEmpleado");
                                 if (f)
                                     f.reset();
+                                document.getElementById("accion").value = "actualizar";
+                                document.getElementById("idVeterinario").value = id;
+                                document.getElementById("tipoEmpleado").value = "veterinario";
+                                document.getElementById("modalTitulo").textContent = "Editar Veterinario";
 
-                                const acc = document.getElementById("accion");
-                                if (acc)
-                                    acc.value = "actualizar";
-
-                                const idV = document.getElementById("idVeterinario");
-                                if (idV)
-                                    idV.value = id;
-
-                                const tipo = document.getElementById("tipoEmpleado");
-                                if (tipo)
-                                    tipo.value = "veterinario";
-
-                                const titulo = document.getElementById("modalTitulo");
-                                if (titulo)
-                                    titulo.textContent = "Editar Veterinario";
-
-                                // Cargar datos
-                                fetch('${pageContext.request.contextPath}/AdminEmpleadoServlet?accion=obtener&tipoEmpleado=veterinario&idEmpleado=' + encodeURIComponent(id))
+                                fetch('<%= request.getContextPath()%>/AdminEmpleadoServlet?accion=obtener&idEmpleado=' + encodeURIComponent(id))
                                         .then(res => {
                                             if (!res.ok)
-                                                return res.json().then(e => {
-                                                    throw new Error(e.error || 'Error');
-                                                });
+                                                throw new Error('No se pudo cargar el veterinario');
                                             return res.json();
                                         })
                                         .then(data => {
-                                            const n = document.getElementById("nombreVeterinario");
-                                            const a = document.getElementById("apellidoVeterinario");
-                                            const t = document.getElementById("telefonoVeterinario");
-                                            const c = document.getElementById("correoVeterinario");
-                                            const sel = document.getElementById("idEspecialidad");
-                                            if (n)
-                                                n.value = data.nombreVeterinario || '';
-                                            if (a)
-                                                a.value = data.apellidoVeterinario || '';
-                                            if (t)
-                                                t.value = data.telefonoVeterinario || '';
-                                            if (c)
-                                                c.value = data.correoVeterinario || '';
-                                            if (sel)
-                                                sel.value = (data.idEspecialidad != null ? String(data.idEspecialidad) : '');
-                                            const m = document.getElementById("modalEmpleado");
-                                            if (m)
-                                                m.style.display = "flex";
+                                            document.getElementById("nombreVeterinario").value = data.nombreVeterinario || '';
+                                            document.getElementById("apellidoVeterinario").value = data.apellidoVeterinario || '';
+                                            document.getElementById("telefonoVeterinario").value = data.telefonoVeterinario || '';
+                                            document.getElementById("correoVeterinario").value = data.correoVeterinario || '';
+                                            document.getElementById("idEspecialidad").value = (data.idEspecialidad != null ? String(data.idEspecialidad) : '');
+                                            document.getElementById("modalEmpleado").style.display = "flex";
                                         })
                                         .catch(err => alert("No se pudo cargar el veterinario: " + err.message));
                             };
+
 
                             window.cerrarModal = function () {
                                 const m = document.getElementById("modalEmpleado");
@@ -875,34 +872,23 @@
                             };
 
                             window.mostrarModalEditarEspecialidad = function (id) {
-                                // preparar el form para actualizar
-                                const acc = document.getElementById('accionEspecialidad');
-                                if (acc)
-                                    acc.value = 'actualizarEspecialidad';
-                                const idH = document.getElementById('idEspecialidadHidden');
-                                if (idH)
-                                    idH.value = id;
+                                document.getElementById('accionEspecialidad').value = 'actualizarEspecialidad';
+                                document.getElementById('idEspecialidadHidden').value = id;
 
-                                // pedir datos al servlet y precargar el modal
-                                fetch('${pageContext.request.contextPath}/AdminEmpleadoServlet?accion=obtenerEspecialidad&idEspecialidad=' + encodeURIComponent(id))
+                                fetch('<%= request.getContextPath()%>/AdminEmpleadoServlet?accion=obtenerEspecialidad&idEspecialidad=' + encodeURIComponent(id))
                                         .then(res => {
                                             if (!res.ok)
                                                 throw new Error('No se pudo obtener la especialidad');
                                             return res.json();
                                         })
                                         .then(data => {
-                                            const nom = document.getElementById('nombreEspecialidad');
-                                            const pre = document.getElementById('precioEspecialidad');
-                                            if (nom)
-                                                nom.value = data.nombreEspecialidad || '';
-                                            if (pre)
-                                                pre.value = (data.precio != null ? data.precio : '');
-                                            const m = document.getElementById('modalEspecialidad');
-                                            if (m)
-                                                m.style.display = 'flex';
+                                            document.getElementById('nombreEspecialidad').value = data.nombreEspecialidad || '';
+                                            document.getElementById('precioEspecialidad').value = (data.precio != null ? data.precio : '');
+                                            document.getElementById('modalEspecialidad').style.display = 'flex';
                                         })
                                         .catch(err => alert(err.message));
                             };
+
 
                             window.cerrarModalEspecialidad = function () {
                                 const m = document.getElementById('modalEspecialidad');

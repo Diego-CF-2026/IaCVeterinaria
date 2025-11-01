@@ -4,8 +4,7 @@
 <%@ page import="Modelo.Proveedor" %>
 <%@ page import="Modelo.ContactoProveedor" %>
 
-<%
-    List<Proveedor> listaProveedores = (List<Proveedor>) request.getAttribute("listaProveedores");
+<%    List<Proveedor> listaProveedores = (List<Proveedor>) request.getAttribute("listaProveedores");
     Proveedor proveedorSel = (Proveedor) request.getAttribute("proveedorSeleccionado");
     String vista = (String) request.getAttribute("vista");
     boolean mostrarInactivos = "inactivos".equals(vista);
@@ -27,7 +26,7 @@
         <link rel="stylesheet" href="<%= request.getContextPath()%>/css/GestorProveedores.css">
     </head>
     <body>
-        
+
         <nav class="sidebar">
             <header>
                 <div class="image-text">
@@ -50,6 +49,11 @@
                     </li>
                     <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/AdminEmpleadoServlet"><i class='bx bx-group icon'></i><span class="text">Veterinarios</span></a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="<%= request.getContextPath()%>/AdminRecepServlet?accion=listar">
+                            <i class='bx bx-user-check icon'></i> <span class="text">Recepcionistas</span>
+                        </a>
                     </li>
                     <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/ProductoServlet?accion=listar">
@@ -105,7 +109,7 @@
                 </thead>
                 <tbody>
                     <% if (listaProveedores != null && !listaProveedores.isEmpty()) {
-                        for (Proveedor p : listaProveedores) {%>
+                            for (Proveedor p : listaProveedores) {%>
                     <tr>
                         <td><%= p.getIdProveedor()%></td>
                         <td><%= p.getRazonSocial()%></td>
@@ -149,12 +153,12 @@
                         <div class="form-grid">
                             <div>
                                 <input type="number" 
-                                        name="ruc" 
-                                        placeholder="RUC"
-                                        value="<%= proveedorSel.getRuc()%>" 
-                                        required 
-                                        maxlength="11" 
-                                        oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                                       name="ruc" 
+                                       placeholder="RUC"
+                                       value="<%= proveedorSel.getRuc()%>" 
+                                       required 
+                                       maxlength="11" 
+                                       oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
                             </div>
                             <div>
                                 <input type="text" name="direccion" placeholder="Dirección" value="<%= proveedorSel.getDireccion()%>" required>
@@ -175,8 +179,8 @@
                         <button class="btn btn-agregar" onclick="abrirModal('modalAgregarContacto')">Agregar Contacto</button>
                     </div>
                     <%
-                    List<Modelo.ContactoProveedor> contactos = proveedorSel.getContactos();
-                    if (contactos != null && !contactos.isEmpty()) {
+                        List<Modelo.ContactoProveedor> contactos = proveedorSel.getContactos();
+                        if (contactos != null && !contactos.isEmpty()) {
                     %>
                     <table class="modal-contactos">
                         <thead>
@@ -191,30 +195,30 @@
                         <tbody>
                             <% for (Modelo.ContactoProveedor c : contactos) {%>
                             <tr>
-                                <form action="ContactoProveedorServlet" method="post">
-                                    <input type="hidden" name="accion" value="actualizar">
-                                    <input type="hidden" name="idContacto" value="<%= c.getIdContacto()%>">
-                                    <input type="hidden" name="idProveedor" value="<%= proveedorSel.getIdProveedor()%>">
-                                    <td><input type="text" name="nombreContacto" placeholder="Nombre" value="<%= c.getNombreContacto()%>" required></td>
-                                    <td><input type="text" name="cargo" placeholder="Cargo" value="<%= c.getCargo()%>" required></td>
-                                    <td><input type="text" name="telefono" placeholder="Teléfono" value="<%= c.getTelefono()%>" required></td>
-                                    <td><input type="email" name="correoContacto" placeholder="Correo" value="<%= c.getCorreoContacto()%>" required></td>
-                                    <td class="acciones">
-                                        <button type="submit">
-                                            <i class='bx bxs-edit'></i>
-                                        </button>
-                                </form>
-                                <form action="ContactoProveedorServlet" method="post" onsubmit="return confirm('¿Eliminar este contacto?')" style="display:inline;">
-                                    <input type="hidden" name="accion" value="eliminar">
-                                    <input type="hidden" name="idContacto" value="<%= c.getIdContacto()%>">
-                                    <input type="hidden" name="idProveedor" value="<%= proveedorSel.getIdProveedor()%>">
-                                    <button type="submit">
-                                        <i class='bx bxs-trash'></i>
-                                    </button>
-                                </form>
-                                </td>
-                            </tr>
-                            <% } %>
+                        <form action="ContactoProveedorServlet" method="post">
+                            <input type="hidden" name="accion" value="actualizar">
+                            <input type="hidden" name="idContacto" value="<%= c.getIdContacto()%>">
+                            <input type="hidden" name="idProveedor" value="<%= proveedorSel.getIdProveedor()%>">
+                            <td><input type="text" name="nombreContacto" placeholder="Nombre" value="<%= c.getNombreContacto()%>" required></td>
+                            <td><input type="text" name="cargo" placeholder="Cargo" value="<%= c.getCargo()%>" required></td>
+                            <td><input type="text" name="telefono" placeholder="Teléfono" value="<%= c.getTelefono()%>" required></td>
+                            <td><input type="email" name="correoContacto" placeholder="Correo" value="<%= c.getCorreoContacto()%>" required></td>
+                            <td class="acciones">
+                                <button type="submit">
+                                    <i class='bx bxs-edit'></i>
+                                </button>
+                        </form>
+                        <form action="ContactoProveedorServlet" method="post" onsubmit="return confirm('¿Eliminar este contacto?')" style="display:inline;">
+                            <input type="hidden" name="accion" value="eliminar">
+                            <input type="hidden" name="idContacto" value="<%= c.getIdContacto()%>">
+                            <input type="hidden" name="idProveedor" value="<%= proveedorSel.getIdProveedor()%>">
+                            <button type="submit">
+                                <i class='bx bxs-trash'></i>
+                            </button>
+                        </form>
+                        </td>
+                        </tr>
+                        <% } %>
                         </tbody>
                     </table>
                     <% } else { %>
@@ -237,24 +241,24 @@
                             </form>
                         </div>
                     </div>
-                    
+
                     <hr>
                     <h3>Productos Relacionados</h3>
                     <ul>
-                    <%
-                    List<Modelo.Producto> productos = proveedorSel.getProductos();
-                    if (productos != null && !productos.isEmpty()) {
-                        for (Modelo.Producto prod : productos) {
-                    %>
+                        <%
+                            List<Modelo.Producto> productos = proveedorSel.getProductos();
+                            if (productos != null && !productos.isEmpty()) {
+                                for (Modelo.Producto prod : productos) {
+                        %>
                         <li><%= prod.getNombreProducto()%> - S/ <%= prod.getPrecio()%></li>
-                    <% 
-                        }
-                    } else {
-                    %>
+                            <%
+                                }
+                            } else {
+                            %>
                         <li>No hay productos relacionados.</li>
-                    <%
-                    }
-                    %>
+                            <%
+                                }
+                            %>
                     </ul>
 
                     <form action="ProveedorServlet" method="post" style="margin-top: 20px;" onsubmit="return confirmarCambioEstado(<%= proveedorSel.getEstado()%>)">
