@@ -85,13 +85,13 @@ root {
 }
 
 .nav-link a:hover {
-  background: var(--primary-color);
-  color: white;
+  background: black;
+  color: black;
 }
 
 .nav-link a:hover .icon,
 .nav-link a:hover .text {
-  color: white;
+  color: black;
 }
 
 .nav-link.active a {
