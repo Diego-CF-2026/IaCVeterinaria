@@ -10,13 +10,14 @@ public class Cita {
     private Date fecha;
     private Time hora;
     private String motivo;
-    private int idEstado; // Nuevo atributo para el estado de la cita
+    private int idEstado; 
     private String estadoNombre;
-    private double precio;
-    // Atributos para los detalles del cliente y veterinario (no están en la tabla Citas, pero se obtienen por JOIN)
+    private double precio; // El precio de la cita en el momento de la reserva
+    
+    // Atributos de apoyo para detalles (obtenidos por JOIN)
     private String nombreCliente;
     private String apellidoCliente;
-    private String dniCliente; // Atributo para almacenar el DNI del cliente
+    private String dniCliente;
     private String nombreVeterinario;
     private String apellidoVeterinario;
     private String especialidadVeterinario;
@@ -25,9 +26,8 @@ public class Cita {
     public Cita() {
     }
 
-    // Constructor con todos los parámetros
-
-    public Cita(int idCita, int idCliente, int idVeterinario, Date fecha, Time hora, String motivo, int idEstado, String estadoNombre, String nombreCliente, String apellidoCliente, String dniCliente, String nombreVeterinario, String apellidoVeterinario, String especialidadVeterinario) {
+    // Constructor completo con precio (usado para recuperar datos de la BD o en lógica de negocio)
+    public Cita(int idCita, int idCliente, int idVeterinario, Date fecha, Time hora, String motivo, int idEstado, String estadoNombre, double precio, String nombreCliente, String apellidoCliente, String dniCliente, String nombreVeterinario, String apellidoVeterinario, String especialidadVeterinario) {
         this.idCita = idCita;
         this.idCliente = idCliente;
         this.idVeterinario = idVeterinario;
@@ -36,6 +36,7 @@ public class Cita {
         this.motivo = motivo;
         this.idEstado = idEstado;
         this.estadoNombre = estadoNombre;
+        this.precio = precio; 
         this.nombreCliente = nombreCliente;
         this.apellidoCliente = apellidoCliente;
         this.dniCliente = dniCliente;
@@ -45,7 +46,7 @@ public class Cita {
     }
 
     // Getters y Setters
-
+    
     public int getIdCita() {
         return idCita;
     }
@@ -110,6 +111,17 @@ public class Cita {
         this.estadoNombre = estadoNombre;
     }
 
+    // 🟢 Getters y Setters del Precio
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+    
+    // Getters y Setters de los detalles
+    
     public String getNombreCliente() {
         return nombreCliente;
     }
@@ -156,13 +168,5 @@ public class Cita {
 
     public void setEspecialidadVeterinario(String especialidadVeterinario) {
         this.especialidadVeterinario = especialidadVeterinario;
-    }
-    
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
     }
 }

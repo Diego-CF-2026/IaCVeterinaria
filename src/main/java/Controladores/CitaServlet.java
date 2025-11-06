@@ -63,6 +63,11 @@ public class CitaServlet extends HttpServlet {
             throws ServletException, IOException {
         String accion = request.getParameter("accion");
 
+        if (accion == null || accion.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/CitaServlet");
+            return;
+        }
+
         switch (accion) {
             case "guardar":
                 guardarCita(request, response);
@@ -166,8 +171,16 @@ public class CitaServlet extends HttpServlet {
         Cita cita = new Cita();
         
         // Asume que los IDs ya vienen validados
-        cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
-        cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
+        try {
+            cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
+            cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
+        } catch (NumberFormatException e) {
+             request.getSession().setAttribute("mensaje", "❌ Error de formato: ID de Cliente o Veterinario inválido.");
+             request.getSession().setAttribute("tipoMensaje", "error");
+             response.sendRedirect(request.getContextPath() + "/CitaServlet");
+             return;
+        }
+
 
         String fechaStr = request.getParameter("fecha");
         String horaStr = request.getParameter("hora");
@@ -189,13 +202,16 @@ public class CitaServlet extends HttpServlet {
 
         cita.setMotivo(request.getParameter("motivo"));
         cita.setEstadoNombre(request.getParameter("estado"));
-
-        boolean operacionExitosa = citaDAO.agregarCita(cita);
-        if (operacionExitosa) {
-            request.getSession().setAttribute("mensaje", "✅ Cita agregada con éxito!");
+        
+        // 🛑 CORRECCIÓN: Capturar el String del DAO
+        String resultadoDAO = citaDAO.agregarCita(cita); 
+        
+        // 🛑 CORRECCIÓN: Evaluar el String
+        if (resultadoDAO.startsWith("✅")) {
+            request.getSession().setAttribute("mensaje", resultadoDAO);
             request.getSession().setAttribute("tipoMensaje", "exito");
         } else {
-            request.getSession().setAttribute("mensaje", "❌ Error al agregar la cita. Verifique IDs o conexión.");
+            request.getSession().setAttribute("mensaje", resultadoDAO); // Mostrar el mensaje de error de validación (Domingo, horario, etc.)
             request.getSession().setAttribute("tipoMensaje", "error");
         }
         response.sendRedirect(request.getContextPath() + "/CitaServlet");
@@ -213,9 +229,17 @@ public class CitaServlet extends HttpServlet {
             return;
         }
 
-        cita.setIdCita(Integer.parseInt(idCitaStr));
-        cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
-        cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
+        try {
+            cita.setIdCita(Integer.parseInt(idCitaStr));
+            cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
+            cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
+        } catch (NumberFormatException e) {
+             request.getSession().setAttribute("mensaje", "❌ Error de formato en los ID.");
+             request.getSession().setAttribute("tipoMensaje", "error");
+             response.sendRedirect(request.getContextPath() + "/CitaServlet");
+             return;
+        }
+
 
         String fechaStr = request.getParameter("fecha");
         String horaStr = request.getParameter("hora");
@@ -237,13 +261,16 @@ public class CitaServlet extends HttpServlet {
 
         cita.setMotivo(request.getParameter("motivo"));
         cita.setEstadoNombre(request.getParameter("estado"));
-
-        boolean operacionExitosa = citaDAO.actualizarCita(cita);
+        
+        // NOTA: Se mantiene la lógica booleana aquí ya que actualizarCita() en el DAO
+        // generalmente devuelve boolean, no tiene las validaciones complejas de agregarCita.
+        boolean operacionExitosa = citaDAO.actualizarCita(cita); 
+        
         if (operacionExitosa) {
             request.getSession().setAttribute("mensaje", "✅ Cita actualizada con éxito!");
             request.getSession().setAttribute("tipoMensaje", "exito");
         } else {
-            request.getSession().setAttribute("mensaje", "❌ Error al actualizar la cita.");
+            request.getSession().setAttribute("mensaje", "❌ Error al actualizar la cita. Verifique IDs, estado o conexión.");
             request.getSession().setAttribute("tipoMensaje", "error");
         }
         response.sendRedirect(request.getContextPath() + "/CitaServlet");
@@ -252,8 +279,17 @@ public class CitaServlet extends HttpServlet {
     private void crearCitaDesdeCliente(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Cita cita = new Cita();
-        cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
-        cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
+        
+        try {
+            cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
+            cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
+        } catch (NumberFormatException e) {
+             request.getSession().setAttribute("mensaje", "❌ Error de formato en los ID de Cliente o Veterinario.");
+             request.getSession().setAttribute("tipoMensaje", "error");
+             response.sendRedirect(request.getContextPath() + "/ClienteRServlet");
+             return;
+        }
+
 
         String fechaStr = request.getParameter("fecha");
         String horaStr = request.getParameter("hora");
@@ -277,12 +313,15 @@ public class CitaServlet extends HttpServlet {
         // Se establece el estado inicial por defecto ("Pendiente").
         cita.setEstadoNombre("Pendiente");
 
-        boolean agregada = citaDAO.agregarCita(cita);
-        if (agregada) {
-            request.getSession().setAttribute("mensaje", "✅ Cita creada con éxito!");
+        // 🛑 CORRECCIÓN: Capturar el String del DAO
+        String resultadoDAO = citaDAO.agregarCita(cita); 
+        
+        // 🛑 CORRECCIÓN: Evaluar el String
+        if (resultadoDAO.startsWith("✅")) {
+            request.getSession().setAttribute("mensaje", resultadoDAO);
             request.getSession().setAttribute("tipoMensaje", "exito");
         } else {
-            request.getSession().setAttribute("mensaje", "❌ Error al crear la cita. Verifique IDs o conexión.");
+            request.getSession().setAttribute("mensaje", resultadoDAO); // Mostrar el mensaje de error de validación (Domingo, horario, etc.)
             request.getSession().setAttribute("tipoMensaje", "error");
         }
         response.sendRedirect(request.getContextPath() + "/ClienteRServlet");
@@ -310,7 +349,7 @@ public class CitaServlet extends HttpServlet {
                 request.getSession().setAttribute("tipoMensaje", "exito");
             } else {
                 // Esto puede ocurrir si la cita no existía, o si el DAO falló, o si ya no estaba "Pendiente".
-                request.getSession().setAttribute("mensaje", "⚠️ No se pudo cancelar la cita N° " + idCita + ". Verifique su estado.");
+                request.getSession().setAttribute("mensaje", "⚠️ No se pudo cancelar la cita N° " + idCita + ". Verifique su estado (solo se cancelan las citas 'Pendiente').");
                 request.getSession().setAttribute("tipoMensaje", "advertencia");
             }
             
@@ -327,7 +366,8 @@ public class CitaServlet extends HttpServlet {
         }
         
         // 3. Redireccionar de vuelta a la lista de citas del cliente
-        response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=listar");
+        // Podríamos redirigir a donde vino el usuario, pero volvemos al listado principal por defecto.
+        response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=listar"); 
     }
     
     // El método 'verCitasCliente' se deja sin cambios.

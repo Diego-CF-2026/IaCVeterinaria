@@ -288,5 +288,38 @@ public class VeterinarioDAO {
             }
         }
     }
+/**
+     * [vistaCliente] Lista los veterinarios disponibles filtrados por especialidad.
+     * @param idEspecialidad El ID de la especialidad a filtrar.
+     * @return Lista de objetos Veterinario.
+     */
+    public List<Veterinario> vistaClienteListarPorEspecialidad(int idEspecialidad) {
+        List<Veterinario> lista = new ArrayList<>();
+        String sql
+                = "SELECT v.idVeterinario, v.nombreVeterinario, v.apellidoVeterinario, v.idEspecialidad "
+                + "FROM veterinario v "
+                // Asumo que solo quieres veterinarios activos o con usuario activo, 
+                // pero por simplicidad se filtra solo por la especialidad.
+                + "WHERE v.idEspecialidad = ? " 
+                + "ORDER BY v.nombreVeterinario";
 
+        try (Connection con = Conexion.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idEspecialidad);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Veterinario v = new Veterinario();
+                    v.setIdVeterinario(rs.getInt("idVeterinario"));
+                    // Solo cargamos los campos que se necesitan en el select del JSP/AJAX
+                    v.setNombreVeterinario(rs.getString("nombreVeterinario"));
+                    v.setApellidoVeterinario(rs.getString("apellidoVeterinario"));
+                    v.setIdEspecialidad(rs.getInt("idEspecialidad"));
+                    lista.add(v);
+                }
+            }
+        } catch (SQLException e) {
+            // Usa un logger más robusto en producción.
+            System.out.println("Error vistaClienteListarPorEspecialidad(): " + e.getMessage()); 
+        }
+        return lista;
+    }
 }

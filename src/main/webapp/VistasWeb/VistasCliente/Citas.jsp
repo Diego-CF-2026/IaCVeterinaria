@@ -1,185 +1,271 @@
-<%@ include file="/proteger.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="java.time.LocalDate" %>
-<%@ page import="java.util.List" %>
-<%@ page import="Modelo.Usuario" %>
-<%@ page import="Modelo.Cliente" %>
-<%@ page import="Modelo.Veterinario" %>
-
-<%
-    // 🟢 Obtenemos el usuario logueado (correo, idUsuario, etc.)
-    Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
-    String usuarioCorreo = (usuarioSesion != null) ? usuarioSesion.getCorreo() : "";
-    int idUsuario = (usuarioSesion != null) ? usuarioSesion.getIdUsuario() : 0;
-
-    // 🟢 Obtenemos los datos del cliente asociados (si fueron cargados por el servlet)
-    Cliente clienteObj = (Cliente) request.getAttribute("cliente");
-    String clienteNombre = (clienteObj != null) ? clienteObj.getNombre() : "";
-    int idCliente = (clienteObj != null) ? clienteObj.getIdCliente() : 0;
-
-    // 🕒 Otros datos necesarios
-    String mensaje = request.getParameter("mensaje");
-    LocalDate fechaActual = LocalDate.now();
-    List<Veterinario> listaVeterinarios = (List<Veterinario>) request.getAttribute("listaVeterinarios");
-%>
-
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Registrar Cita | Veterinaria Santa Cruz</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Solicitar Cita | Veterinaria</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/contacto.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ModoNoche-Sidebar.css">
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #f8f8f8; margin: 0; }
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #3aafa9; padding: 0 30px; height: 70px;
+        .container { max-width: 600px; margin-top: 50px; }
+        .card { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        /* Añadido para descartar problemas de color/CSS en el select */
+        select.form-select, option {
+            color: #000000 !important;
         }
-        .logo { height: 56px; }
-        .center-links a {
-            color: #fff; text-decoration: none; margin: 0 16px; font-weight: 500;
-            transition: color 0.2s;
-        }
-        .center-links a:hover, .active-link { color: #17252a; border-bottom: 2px solid #fff; }
-        .buttons .btn {
-            background: #def2f1; color: #3aafa9; padding: 8px 18px; border-radius: 20px;
-            text-decoration: none; font-weight: 600;
-        }
-        .registro-cita {
-            max-width: 600px; margin: 40px auto; padding: 20px;
-            border: 1px solid #ccc; border-radius: 8px; background: #fff;
-        }
-        .registro-cita h3 { text-align: center; color: #3aafa9; font-weight: 600; }
-        .registro-cita label { display: block; margin-top: 15px; font-weight: 500; }
-        .registro-cita input, .registro-cita select, .registro-cita textarea {
-            width: 100%; padding: 10px; border: 1px solid #999; border-radius: 4px;
-        }
-        .registro-cita .button-group { display: flex; gap: 15px; margin-top: 25px; }
-        .registro-cita button {
-            flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;
-        }
-        button[type="submit"] { background: #3aafa9; color: white; }
-        button[type="submit"]:hover { background: #2f8f8a; }
-        button[type="button"] { background: #f44336; color: white; }
-        button[type="button"]:hover { background: #d32f2f; }
-        .alert-success, .alert-error {
-            max-width: 600px; margin: 20px auto; padding: 15px; border-radius: 5px; text-align: center;
-        }
-        .alert-success { background: #d4edda; color: #155724; }
-        .alert-error { background: #f8d7da; color: #721c24; }
-        .error-message { color: #dc3545; font-size: 0.9rem; margin-top: 5px; display: none; }
     </style>
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="${pageContext.request.contextPath}/index.jsp">
-        <img src="${pageContext.request.contextPath}/Recursos/Logo.png" alt="Logo" class="logo"/>
-    </a>
-    <div class="center-links">
-        <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Nosotros.jsp">Nosotros</a>
-        <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/servicios.jsp">Servicios</a>
-        <a href="${pageContext.request.contextPath}/ProductoServlet?accion=listarCliente">Productos</a>
-        <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Contacto.jsp">Contacto</a>
+    <nav class="navbar">
+        <div class="logo-container">
+            <a href="${pageContext.request.contextPath}/index.jsp">
+                <img src="${pageContext.request.contextPath}/Recursos/Logo.png" alt="Logo de Veterinaria Santa Cruz" class="logo" />
+            </a>
+        </div>
+        <div class="hamburger" id="hamburger" aria-label="Menú" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </div>
+        <div class="nav-links" id="nav-links">
+            <div class="center-links">
+                <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Nosotros.jsp" id="link-nosotros">Nosotros</a>
+                <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/servicios.jsp" id="link-servicios">Servicios</a>
+                <a href="${pageContext.request.contextPath}/ProductoServlet?accion=listarCliente" id="link-productos">Productos</a>
+                <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/Contacto.jsp" id="link-contacto" class="active-link">Contacto</a>
+            </div>
+            <div class="buttons">
+                <a href="javascript:void(0)" class="btn perfil" id="verPerfilBtn">Ver Perfil</a>
+            </div>
+        </div>
+    </nav>  
+                <!-- Sidebar perfil -->
+                <div id="sidebarPerfil" class="sidebar-perfil" role="dialog" aria-modal="true" aria-labelledby="perfilTitle">
+                    <h2 id="perfilTitle">Mi Perfil</h2>
+                    <a href="${pageContext.request.contextPath}/VistasWeb/VistasCliente/MiPerfil.jsp">Mi perfil</a>
+                    <a href="${pageContext.request.contextPath}/HistorialComprasServlet">Carrito</a>
+                    <a href="${pageContext.request.contextPath}/UsuarioMisCitasServlet">Citas agendadas</a>
+                    <a href="${pageContext.request.contextPath}/LogoutServlet">Cerrar sesión</a>
+                </div>
+                <div id="sidebarOverlay"></div>
+                
+    <div class="container">
+        
+        <h1 class="mb-4 text-center">Solicitar Nueva Cita</h1>
+        
+        <c:if test="${mensaje != null}">
+            <div class="alert
+                <c:choose>
+                    <c:when test="${mensaje.startsWith('✅')}">alert-success</c:when>
+                    <c:when test="${mensaje eq 'cancelado'}">alert-warning</c:when>
+                    <%-- Si no es éxito ni cancelación, asumimos que es un mensaje de error, incluyendo los de validación --%>
+                    <c:otherwise>alert-danger</c:otherwise>
+                </c:choose>
+            " role="alert">
+                <c:choose>
+                    <%-- Caso 1: Mensaje que empieza con ✅ (Éxito del DAO) --%>
+                    <c:when test="${mensaje.startsWith('✅')}">
+                        ${mensaje}
+                    </c:when>
+                    <%-- Caso 2: Mensaje de error interno conocido (del Servlet) --%>
+                    <c:when test="${mensaje eq 'error_campos_vacios'}">
+                        ❌ Error: Todos los campos son obligatorios.
+                    </c:when>
+                    <c:when test="${mensaje eq 'error_formato_numerico'}">
+                        ❌ Error: El ID del veterinario o el precio tienen un formato inválido.
+                    </c:when>
+                    <%-- Caso 3: Si no es un caso conocido, mostramos el mensaje directo (incluye errores de fecha/hora) --%>
+                    <c:otherwise>
+                        ${mensaje}
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </c:if>
+
+        <div class="card p-4">
+            <h2 class="card-title ">${cliente.nombre} ${cliente.apellido}</h2>
+            
+            <form action="${pageContext.request.contextPath}/UsuarioCitasServlet" method="post">
+                <input type="hidden" name="accion" value="registrar">
+                
+                <div class="mb-3">
+                    <label for="idEspecialidad" class="form-label">Especialidad Requerida:</label>
+                    <select class="form-select" id="idEspecialidad" name="idEspecialidad" required
+                            onchange="actualizarCostoYFiltrarVets()">
+                        <option value="">Seleccione una especialidad</option>
+                        <c:forEach var="esp" items="${listaEspecialidades}">
+                            <option value="${esp.idEspecialidad}" data-precio="${esp.precio}">${esp.nombreEspecialidad} (S/. ${esp.precio})</option>
+                        </c:forEach>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="idVeterinario" class="form-label">Veterinario:</label>
+                    <select class="form-select" id="idVeterinario" name="idVeterinario" required>
+                        <option value="">Seleccione un veterinario</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="fecha" class="form-label">Fecha:</label>
+                    <input type="date" class="form-control" id="fecha" name="fecha" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="hora" class="form-label">Hora:</label>
+                    <input type="time" class="form-control" id="hora" name="hora" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="motivo" class="form-label">Motivo de la Cita:</label>
+                    <textarea class="form-control" id="motivo" name="motivo" rows="3" required></textarea>
+                </div>
+                
+                <input type="hidden" name="precio" id="precioCita" value="0.0">
+                
+                <div class="alert alert-info mt-3" role="alert">
+                    Costo Estimado de la Cita: **S/. <span id="displayPrecio">0.00</span>**
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mt-3">Registrar Cita</button>
+            </form>
+        </div>
     </div>
-    <div class="buttons">
-        <a href="javascript:void(0)" class="btn" id="verPerfilBtn">Ver Perfil</a>
-    </div>
-</nav>
+            <button id="modoNocheBtn" class="modo-noche-flotante" aria-label="Cambiar a modo noche">🌙</button>
+        <script src="<%= request.getContextPath()%>/Js/JsAdmin/ModoNoche-Sidebar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- 🔔 Mensajes -->
-<% if (mensaje != null) { %>
-    <% if ("registrado".equals(mensaje)) { %>
-        <div class="alert-success">¡Cita registrada correctamente!</div>
-    <% } else if ("error_registro".equals(mensaje)) { %>
-        <div class="alert-error">Error al registrar la cita. Intenta nuevamente.</div>
-    <% } else if ("fecha_hora_pasada".equals(mensaje)) { %>
-        <div class="alert-error">No puedes seleccionar una fecha u hora pasada.</div>
-    <% } else { %>
-        <div class="alert-error">Ocurrió un error inesperado. Vuelve a intentarlo.</div>
-    <% } %>
-<% } %>
+    <script>
+        document.getElementById('verPerfilBtn').addEventListener('click', function() {
+        document.getElementById('sidebarPerfil').classList.add('active');
+        document.getElementById('sidebarOverlay').classList.add('active');
+    });
 
-<!-- 📅 Formulario de Cita -->
-<section class="registro-cita">
-    <h3>Registrar Nueva Cita</h3>
-    <form id="formCita" action="${pageContext.request.contextPath}/UsuarioCitasServlet" method="post" onsubmit="return validarFechaHora()">
-        <input type="hidden" name="accion" value="registrar"/>
-        <input type="hidden" name="idCliente" value="<%= idCliente %>"/>
+    
+    document.getElementById('sidebarOverlay').addEventListener('click', function() {
+        document.getElementById('sidebarPerfil').classList.remove('active');
+        this.classList.remove('active');
+    });
 
-        <label>Cliente:</label>
-        <input type="text" name="nombre" value="<%= clienteNombre %>" readonly/>
-
-        <label>Fecha:</label>
-        <input type="date" id="fecha" name="fecha" min="<%= fechaActual %>" required>
-        <div id="errorFecha" class="error-message">No puedes seleccionar una fecha pasada.</div>
-
-        <label>Hora:</label>
-        <input type="time" id="hora" name="hora" required>
-        <div id="errorHora" class="error-message">No puedes seleccionar una hora pasada para hoy.</div>
-
-        <label>Veterinario:</label>
-        <select name="idVeterinario" required>
-            <option value="">-- Seleccione un veterinario --</option>
-            <%
-                List<Veterinario> listarVeterinarios = (List<Veterinario>) request.getAttribute("listaVeterinarios");
-                if (listaVeterinarios != null && !listaVeterinarios.isEmpty()) {
-                    for (Veterinario v : listaVeterinarios) {
-            %>
-                        <option value="<%=v.getIdVeterinario()%>">
-                            <%=v.getNombreVeterianrio()%> <%=v.getApellidoVeterinario()%> - <%=v.getNombreEspecialidad()%>
-                        </option>
-            <%
+        // 1. FUNCIÓN PRINCIPAL DE RESTRICCIÓN DE FECHA Y HORA (HTML/JS - Front-end)
+        function establecerRestriccionesTiempo() {
+            const inputFecha = document.getElementById('fecha');
+            const inputHora = document.getElementById('hora');
+            
+            // Obtener la fecha y hora actual en formato local
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            
+            // Establecer la fecha mínima como HOY
+            const today = `${year}-${month}-${day}`;
+            inputFecha.min = today;
+            
+            // Escuchar cambios en la fecha para actualizar la restricción de hora
+            inputFecha.addEventListener('change', function() {
+                const fechaSeleccionada = this.value;
+                
+                // Si la fecha seleccionada es HOY, limitar la hora mínima
+                if (fechaSeleccionada === today) {
+                    const currentHour = String(now.getHours()).padStart(2, '0');
+                    const currentMinute = String(now.getMinutes() + 1).padStart(2, '0'); // +1 minuto para evitar seleccionar la hora exacta actual
+                    inputHora.min = `${currentHour}:${currentMinute}`;
+                    
+                    // Asegurar que, si la hora ya seleccionada es anterior, se borre
+                    if (inputHora.value && inputHora.value < inputHora.min) {
+                        inputHora.value = '';
                     }
                 } else {
-            %>
-                    <option disabled>No hay veterinarios disponibles</option>
-            <%
+                    // Si es cualquier otro día (futuro), no hay restricción mínima de hora
+                    // Nota: Las restricciones de horario de 9:00 a 17:00 y Domingo se validan en el BACKEND (DAO)
+                    inputHora.min = '00:00';
                 }
-            %>
-        </select>
+            });
 
-
-        <label>Motivo de la Cita:</label>
-        <textarea id="motivo" name="motivo" rows="3" required></textarea>
-
-        <div class="button-group">
-            <button type="submit">Registrar Cita</button>
-            <button type="button" onclick="window.location.href='${pageContext.request.contextPath}/VistasWeb/VistasCliente/servicios.jsp'">Salir</button>
-        </div>
-    </form>
-</section>
-
-<script>
-function validarFechaHora() {
-    const fecha = document.getElementById('fecha');
-    const hora = document.getElementById('hora');
-    const errorFecha = document.getElementById('errorFecha');
-    const errorHora = document.getElementById('errorHora');
-    const hoy = new Date();
-    const fechaSel = new Date(fecha.value + "T00:00");
-    errorFecha.style.display = errorHora.style.display = 'none';
-
-    if (fechaSel < new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate())) {
-        errorFecha.style.display = 'block';
-        return false;
-    }
-    if (fechaSel.toDateString() === hoy.toDateString()) {
-        const [h, m] = hora.value.split(':');
-        const horaSel = new Date();
-        horaSel.setHours(h, m, 0, 0);
-        if (horaSel < hoy) {
-            errorHora.style.display = 'block';
-            return false;
+            // Inicializar la restricción de hora al cargar la página
+            if (inputFecha.value === today) {
+                const currentHour = String(now.getHours()).padStart(2, '0');
+                const currentMinute = String(now.getMinutes() + 1).padStart(2, '0');
+                inputHora.min = `${currentHour}:${currentMinute}`;
+            } else {
+                inputHora.min = '00:00';
+            }
         }
-    }
-    return true;
-}
-document.addEventListener('DOMContentLoaded', () => {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('fecha').setAttribute('min', today);
-});
-</script>
+        
+        // --- CÓDIGO AJAX PARA FILTRAR VETERINARIOS Y CALCULAR PRECIO ---
+        function actualizarCostoYFiltrarVets() {
+            const selectEspecialidad = document.getElementById('idEspecialidad');
+            const precioInput = document.getElementById('precioCita');
+            const displayPrecio = document.getElementById('displayPrecio');
+            const selectVeterinario = document.getElementById('idVeterinario');
+            
+            // 1. Lógica de precio
+            const selectedOption = selectEspecialidad.options[selectEspecialidad.selectedIndex];
+            if (selectedOption && selectedOption.hasAttribute('data-precio')) {
+                const precio = selectedOption.getAttribute('data-precio');
+                precioInput.value = precio;
+                displayPrecio.textContent = parseFloat(precio).toFixed(2);
+            } else {
+                precioInput.value = '0.0';
+                displayPrecio.textContent = '0.00';
+            }
 
+            // 2. Lógica AJAX para Filtrar Veterinarios
+            const idEspecialidad = selectEspecialidad.value;
+            selectVeterinario.innerHTML = '<option value="">Cargando veterinarios...</option>';
+
+            if (idEspecialidad) {
+                const url = '${pageContext.request.contextPath}/AjaxCitasServlet?accion=listarVeterinariosPorEspecialidad&idEspecialidad=' + idEspecialidad;
+                
+                fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error('Error ' + response.status + ': ' + (err.error || 'Respuesta de servidor inválida.'));
+                        }).catch(() => {
+                            throw new Error('Error ' + response.status + ': La respuesta del servidor no fue JSON.');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    
+                    selectVeterinario.innerHTML = '<option value="">Seleccione un veterinario</option>';
+                    
+                    if (Array.isArray(data) && data.length > 0) {
+                        
+                        data.forEach(vet => {
+                            const option = document.createElement('option');
+                            option.value = vet.idVeterinario;
+                            
+                            // Concatenación robusta
+                            const nombre = String(vet.nombreVeterinario || '');
+                            const apellido = String(vet.apellidoVeterinario || '');
+                            option.textContent = nombre + ' ' + apellido;
+                            
+                            selectVeterinario.appendChild(option);
+                        });
+
+                    } else if (Array.isArray(data) && data.length === 0) {
+                        selectVeterinario.innerHTML = '<option value="">No hay veterinarios disponibles para esta especialidad</option>';
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error AJAX al cargar veterinarios:', error);
+                    selectVeterinario.innerHTML = `<option value="">ERROR: ${error.message}</option>`;
+                });
+            } else {
+                 selectVeterinario.innerHTML = '<option value="">Seleccione un veterinario</option>';
+            }
+        }
+
+        // Ejecutar ambas funciones al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            establecerRestriccionesTiempo();
+            actualizarCostoYFiltrarVets();
+        });
+    </script>
 </body>
 </html>

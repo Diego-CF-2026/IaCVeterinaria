@@ -138,4 +138,22 @@ public class EspecialidadDAO {
         }
         return false;
     }
+    public List<Especialidad> vistaClienteListarEspecialidades() {
+        // Si en el futuro necesitas filtrar especialidades inactivas para el cliente, 
+        // la lógica específica iría aquí. Por ahora, llama al listado completo.
+        LOG.info("EspecialidadDAO.vistaClienteListarEspecialidades(): Llamando a listar().");
+        return listar(); 
+    }
+
+    /** * [vistaCliente] Obtiene el precio de una especialidad específica. 
+     * Útil para validación server-side o servicios AJAX.
+     */
+    public double vistaClienteObtenerPrecioPorEspecialidad(int id) {
+        Especialidad especialidad = obtenerPorId(id);
+        if (especialidad != null) {
+            return especialidad.getPrecio();
+        }
+        LOG.log(Level.WARNING, "EspecialidadDAO.vistaClienteObtenerPrecioPorEspecialidad(): No se encontró la especialidad ID {0}.", id);
+        return 0.0; // Devuelve 0.0 si la especialidad no existe.
+    }
 }
