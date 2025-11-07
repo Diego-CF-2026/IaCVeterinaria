@@ -17,7 +17,7 @@ public class Usuario {
     private boolean Estado;
 
      
-    private java.sql.Timestamp tiempoBloqueo; // Usar java.sql.Timestamp o LocalDateTime (si usas JPA/Hibernate)
+    private java.sql.Timestamp tiempoBloqueo; 
     
     private String nombreRol; 
     public Usuario() {

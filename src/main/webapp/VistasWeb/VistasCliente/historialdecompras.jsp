@@ -333,7 +333,12 @@
                 Producto p = det.getProducto();
           %>
             <tr>
-              <td><%= (p != null ? p.getNombreProducto() : "Producto ID " + det.getIdProducto()) %></td>
+                <td>
+                  <img src="<%= request.getContextPath() + "/" + p.getImagen() %>"
+                       width="60" height="60" 
+                       style="border-radius:8px;object-fit:cover;">
+                  <br><%= p.getNombreProducto() %>
+                </td>
               
               
             <td>
@@ -402,27 +407,32 @@
   <div id="modalCompra" class="modal">
     <div class="modal-content">
       <div class="modal-header">Confirmar compra</div>
-      <form action="${pageContext.request.contextPath}/ConfirmarCompraServlet" method="post">
-        <input type="hidden" id="idCarrito" name="idCarrito">
-        <p><b>Total:</b> S/ <span id="montoTotal"></span></p>
-        <label>Método de pago:</label>
-        <select id="idPago" name="idPago">
-          <option value="">-- Selecciona --</option>
-          <%
-            if (tiposPago != null) {
-              for (TipoDePago tp : tiposPago) {
-          %>
-                <option value="<%= tp.getIdPago() %>"><%= tp.getNombrePago() %></option>
-          <%
-              }
-            }
-          %>
-        </select>
-        <div class="modal-footer">
-          <button type="button" onclick="cerrarModal()">Cancelar</button>
-          <button type="submit">Confirmar</button>
-        </div>
-      </form>
+        <form action="${pageContext.request.contextPath}/ConfirmarCompraServlet" method="post" id="formCompra">
+          <input type="hidden" id="idCarrito" name="idCarrito">
+          <p><b>Total:</b> S/ <span id="montoTotal"></span></p>
+
+          <label for="idPago">Método de pago:</label>
+            <select id="idPago" name="idPago" onchange="mostrarMetodoPago()">
+              <option value="">-- Selecciona --</option>
+              <%
+                if (tiposPago != null) {
+                  for (TipoDePago tp : tiposPago) {
+              %>
+                    <option value="<%= tp.getIdPago() %>"><%= tp.getNombrePago() %></option>
+              <%
+                  }
+                }
+              %>
+            </select>
+
+          <!-- 🔹 Contenedor dinámico -->
+          <div id="pagoExtra" style="margin-top: 15px;"></div>
+
+          <div class="modal-footer">
+            <button type="button" onclick="cerrarModal()">Cancelar</button>
+            <button type="submit">Confirmar</button>
+          </div>
+        </form>
     </div>
   </div>  
         
@@ -459,6 +469,23 @@
     document.getElementById('hamburger-menu').onclick = function () {
       document.querySelector('.nav-links').classList.toggle('active');
     };
+    
+    document.getElementById("formCompra").addEventListener("submit", function(event) {
+        const metodo = document.getElementById("idPago").value;
+        if (!metodo) {
+          event.preventDefault();
+          alert("Selecciona un método de pago.");
+          return;
+        }
+
+        if (metodo === "Tarjeta") {
+          const numero = this.numeroTarjeta.value.trim();
+          if (!/^\d{16}$/.test(numero.replace(/\s/g, ""))) {
+            event.preventDefault();
+            alert("Número de tarjeta inválido.");
+          }
+        }
+    });
 
     window.addEventListener('DOMContentLoaded', () => {
       const navLinks = document.querySelectorAll('.center-links a');
@@ -471,6 +498,10 @@
     });
     
     function abrirModal(idCarrito, total) {
+      if (total <= 0) {
+        alert("No puedes confirmar una compra vacía.");
+        return;
+      }
       document.getElementById("idCarrito").value = idCarrito;
       document.getElementById("montoTotal").innerText = total;
       document.getElementById("modalCompra").style.display = "flex";
@@ -478,6 +509,8 @@
 
     function cerrarModal() {
       document.getElementById("modalCompra").style.display = "none";
+      document.getElementById("pagoExtra").innerHTML = "";
+      document.getElementById("idPago").value = "";
     }
     
     function abrirModalExito() {
@@ -486,7 +519,47 @@
 
     function cerrarModalExito() {
         document.getElementById("modalExito").style.display = "none";
-      }
+      } 
+      
+    function mostrarMetodoPago() {
+        const metodo = document.getElementById("idPago").value;
+        const contenedor = document.getElementById("pagoExtra");
+        contenedor.innerHTML = ""; // limpia al cambiar
+
+        if (metodo === "1") {
+          contenedor.innerHTML = `
+            <div style="text-align:center;">
+              <p>Escanea este código QR para completar tu pago:</p>
+              <img src="${pageContext.request.contextPath}/Recursos/QrYape/Captura2025.png" 
+                   alt="QR ${metodo}" 
+                   style="width:180px;height:180px;border-radius:10px;box-shadow:0 3px 8px rgba(0,0,0,0.2);">
+            </div>
+          `;
+        } else if (metodo === "2") {
+          contenedor.innerHTML = `
+            <div class="tarjeta-form" style="margin-top:10px;text-align:left;">
+              <label>Nombre en la tarjeta:</label>
+              <input type="text" name="nombreTarjeta" placeholder="Ej. Juan Pérez" required 
+                     style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin-bottom:8px;">
+              <label>Número de tarjeta:</label>
+              <input type="text" name="numeroTarjeta" placeholder="1234 5678 9012 3456" required 
+                     maxlength="19" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin-bottom:8px;">
+              <div style="display:flex;gap:10px;">
+                <div style="flex:1;">
+                  <label>Vencimiento:</label>
+                  <input type="text" name="vencimiento" placeholder="MM/AA" required 
+                         maxlength="5" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;">
+                </div>
+                <div style="flex:1;">
+                  <label>CVV:</label>
+                  <input type="password" name="cvv" placeholder="***" required maxlength="3"
+                         style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;">
+                </div>
+              </div>
+            </div>
+          `;
+        }
+     }  
     
   </script>
 
@@ -503,4 +576,4 @@
     }
   %>
 </body>
-</html>
+</html> 
