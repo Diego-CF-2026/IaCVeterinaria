@@ -1,18 +1,24 @@
 package Modelo;
+//paquete Modelo
 
+//clase veterinario
 public class Veterinario {
+    //variables de veterinario
     private int idVeterinario;
     private int idUsuario;
     private String nombreVeterinario;
     private String apellidoVeterinario;
     private String telefonoVeterinario;
-    private int idEspecialidad; // Clave foránea 
-    private String correoVeterinario; // Dato de apoyo
+    // Clave foránea 
+    private int idEspecialidad; 
+    // Dato de apoyo
+    private String correoVeterinario;
 
     // 1. Constructor Vacío
     public Veterinario() {
     }
 
+    //constructo completo
     public Veterinario(int idVeterinario, int idUsuario, String nombreVeterinario, String apellidoVeterinario, String telefonoVeterinario, int idEspecialidad, String correoVeterinario) {
         this.idVeterinario = idVeterinario;
         this.idUsuario = idUsuario;
@@ -23,7 +29,7 @@ public class Veterinario {
         this.correoVeterinario = correoVeterinario;
     }
 
-
+// getehrs and sethers
     public int getIdVeterinario() {
         return idVeterinario;
     }

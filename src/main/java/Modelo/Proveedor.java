@@ -1,26 +1,31 @@
 package Modelo;
-
+//paquete Modelo
 import java.time.LocalDateTime;
+//import tiempo
 import java.util.ArrayList;
+//import listado
 import java.util.List;
-
-public class Proveedor {
+//import listado
+public class Proveedor { 
+//varibles de la clase proveedor
     private int idProveedor;
     private String razonSocial;
-    private String ruc;
-    private String direccion;
-    private String correo;
+    private String ruc; //ruc del proveeedor
+    private String direccion; //direccion del establecimientod el negocio
+    private String correo; 
     private int estado;
     private LocalDateTime fechaRegistro;
-
     private List<ContactoProveedor> contactos;
-    private List<Producto> productos; // NUEVO
+    private List<Producto> productos; 
+// NUEVO
 
     public Proveedor() {
+        //listado 
         this.contactos = new ArrayList<>();
+         //listado 
         this.productos = new ArrayList<>();
     }
-
+//constructor completo 
     public Proveedor(int idProveedor, String razonSocial, String ruc, String direccion, String correo, int estado, LocalDateTime fechaRegistro) {
         this.idProveedor = idProveedor;
         this.razonSocial = razonSocial;
@@ -120,7 +125,7 @@ public class Proveedor {
         }
         this.productos.add(producto);
     }
-
+// Método toString para depuración
     @Override
     public String toString() {
         return "Proveedor{" +

@@ -14,9 +14,10 @@ public class ProductoDAO {
         this.con = con;
     }
 
+    // Lista todos los productos activos (estado = 1)
     public List<Producto> listarTodos() {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT * FROM Producto WHERE estado = 1";
+        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM Producto WHERE estado = 1";
 
         try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -29,9 +30,10 @@ public class ProductoDAO {
         return productos;
     }
 
+    // Lista los productos inactivos (estado = 0)
     public List<Producto> listarInactivos() {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT * FROM Producto WHERE estado = 0";
+        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM Producto WHERE estado = 0";
 
         try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -44,9 +46,10 @@ public class ProductoDAO {
         return productos;
     }
 
+    // Busca productos por nombre y según su estado (activo o inactivo)
     public List<Producto> buscarPorNombre(String nombre, boolean inactivos) {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT * FROM Producto WHERE nombreProducto LIKE ? AND estado = ?";
+        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM Producto WHERE nombreProducto LIKE ? AND estado = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, "%" + nombre + "%");
@@ -63,9 +66,10 @@ public class ProductoDAO {
         return productos;
     }
 
+    // Lista productos por proveedor (solo los activos)
     public List<Producto> listarPorProveedor(int idProveedor) {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT * FROM Producto WHERE idProveedor = ? AND estado = 1";
+        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM Producto WHERE idProveedor = ? AND estado = 1";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProveedor);
@@ -81,8 +85,9 @@ public class ProductoDAO {
         return productos;
     }
 
+    // Obtiene un producto por su ID
     public Producto obtenerPorId(int id) {
-        String sql = "SELECT * FROM Producto WHERE idProducto = ?";
+        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM Producto WHERE idProducto = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -98,22 +103,21 @@ public class ProductoDAO {
         return null;
     }
 
+    // Agrega un nuevo producto con validaciones básicas
     public boolean agregar(Producto producto) {       
-        // 1. Validar que el precio no sea nulo y sea un número.
-        // El tipo BigDecimal ya asegura que no contendrá letras, pero hay que validar que no sea null.
+        // Validar precio (no nulo ni negativo)
         if (producto.getPrecio() == null || producto.getPrecio().compareTo(BigDecimal.ZERO) < 0) {
             System.err.println("Error: El precio no puede ser nulo o negativo.");
             return false;
         }
 
-        // 2. Validar que la unidad de medida solo contenga letras.
-        // Usamos una expresión regular (regex) para verificar que solo sean letras.
+        // Validar unidad de medida (solo letras)
         if (producto.getUnidadMedida() == null || !producto.getUnidadMedida().matches("^[a-zA-Z]+$")) {
             System.err.println("Error: La unidad de medida debe contener solo letras.");
             return false;
         }
 
-        // 3. Validar otros campos clave (buena práctica)
+        // Validar nombre del producto (no vacío)
         if (producto.getNombreProducto() == null || producto.getNombreProducto().trim().isEmpty()) {
             System.err.println("Error: El nombre del producto no puede estar vacío.");
             return false;
@@ -141,6 +145,7 @@ public class ProductoDAO {
         return false;
     }
 
+    // Actualiza los datos de un producto existente
     public boolean actualizar(Producto producto) {
         String sql = "UPDATE Producto SET nombreProducto=?, descripcion=?, precio=?, stock=?, unidadMedida=?, estado=?, idProveedor=?, imagen=? WHERE idProducto=?";
 
@@ -162,7 +167,7 @@ public class ProductoDAO {
         return false;
     }
 
-    // Eliminación lógica (estado = 0)
+    // Eliminación lógica (cambia el estado a 0)
     public boolean eliminar(int id) {
         String sql = "UPDATE Producto SET estado = 0 WHERE idProducto = ?";
 
@@ -176,7 +181,7 @@ public class ProductoDAO {
         return false;
     }
 
-    // Eliminación física permanente
+    // Eliminación física (borra el registro definitivamente)
     public boolean eliminarDefinitivo(int id) {
         String sql = "DELETE FROM Producto WHERE idProducto = ?";
 
@@ -190,6 +195,7 @@ public class ProductoDAO {
         return false;
     }
 
+    // Mapea los datos del ResultSet a un objeto Producto
     private Producto mapearProducto(ResultSet rs) throws SQLException {
         Producto p = new Producto();
         p.setIdProducto(rs.getInt("idProducto"));
@@ -204,5 +210,4 @@ public class ProductoDAO {
         p.setFechaRegistro(rs.getTimestamp("fechaRegistro"));
         return p;
     }
-
 }

@@ -1,23 +1,29 @@
 package Modelo;
-
+//paquete Modelo
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
+//import de tiempo 
+//clase producto
 public class Producto {
+    //variables 
     private int idProducto;
     private String nombreProducto;
     private String descripcion;
     private BigDecimal precio;
+    //stock de productos 
     private int stock;
+    //unidad de medida
     private String unidadMedida;
-    private String imagen; // nombre del archivo o ruta relativa
+    // nombre del archivo o ruta relativa
+    private String imagen; 
     private int estado;
+    //id del proveedor 
     private int idProveedor;
     private Timestamp fechaRegistro;
 
     // ----- Constructores -----
     public Producto() {}
-
+// constructor completo 
     public Producto(int idProducto, String nombreProducto, String descripcion, BigDecimal precio, int stock,
                     String unidadMedida, String imagen, int estado, int idProveedor, Timestamp fechaRegistro) {
         this.idProducto = idProducto;

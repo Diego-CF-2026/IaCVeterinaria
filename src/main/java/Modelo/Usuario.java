@@ -3,12 +3,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Modelo;
+//paquete Modelo
 
 /**
  *
  * @author PC
  */
+
+// clase Usuario
 public class Usuario {
+    //variable de ususario
     private int idUsuario;
     private int idRol;
     private String correo;
@@ -18,12 +22,12 @@ public class Usuario {
 
      
     private java.sql.Timestamp tiempoBloqueo; 
-    
+    //constructor vacio
     private String nombreRol; 
     public Usuario() {
     }
 
-    
+    //constructor completo
     public Usuario(int idUsuario, int idRol, String correo, String contra, int intentos, boolean Estado) {
         this.idUsuario = idUsuario;
         this.idRol = idRol;
@@ -33,6 +37,7 @@ public class Usuario {
         this.Estado = Estado;
     }
 
+    //gethers and sethers
     public int getIdUsuario() {
         return idUsuario;
     }

@@ -1,12 +1,14 @@
 package Modelo;
+//paquete Modelo
 
 import java.util.Date;
-
+//import de tiempo
 /**
  * Clase que representa un tratamiento médico en la veterinaria.
  * Contiene información sobre el diagnóstico, tratamiento aplicado,
  * la cita asociada, el cliente y la fecha de registro.
  */
+//esta es la clase tramtamiento
 public class Tratamiento {
 
     // ==========================
@@ -24,7 +26,7 @@ public class Tratamiento {
     // ==========================
     public Tratamiento() {
     }
-
+//constructor completo
     public Tratamiento(int idTratamiento, int idCita, String diagnostico, String tratamiento, String dniCliente, Date fechaRegistro) {
         this.idTratamiento = idTratamiento;
         this.idCita = idCita;
@@ -84,7 +86,7 @@ public class Tratamiento {
     public void setFechaRegistro(Date fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
-
+// Método toString para depuración
     // ==========================
     // toString (opcional, útil para depuración)
     // ==========================

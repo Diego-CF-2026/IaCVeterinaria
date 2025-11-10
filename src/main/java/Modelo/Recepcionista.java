@@ -1,6 +1,8 @@
 package Modelo;
-
+//pacquete Modelo
+//clase recepcionista
 public class Recepcionista {
+    //variables de recepcionista
     private int idRecepcionista;
     private int idUsuario ;
     private String nombreRecepcionista;
@@ -9,10 +11,10 @@ public class Recepcionista {
     
     // ✅ CORRECCIÓN CLAVE: Atributo de relación
     private Usuario usuario; 
-
+//constrcutor vacio
     public Recepcionista() {
     }
-
+//constrcutor completo
     // Constructor actualizado para incluir el objeto Usuario (opcional)
     public Recepcionista(int idRecepcionista, int idUsuario, String nombreRecepcionista, 
                          String apellidoRecepcionista, String telefonoRecepcionista, 
@@ -44,7 +46,7 @@ public class Recepcionista {
     public void setTelefonoRecepcionista(String telefonoRecepcionista) { this.telefonoRecepcionista = telefonoRecepcionista; }
 
 
-    // ✅ MÉTODOS DE RELACIÓN AÑADIDOS (Permiten la inyección de datos)
+    // MÉTODOS DE RELACIÓN AÑADIDOS (Permiten la inyección de datos)
 
     /**
      * @return el objeto Usuario asociado a este Recepcionista.

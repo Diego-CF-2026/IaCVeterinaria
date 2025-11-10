@@ -19,7 +19,7 @@ public class EstadoDAO {
     private PreparedStatement ps;
     private ResultSet rs;
 
-    // Método auxiliar para listar todos los estados
+    // Listar todos los estados de la tabla 'estado'
     public List<Estado> listarEstados() {
         List<Estado> lista = new ArrayList<>();
         String sql = "SELECT idEstado, tipoEstado FROM estado ORDER BY idEstado ASC";
@@ -29,6 +29,7 @@ public class EstadoDAO {
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
 
+            // Recorre los resultados y crea objetos Estado
             while (rs.next()) {
                 Estado e = new Estado();
                 e.setIdEstado(rs.getInt("idEstado"));
@@ -36,15 +37,14 @@ public class EstadoDAO {
                 lista.add(e);
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "❌ ERROR SQL al listar estados.", e);
+            LOGGER.log(Level.SEVERE, "Error SQL al listar estados.", e);
         } finally {
             closeResources();
         }
         return lista;
     }
-    
-    // Método auxiliar para obtener el ID de un estado específico (ej. "Pendiente")
-    // Útil para la creación de citas donde el estado inicial es fijo.
+
+    // Obtener el ID de un estado específico a partir de su nombre
     public int obtenerIdEstadoPorNombre(String nombreEstado) {
         String sql = "SELECT idEstado FROM estado WHERE tipoEstado = ?";
         int id = -1;
@@ -55,17 +55,19 @@ public class EstadoDAO {
             ps.setString(1, nombreEstado);
             rs = ps.executeQuery();
 
+            // Si existe el estado, se obtiene su ID
             if (rs.next()) {
                 id = rs.getInt("idEstado");
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "❌ ERROR SQL al obtener ID de estado.", e);
+            LOGGER.log(Level.SEVERE, "Error SQL al obtener ID de estado.", e);
         } finally {
             closeResources();
         }
         return id;
     }
 
+    // Cierra todos los recursos abiertos para evitar fugas de conexión
     private void closeResources() {
         try {
             if (rs != null) rs.close();
