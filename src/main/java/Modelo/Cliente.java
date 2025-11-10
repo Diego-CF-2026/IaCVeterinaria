@@ -29,7 +29,7 @@ public class Cliente {
         this.telefono = telefono;
         this.fechaRegistro = fechaRegistro;
     }
-//guetehrs and sethers
+//guetehrs and setherss
     public int getIdCliente() {
         return idCliente;
     }
