@@ -10,14 +10,14 @@ public class Administrador {
     // Constructor vacío
     public Administrador() {
     }
-
+   //constructor con datos
     public Administrador(int idAdmin, int idUsuario, String nombre, String apellido) {
         this.idAdmin = idAdmin;
         this.idUsuario = idUsuario;
         this.nombreAdmin = nombre;
         this.apellidoAdmin = apellido;
     }
-
+//geters and sethers
     public int getIdAdmin() {
         return idAdmin;
     }
@@ -49,8 +49,6 @@ public class Administrador {
     public void setApellido(String apellido) {
         this.apellidoAdmin = apellido;
     }
-
-
-
+// campos para rellenar
     
 }

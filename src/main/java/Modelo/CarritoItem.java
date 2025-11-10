@@ -1,9 +1,9 @@
 package Modelo;
-
+//guardado en paquete
 import java.math.BigDecimal;
 
 public class CarritoItem {
-
+//variables
     private int idCarrito;
     private String nombreProducto;
     private BigDecimal precio;
@@ -12,7 +12,7 @@ public class CarritoItem {
 
     public CarritoItem() {
     }
-
+// constructor
     public CarritoItem(int idCarrito, String nombreProducto, BigDecimal precio, int cantidad, BigDecimal subtotal) {
         this.idCarrito = idCarrito;
         this.nombreProducto = nombreProducto;
@@ -20,7 +20,7 @@ public class CarritoItem {
         this.cantidad = cantidad;
         this.subtotal = subtotal;
     }
-
+//getehrs and sethers
     public int getIdCarrito() {
         return idCarrito;
     }
@@ -60,7 +60,7 @@ public class CarritoItem {
     public void setSubtotal(BigDecimal subtotal) {
         this.subtotal = subtotal;
     }
-
+//cambiadno valor de dato
     @Override
     public String toString() {
         return "CarritoItem{" +

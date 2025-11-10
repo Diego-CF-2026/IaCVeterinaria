@@ -3,15 +3,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Modelo;
-
+//paquete modelo
 import java.sql.Timestamp;
 
 /**
  *
  * @author kristhor
  */
+
+// clase detalle carrrito
 public class DetalleCarrito {
-    
+    //variables detalle carrrito
     private int idDetalleCarrito;
     private int idCarrito;
     private int idProducto;
@@ -21,8 +23,10 @@ public class DetalleCarrito {
     // Relación con producto (opcional para mostrar datos en carrito)
     private Producto producto;  
     
+    //constrcutor vacio
     public DetalleCarrito() {}
 
+    //constrcutor completo
     public DetalleCarrito(int idDetalleCarrito, int idCarrito, int idProducto, int cantidadProducto, Timestamp fechaAgregado, Producto producto) {
         this.idDetalleCarrito = idDetalleCarrito;
         this.idCarrito = idCarrito;
@@ -32,6 +36,7 @@ public class DetalleCarrito {
         this.producto = producto;
     }
 
+    //getehrs and sethers
     public int getIdDetalleCarrito() {
         return idDetalleCarrito;
     }

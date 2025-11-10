@@ -1,6 +1,7 @@
 package Modelo;
-
+//paquete modelo
 public class ContactoProveedor {
+    //variables
     private int idContacto;
     private int idProveedor;
     private String nombreContacto;
@@ -20,7 +21,7 @@ public class ContactoProveedor {
         this.telefono = telefono;
         this.correoContacto = correoContacto;
     }
-
+//aclaracion
     // Getters y Setters
     public int getIdContacto() {
         return idContacto;
@@ -69,7 +70,7 @@ public class ContactoProveedor {
     public void setCorreoContacto(String correoContacto) {
         this.correoContacto = correoContacto;
     }
-
+//cambio de tipo de valores a string
     @Override
     public String toString() {
         return "ContactoProveedor{" +

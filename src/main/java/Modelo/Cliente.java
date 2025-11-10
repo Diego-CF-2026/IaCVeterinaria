@@ -3,10 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Modelo;
-
+//lugar de paquete
 import java.sql.Date;
-
+//import de tiempo
 public class Cliente {
+    //variables
     private int idCliente;
     private int idUsuario;
     private String nombre;
@@ -14,11 +15,11 @@ public class Cliente {
     private String dni;
     private String telefono;
     private Date fechaRegistro;
-
+// constructor vacio
     public Cliente() {
         
     }
-
+//constructor con variables
     public Cliente(int idCliente, int idUsuario, String nombre,String Apellido, String dni, String telefono, Date fechaRegistro) {
         this.idCliente = idCliente;
         this.idUsuario = idUsuario;
@@ -28,7 +29,7 @@ public class Cliente {
         this.telefono = telefono;
         this.fechaRegistro = fechaRegistro;
     }
-
+//guetehrs and sethers
     public int getIdCliente() {
         return idCliente;
     }

@@ -1,8 +1,8 @@
 package Modelo;
-
+//guardado en paquete
 import java.sql.Date;
 import java.sql.Time;
-
+//importaciones apra el tiempo
 public class Cita {
     private int idCita;
     private int idCliente;
@@ -92,8 +92,8 @@ public class Cita {
     public void setIdEstado(int idEstado) {
         this.idEstado = idEstado;
     }
-    
-    public String getEstado() { // <--- ¡AÑADE ESTE MÉTODO!
+    // se añadio esto para el estado
+    public String getEstado() { 
         return this.estadoNombre;
     }
 
