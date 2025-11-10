@@ -25,7 +25,7 @@ public class Proveedor {
          //listado 
         this.productos = new ArrayList<>();
     }
-
+//constructor completo 
     public Proveedor(int idProveedor, String razonSocial, String ruc, String direccion, String correo, int estado, LocalDateTime fechaRegistro) {
         this.idProveedor = idProveedor;
         this.razonSocial = razonSocial;

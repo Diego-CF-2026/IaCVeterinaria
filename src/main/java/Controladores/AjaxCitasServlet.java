@@ -14,12 +14,29 @@ import ModeloDAO.VeterinarioDAO;
 // NOTA: Si usas la librería Gson, debes descomentar la importación
 // import com.google.gson.Gson; 
 
+/**
+ * Servlet AJAX para operaciones relacionadas a citas.
+ * Actualmente expone:
+ *  - GET ?accion=listarVeterinariosPorEspecialidad&idEspecialidad=ID
+ *      Devuelve un JSON con {idVeterinario, nombreVeterinario, apellidoVeterinario}
+ *      de todos los veterinarios asociados a la especialidad indicada.
+ *
+ * Notas:
+ *  - Respuestas en formato JSON (UTF-8).
+ *  - Manejo de errores con códigos HTTP 400 (parámetros inválidos) y 500 (error interno).
+ *  - Por simplicidad, la conversión a JSON se hace manualmente; opcionalmente puedes usar Gson.
+ */
 @WebServlet("/AjaxCitasServlet")
 public class AjaxCitasServlet extends HttpServlet {
 
+    // DAO para acceder a la capa de datos de Veterinario
     private final VeterinarioDAO vetDAO = new VeterinarioDAO();
     // private final Gson gson = new Gson(); // Descomentar si usas la librería Gson
 
+    /**
+     * Enrutador de solicitudes GET para endpoints AJAX.
+     * Actualmente soporta "listarVeterinariosPorEspecialidad".
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,59 +45,57 @@ public class AjaxCitasServlet extends HttpServlet {
 
         if ("listarVeterinariosPorEspecialidad".equalsIgnoreCase(accion)) {
             
-            // 1. Configurar la respuesta como JSON
+            // 1) Configurar cabeceras de respuesta JSON
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             
             PrintWriter out = response.getWriter();
-            String jsonOutput = "[]"; // Valor por defecto: lista vacía
+            String jsonOutput = "[]"; // Por defecto, lista vacía
 
             try {
-                // 2. Obtener y validar el ID
+                // 2) Leer y validar el parámetro idEspecialidad
                 String idEspecialidadStr = request.getParameter("idEspecialidad");
-                
                 if (idEspecialidadStr == null || idEspecialidadStr.isEmpty()) {
                      throw new NumberFormatException("El ID de especialidad está vacío.");
                 }
-                
                 int idEspecialidad = Integer.parseInt(idEspecialidadStr);
 
-                // 3. Obtener los datos del DAO
-                // Usando la función vistaCliente que agregaste al DAO
+                // 3) Consultar el DAO (vista para cliente por especialidad)
                 List<Veterinario> listaVets = vetDAO.vistaClienteListarPorEspecialidad(idEspecialidad);
 
-                // 4. Convertir la lista de objetos Java (Veterinario) a JSON
-                
-                // Opción A: Usando Gson
+                // 4) Serializar la lista a JSON
+                // Opción A (con librería):
                 // jsonOutput = gson.toJson(listaVets);
-                
-                // Opción B: Construcción manual de JSON (como no hay librería GSON/Jackson)
+                // Opción B (sin librería): construcción manual segura (escapando comillas)
                 jsonOutput = construirJsonVeterinarios(listaVets);
 
-
             } catch (NumberFormatException e) {
-                // El ID no es un número válido
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Código 400
-                jsonOutput = "{\"error\": \"ID de Especialidad no válido o ausente: " + e.getMessage() + "\"}";
+                // Parámetro ausente o no numérico -> 400 Bad Request
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                jsonOutput = "{\"error\": \"ID de Especialidad no válido o ausente: " 
+                             + e.getMessage() + "\"}";
             } catch (Exception e) {
-                // Error de servidor/DB
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Código 500
-                jsonOutput = "{\"error\": \"Error interno del servidor: " + e.getMessage().replace("\"", "'") + "\"}";
+                // Cualquier otro error (BD, nulls inesperados, etc.) -> 500
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                jsonOutput = "{\"error\": \"Error interno del servidor: " 
+                             + e.getMessage().replace("\"", "'") + "\"}";
             } finally {
-                // 5. Enviar la respuesta JSON
+                // 5) Enviar respuesta
                 out.print(jsonOutput);
                 out.flush();
             }
         } else {
-            // Acción no reconocida
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND); // Código 404
+            // Acción no soportada -> 404
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
     /**
-     * Construye manualmente el JSON para la lista de veterinarios.
-     * @param listaVets La lista de veterinarios.
-     * @return String en formato JSON.
+     * Construcción manual de JSON para una lista de veterinarios.
+     * Incluye escape sencillo de comillas en nombre y apellido.
+     *
+     * @param listaVets lista de Veterinario a serializar
+     * @return arreglo JSON con campos idVeterinario, nombreVeterinario, apellidoVeterinario
      */
     private String construirJsonVeterinarios(List<Veterinario> listaVets) {
         StringBuilder sb = new StringBuilder();
@@ -88,9 +103,12 @@ public class AjaxCitasServlet extends HttpServlet {
         
         for (int i = 0; i < listaVets.size(); i++) {
             Veterinario vet = listaVets.get(i);
-            // Asegurar que el nombre y apellido no causen problemas con comillas
-            String nombre = vet.getNombreVeterinario().replace("\"", "\\\"");
-            String apellido = vet.getApellidoVeterinario().replace("\"", "\\\"");
+
+            // Evitar errores por null y escapar comillas
+            String nombre = vet.getNombreVeterinario() == null ? "" 
+                            : vet.getNombreVeterinario().replace("\"", "\\\"");
+            String apellido = vet.getApellidoVeterinario() == null ? "" 
+                              : vet.getApellidoVeterinario().replace("\"", "\\\"");
             
             sb.append("{");
             sb.append("\"idVeterinario\":").append(vet.getIdVeterinario()).append(",");
@@ -106,6 +124,10 @@ public class AjaxCitasServlet extends HttpServlet {
         return sb.toString();
     }
     
+    /**
+     * Redirige las solicitudes POST al mismo manejo que GET (idempotente para esta operación).
+     * Útil si el cliente envía POST por conveniencia.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

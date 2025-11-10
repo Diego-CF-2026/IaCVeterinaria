@@ -4,6 +4,7 @@ package Modelo;
  * Representa la tabla 'estado' en la base de datos.
  * Esta tabla contiene la lista de posibles estados de una cita (ej: Pendiente, Confirmada, Cancelada, Finalizada).
  */
+//clase estado
 public class Estado {
 
     // Corresponde a 'idEstado' en la BD (Clave Primaria - FK en la tabla 'citas')
