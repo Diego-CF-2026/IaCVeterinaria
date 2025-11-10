@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package ModeloDAO;
 
 import Modelo.TipoDePago;
@@ -12,35 +8,42 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author kristhor
- */
 public class TipoDePagoDAO {
 
+    // ============================================================
+    // Atributos y Constructor
+    // ============================================================
+
+    // Conexión recibida externamente (mantiene consistencia con otros DAOs)
     private final Connection con;
 
-    // Constructor que recibe la conexión (coherente con tus otros DAOs)
     public TipoDePagoDAO(Connection con) {
         this.con = con;
     }
 
-    // Lista todos los tipos de pago
+    // ============================================================
+    // LISTAR TIPOS DE PAGO
+    // ============================================================
+
+    // Método para listar todos los tipos de pago registrados en la base de datos
     public List<TipoDePago> listar() {
         List<TipoDePago> lista = new ArrayList<>();
-        String sql = "SELECT idPago, nombrePago FROM tipodepago"; // ajusta nombres si difieren
+        String sql = "SELECT idPago, nombrePago FROM tipodepago"; // Ajustar nombres según BD
 
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
+            // Recorre los resultados y crea objetos TipoDePago
             while (rs.next()) {
-                // Usa el constructor que tienes en Modelo.TipoDePago
-                TipoDePago tp = new TipoDePago(rs.getInt("idPago"), rs.getString("nombrePago"));
+                TipoDePago tp = new TipoDePago(
+                    rs.getInt("idPago"),
+                    rs.getString("nombrePago")
+                );
                 lista.add(tp);
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error al listar tipos de pago: " + e.getMessage());
         }
 
         return lista;

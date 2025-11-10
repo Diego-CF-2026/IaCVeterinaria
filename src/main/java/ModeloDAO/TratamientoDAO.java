@@ -11,34 +11,35 @@ import java.util.List;
 
 public class TratamientoDAO {
 
-    /**
-     * Lista todos los tratamientos asociados a un cliente por su DNI.
-     * Incluye el diagnóstico, tratamiento, fecha de registro y DNI.
-     */
+    // ============================================================
+    // LISTAR TRATAMIENTOS POR DNI
+    // ============================================================
+
+    // Método que obtiene todos los tratamientos asociados a un cliente según su DNI.
+    // Incluye diagnóstico, tratamiento, fecha de registro y DNI.
     public List<Tratamiento> listarTratamientosPorDni(String dni) {
         List<Tratamiento> lista = new ArrayList<>();
 
-        // Consulta SQL: obtén todos los tratamientos con la fecha de registro
-        String sql =  "SELECT "
-           + "t.idTratamiento, "
-           + "t.idCita, "
-           + "t.diagnostico, "
-           + "t.tratamiento, "
-           + "t.dniCliente, "
-           + "c.fecha AS fechaRegistro "
-           + "FROM tratamientomedico t "
-           + "INNER JOIN citas c ON t.idCita = c.idCita "
-           + "WHERE t.dniCliente = ? "
-           + "ORDER BY c.fecha DESC";
-
-
+        // Consulta SQL: obtiene los tratamientos junto con la fecha de la cita
+        String sql = "SELECT "
+                   + "t.idTratamiento, "
+                   + "t.idCita, "
+                   + "t.diagnostico, "
+                   + "t.tratamiento, "
+                   + "t.dniCliente, "
+                   + "c.fecha AS fechaRegistro "
+                   + "FROM tratamientomedico t "
+                   + "INNER JOIN citas c ON t.idCita = c.idCita "
+                   + "WHERE t.dniCliente = ? "
+                   + "ORDER BY c.fecha DESC";
 
         try (Connection con = Conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, dni);
-            try (ResultSet rs = ps.executeQuery()) {
 
+            try (ResultSet rs = ps.executeQuery()) {
+                // Recorrer resultados y llenar la lista con objetos Tratamiento
                 while (rs.next()) {
                     Tratamiento t = new Tratamiento();
                     t.setIdTratamiento(rs.getInt("idTratamiento"));
@@ -52,7 +53,7 @@ public class TratamientoDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("❌ Error en listarTratamientosPorDni(): " + e.getMessage());
+            System.err.println("Error al listar tratamientos por DNI: " + e.getMessage());
         }
 
         return lista;
