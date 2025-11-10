@@ -8,24 +8,21 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
-/**
- *
- * @author kristhor
- */
 public class Carrito {
     
     private int idCarrito;
     private int idCliente;
     private BigDecimal total;
-    private String estado; // ABIERTO o CERRADO
+    private String estado; 
     private Timestamp fecha;
     private int idPago; 
+    private String estadoEntrega;
     
     private List<DetalleCarrito> detalles;
     
     public Carrito() {}
 
-    public Carrito(int idCarrito, int idCliente, BigDecimal total, String estado, Timestamp fecha, int idPago) {
+    public Carrito(int idCarrito, int idCliente, BigDecimal total, String estado, Timestamp fecha, int idPago, String estadoEntrega) {
         this.idCarrito = idCarrito;
         this.idCliente = idCliente;
         this.total = total;
@@ -33,6 +30,7 @@ public class Carrito {
         this.fecha = fecha;
         this.idPago = idPago;
         this.detalles = detalles;
+        this.estadoEntrega = estadoEntrega;
     }
 
     public int getIdCarrito() {
@@ -91,8 +89,21 @@ public class Carrito {
         this.detalles = detalles;
     }
     
-    
-    
-            
-    
+    private Cliente cliente; 
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public String getEstadoEntrega() {
+        return estadoEntrega;
+    }
+
+    public void setEstadoEntrega(String estadoEntrega) {
+        this.estadoEntrega = estadoEntrega;
+    }
 }

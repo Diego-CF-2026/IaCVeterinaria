@@ -42,10 +42,6 @@
                             <i class='bx bx-package icon'></i><span class="text">Productos</span></a>
                     </li> 
                     <li class="nav-link">
-                        <a href="${pageContext.request.contextPath}/HistorialVentaServlet">
-                            <i class='bx bx-receipt icon'></i><span class="text">Historial de Ventas</span></a>
-                    </li>
-                    <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/LogoutServlet">
                             <i class='bx bx-log-out icon'></i><span class="text">Salir</span>
                         </a>

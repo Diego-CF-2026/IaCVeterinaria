@@ -2,13 +2,30 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+
+/*
+ * DAO (Data Access Object) para manejar todas las operaciones relacionadas con la tabla `carrito`
+ * y sus relaciones (detallecarrito, producto, cliente).
+ */
+
+/*
+ * Aquí se implementan métodos CRUD y de lógica de negocio como:
+ *  - Agregar productos al carrito
+ *  - Obtener carrito activo o cerrado
+ *  - Confirmar compra
+ */
+
+/*
+ *  - Actualizar cantidades, eliminar productos
+ *  - Cambiar estado de entrega (PROCESO / ENTREGADO)
+ */
+
 package ModeloDAO;
 
-
 import Modelo.Carrito;
+import Modelo.Cliente;
 import Modelo.DetalleCarrito;
 import Modelo.Producto;
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -255,5 +272,52 @@ public class CarritoDAO {
             return false;
         }
     }
-   
+    
+    public List<Carrito> obtenerCarritosCerrados() {
+        List<Carrito> lista = new ArrayList<>();
+        try {
+            String sql = "SELECT c.*, cl.nombre, cl.apellido " +
+                         "FROM carrito c " +
+                         "INNER JOIN cliente cl ON c.idCliente = cl.idCliente " +
+                         "WHERE c.estado = 'CERRADO' " +
+                         "ORDER BY c.fecha DESC";
+
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    Carrito c = new Carrito();
+                    c.setIdCarrito(rs.getInt("idCarrito"));
+                    c.setIdCliente(rs.getInt("idCliente"));
+                    c.setTotal(rs.getBigDecimal("total"));
+                    c.setEstado(rs.getString("estado"));
+                    c.setFecha(rs.getTimestamp("fecha"));
+                    c.setIdPago(rs.getInt("idPago"));
+                    c.setEstadoEntrega(rs.getString("estadoEntrega"));
+                    Cliente cliente = new Cliente();
+                    cliente.setNombre(rs.getString("nombre"));
+                    cliente.setApellido(rs.getString("apellido"));
+                    c.setCliente(cliente);
+
+                    c.setDetalles(obtenerDetalles(c.getIdCarrito()));
+
+                    lista.add(c);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+    
+    public boolean actualizarEstadoEntrega(int idCarrito, String nuevoEstado) {
+        String sql = "UPDATE Carrito SET estadoEntrega = ? WHERE idCarrito = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, idCarrito);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
