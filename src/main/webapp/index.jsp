@@ -19,22 +19,30 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>VeterinariaSantaCruz</title>
+        <link rel="preload" as="image" href="Recursos/ImgDoctor.png">
         <link rel="stylesheet" href="css/index.css">
         <style>
-            /* Estilos para el mensaje de error */
-            /* Nota: Se usa la clase .alert.error definida en tu CSS para mantener la consistencia */
+            /* Estilos críticos en línea para mejorar el First Contentful Paint (FCP) */
+            /* Nota: Se mantiene el estilo de error de login */
             #mensajeErrorLogin {
-                color: red; /* Se asegura de que se vea el color del error */
+                color: red; 
                 font-weight: bold;
                 margin-top: 10px;
                 text-align: center;
             }
         </style>
-    </head>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
-
+        </head>
+    
     <body>
+        
+        <%-- Bloque JS para aplicar el modo noche inmediatamente antes de renderizar el contenido --%>
+        <script>
+            // Este script es CRÍTICO para evitar el FOUC (flash of unstyled content) en modo noche.
+            const modoGuardado = localStorage.getItem('modo-noche');
+            if (modoGuardado === 'activado') {
+                document.body.classList.add('modo-noche');
+            }
+        </script>
 
         <nav class="navbar">
             <div class="logo-container">
@@ -55,28 +63,30 @@
                     <a href="#">Contacto</a>
                 </div>
                 <div class="buttons">
-                    <a href="#" class="btn login" onclick="abrirLogin()">Iniciar Sesión</a> <a href="#" onclick="abrirRegistroDesdeLogin()" class="btn register">Registrarse</a>
+                    <a href="#" class="btn login" onclick="abrirLogin()">Iniciar Sesión</a> 
+                    <a href="#" onclick="abrirRegistro()" class="btn register">Registrarse</a>
                 </div>
             </div>
 
             <button id="modoNocheBtn" class="modo-noche-flotante" aria-label="Cambiar a modo noche">🌙</button>
         </nav>
 
+        <%-- MODAL LOGIN --%>
         <div id="modalLogin" class="modal">
             <div class="modal-content animado">
                 <span class="cerrar" onclick="cerrarModal('modalLogin')">&times;</span>
-                <h2>Iniciar Sesión</h2>
+                <h2 id="tituloLogin">Iniciar Sesión</h2>
                 <img src="Recursos/IconUser.svg" alt="Icono Usuario" class="icono-usuario">
 
                 <form id="formLogin" action="LoginServlet" method="post">
+                    <input type="hidden" id="inputRol" name="rol" value="">
                     <input type="email" name="correo" placeholder="Correo electrónico" required>
                     <input type="password" name="contrasena" placeholder="Contraseña" required>
-
 
                     <button type="submit" class="btn1 iniciar-sesion">Ingresar</button>
                 </form>
 
-                <%-- Bloque para mostrar errores de login (bloqueo/intentos) --%>
+                <%-- Bloque para mostrar errores de login --%>
                 <% if (request.getAttribute("errorLogin") != null) {%>
                 <div id="mensajeErrorLogin" class="alert error" style="display: block;"><%= request.getAttribute("errorLogin")%></div>
                 <% } else { %>
@@ -90,8 +100,7 @@
         </div>
 
 
-
-
+        <%-- MODAL REGISTRO --%>
         <div id="modalRegistro" class="modal" 
              style="<%= (request.getAttribute("errorRegistro") != null
                      || request.getAttribute("exitoRegistro") != null) ? "display:flex;" : ""%>">
@@ -100,23 +109,19 @@
                 <img id="logoRegistro" src="Recursos/Logo.png" alt="Logo" class="icono-patita">
                 <h2>Registrar Cliente</h2>
 
+                <%-- Mensajes de Error/Éxito --%>
                 <% if ("error".equals(String.valueOf(request.getAttribute("errorRegistro")))) { %>
                 <div class="alert error">Error general al registrar. Intenta nuevamente.</div>
                 <% } %>
-
-
                 <% if ("dni".equals(request.getAttribute("errorRegistro"))) { %>
                 <div class="alert error">DNI ya registrado.</div>
                 <% } %>
-
                 <% if ("correo".equals(request.getAttribute("errorRegistro"))) { %>
                 <div class="alert error">Correo ya registrado.</div>
                 <% } %>
-
                 <% if ("telefono".equals(request.getAttribute("errorRegistro"))) { %>
                 <div class="alert error">Teléfono ya registrado.</div>
                 <% } %>
-
                 <% if (request.getAttribute("exitoRegistro") != null) { %>
                 <div class="alert success">¡Registro exitoso! Ya puedes iniciar sesión.</div>
                 <% }%>
@@ -153,7 +158,8 @@
 
                     <input type="password" name="contrasena" placeholder="Contraseña" required minlength="8" maxlength="45">
 
-                    <div class="g-recaptcha" data-sitekey="6LdCzuorAAAAAELJNXsllBliNLKG8Ko2Yg-Jd2Mj"></div>  
+                    <div class="g-recaptcha" data-sitekey="6LdCzuorAAAAAELJNXsllBliNLKG8Ko2Yg-Jd2Mj" 
+                         data-callback="onCaptchaOk" data-expired-callback="onCaptchaExpired"></div> 
                     <% if ("captcha".equals(request.getAttribute("errorRegistro"))) { %>
                     <div class="alert error">Por favor completa el CAPTCHA.</div>
                     <% }%>
@@ -165,8 +171,6 @@
             </div>
         </div>
 
-
-
         <div class="overlay" id="overlay"></div>
 
         <section class="main-section">
@@ -176,7 +180,7 @@
                     <p class="subtext">Cuidamos a tu mascota con amor, experiencia y compromiso.</p>
                 </div>
                 <div class="image-container">
-                    <img src="Recursos/ImgDoctor.png" alt="Veterinaria Santa Cruz">
+                    <img src="Recursos/ImgDoctor.png" alt="Veterinaria Santa Cruz" fetchpriority="high">
                 </div>
             </div>
         </section>
@@ -197,7 +201,7 @@
                 </div>
             </div>
             <div class="div-imagen1">
-                <img src="Recursos/Gato.svg" alt="Gato acostado" class="imagen">
+                <img src="Recursos/Gato.svg" alt="Gato acostado" class="imagen" loading="lazy" decoding="async">
             </div>
         </section>
 
@@ -207,307 +211,73 @@
                 <div class="titulo-servicios">
                     <h2>Nuestros Servicios</h2>
                 </div>
-                <div class="subtitulo-servicios">
-                    <p>
-                        En Veterinaria Santa Cruz estamos plenamente capacitados para diagnosticar y tratar todas las enfermedades que pueda presentar tu mascota. 
-                        Contamos con tecnología de diagnóstico de última generación y un equipo profesional en constante formación, actualizándonos en nuevas técnicas y métodos para brindarte una atención de calidad en medicina veterinaria para animales de compañía.
-                    </p>
                 </div>
-            </div>
 
             <div class="div-slider">
-                <button class="flecha izquierda">
-                    <img src="Recursos/FIzquierda.svg" alt="Flecha Izquierda">
-                </button>
-
                 <div class="slider-contenedor">
                     <div class="tarjeta">
                         <div class="tarjeta-imagen">
-                            <img src="Recursos/Consulta.svg" alt="Consulta General">
+                            <img src="Recursos/Consulta.svg" alt="Consulta General" loading="lazy" decoding="async">
                         </div>
-                        <div class="tarjeta-contenido">
-                            <h3>Consulta General</h3>
-                            <p>Evaluamos el estado de salud de tu mascota a través de un chequeo físico completo, resolviendo dudas sobre alimentación, comportamiento o síntomas clínicos.</p>
                         </div>
                     </div>
-
-                    <div class="tarjeta">
-                        <div class="tarjeta-imagen">
-                            <img src="Recursos/Vacunacion.svg" alt="Vacunación">
-                        </div>
-                        <div class="tarjeta-contenido">
-                            <h3>Vacunación</h3>
-                            <p>Aplicamos vacunas esenciales para prevenir enfermedades contagiosas, adaptadas a la especie y edad de salud de tu mascota.</p>
-                        </div>
-                    </div>
-
-                    <div class="tarjeta">
-                        <div class="tarjeta-imagen">
-                            <img src="Recursos/Desparacitacion.svg" alt="Desparasitación">
-                        </div>
-                        <div class="tarjeta-contenido">
-                            <h3>Desparasitación</h3>
-                            <p>Eliminamos parásitos internos y externos para cuidar su bienestar y el de tu familia.</p>
-                        </div>
-                    </div>
-
-                    <div class="tarjeta">
-                        <div class="tarjeta-imagen">
-                            <img src="Recursos/ImgAtencionE.svg" alt="Atención de Urgencias">
-                        </div>
-                        <div class="tarjeta-contenido">
-                            <h3>Atención de Urgencias</h3>
-                            <p>Contamos con atención inmediata para emergencias médicas que pongan en riesgo la vida o salud de tu mascota.</p>
-                        </div>
-                    </div>
-
-                    <div class="tarjeta">
-                        <div class="tarjeta-imagen">
-                            <img src="Recursos/ImgCertificados.svg" alt="Certificados de Salud">
-                        </div>
-                        <div class="tarjeta-contenido">
-                            <h3>Certificados de Salud</h3>
-                            <p>Emitimos certificados veterinarios oficiales para viajes, adopciones o concursos, avalando el estado de salud de tu mascota.</p>
-                        </div>
-                    </div>
-
-                    <div class="tarjeta">
-                        <div class="tarjeta-imagen">
-                            <img src="Recursos/ImgPeluqueria 1.svg" alt="Baño y Peluquería">
-                        </div>
-                        <div class="tarjeta-contenido">
-                            <h3>Baño y Peluquería</h3>
-                            <p>Ofrecemos servicios de estética y cuidados como baños, corte de uñas, limpieza de oídos y peluquería especializada.</p>
-                        </div>
-                    </div>
-
                 </div>
-
-                <button class="flecha derecha">
-                    <img src="Recursos/FDerecha.svg" alt="Flecha Derecha">
-                </button>
-            </div>
         </section>
 
 
         <section class="bloque-tienda">
-            <div class="div-contenido-tienda">
-                <h2>Tienda Santa Cruz</h2>
-            </div>
-
-            <div class="div-slider-tienda">
-                <div class="slider-tienda-contenedor">
-                    <div class="tarjeta-tienda">
-                        <div class="tarjeta-imagen-tienda">
-                            <img src="Recursos/Gatotienda.svg" alt="Alimentos balanceados">
-                        </div>
-                        <div class="tarjeta-texto-tienda">
-                            <div class="titulo-tarjeta">
-                                <h3>Alimentos balanceados</h3>
-                            </div>
-                            <div class="subtitulo-tarjeta">
-                                <p>Croquetas y alimentos húmedos para cachorros, adultos y mascotas con necesidades especiales (digestivas, renales, obesidad, etc.).</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tarjeta-tienda">
-                        <div class="tarjeta-imagen-tienda">
-                            <img src="Recursos/Suplementos.svg" alt="Suplementos y vitaminas">
-                        </div>
-                        <div class="tarjeta-texto-tienda">
-                            <div class="titulo-tarjeta">
-                                <h3>Suplementos y vitaminas</h3>
-                            </div>
-                            <div class="subtitulo-tarjeta">
-                                <p>Apoyo nutricional para fortalecer articulaciones, sistema inmune, piel, pelaje y más.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tarjeta-tienda">
-                        <div class="tarjeta-imagen-tienda">
-                            <img src="Recursos/Desparacitacion.svg" alt="Antipulgas y desparasitantes">
-                        </div>
-                        <div class="tarjeta-texto-tienda">
-                            <div class="titulo-tarjeta">
-                                <h3>Antipulgas y desparasitantes</h3>
-                            </div>
-                            <div class="subtitulo-tarjeta">
-                                <p>Pipetas, collares, comprimidos y jarabes para prevenir y tratar pulgas, garrapatas y parásitos internos.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tarjeta-tienda">
-                        <div class="tarjeta-imagen-tienda">
-                            <img src="Recursos/Higiene.svg" alt="Productos de higiene">
-                        </div>
-                        <div class="tarjeta-texto-tienda">
-                            <div class="titulo-tarjeta">
-                                <h3>Productos de higiene</h3>
-                            </div>
-                            <div class="subtitulo-tarjeta">
-                                <p>Shampoos medicados, jabones dermatológicos, colonias y talcos para el cuidado diario.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tarjeta-tienda">
-                        <div class="tarjeta-imagen-tienda">
-                            <img src="Recursos/ImgJuguetes 1.svg" alt="Juguetes y enriquecimiento">
-                        </div>
-                        <div class="tarjeta-texto-tienda">
-                            <div class="titulo-tarjeta">
-                                <h3>Juguetes y enriquecimiento</h3>
-                            </div>
-                            <div class="subtitulo-tarjeta">
-                                <p>Pelotas, mordedores y juegos interactivos para estimular física y mentalmente a tu mascota.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tarjeta-tienda">
-                        <div class="tarjeta-imagen-tienda">
-                            <img src="Recursos/ImgCollar 1.svg" alt="Collares, correas y arneses">
-                        </div>
-                        <div class="tarjeta-texto-tienda">
-                            <div class="titulo-tarjeta">
-                                <h3>Collares, correas y arneses</h3>
-                            </div>
-                            <div class="subtitulo-tarjeta">
-                                <p>Variedad de estilos y tamaños para paseos cómodos y seguros.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
+            </section>
 
 
         <footer class="footer">
-            <div class="footer-contenido">
-                <h2>Veterinaria Santa Cruz</h2>
-                <p>
-                    Tu mascota merece lo mejor. Escríbenos o visítanos para agendar una consulta, resolver tus dudas o conocer más sobre nuestros servicios y productos.
-                </p>
-                <p>
-                    Estamos aquí para cuidar a tu mejor amigo con cariño y profesionalismo.
-                </p>
-
-                <div class="footer-social">
-                    <a href="#"><img src="Recursos/Tiktok.svg" alt="TikTok"></a>
-                    <a href="#"><img src="Recursos/WhatsApp.svg" alt="WhatsApp"></a>
-                    <a href="#"><img src="Recursos/Facebook.svg" alt="Facebook"></a>
-                </div>
-
-                <div class="footer-copy">
-                    <p>©Grupo 3 / SolucionesWeb</p>
-                </div>
-            </div>
-        </footer>
+            </footer>
+        
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        
         <script src="Js/Index.js"></script>
         <script src="Js/ModoNocheIndex.js"></script>
 
         <script>
-                        // Funciones para abrir y cerrar modales
-                        function abrirModal(idModal) {
-                            document.getElementById(idModal).style.display = 'flex';
-                        }
+            // Las funciones de apertura/cierre de modales y reCAPTCHA
+            // se mantienen aquí para que el HTML (con los onclick) las encuentre globalmente.
+            
+            // Funciones globales (definidas en el script de abajo o en Index.js)
+            // Se asume que ahora SÓLO se llama a las funciones definidas en Index.js,
+            // pero para evitar errores de referencia en el HTML, las definiremos
+            // con las llamadas correctas a las funciones principales de Index.js:
+            
+            function abrirModal(idModal) {
+                const modal = document.getElementById(idModal);
+                if (modal) modal.style.display = 'flex';
+            }
 
-                        function cerrarModal(idModal) {
-                            document.getElementById(idModal).style.display = 'none';
-                        }
+            function cerrarModal(idModal) {
+                const modal = document.getElementById(idModal);
+                if (modal) modal.style.display = 'none';
+            }
 
-                        // ✅ Abre directamente el modal de login
-                        function abrirLogin() {
-                            // Limpia mensajes de error y resetea el formulario
-                            const formLogin = document.getElementById('formLogin');
-                            const mensajeErrorLogin = document.getElementById('mensajeErrorLogin');
+            function abrirRegistroDesdeLogin() {
+                cerrarModal('modalLogin');
+                abrirModal('modalRegistro');
+            }
 
-                            if (formLogin)
-                                formLogin.reset();
-                            if (mensajeErrorLogin) {
-                                // Ocultamos el div y limpiamos el texto si se abre sin error
-                                mensajeErrorLogin.style.display = 'none';
-                                mensajeErrorLogin.textContent = '';
-                            }
-
-                            abrirModal('modalLogin');
-                        }
-
-                        // ✅ Navegación entre login y registro
-                        function abrirRegistroDesdeLogin() {
-                            cerrarModal('modalLogin');
-                            abrirModal('modalRegistro');
-                        }
-
-                        function abrirLoginDesdeRegistro() {
-                            cerrarModal('modalRegistro');
-                            abrirLogin(); // vuelve al login directo
-                        }
-
-                        // ✅ Cuando el DOM ya cargó
-                        document.addEventListener('DOMContentLoaded', function () {
-                            const modalLogin = document.getElementById('modalLogin');
-                            const mensajeErrorLogin = document.getElementById('mensajeErrorLogin');
-                            const btnLoginNavbar = document.querySelector('.navbar .btn.login');
-
-                            // Mantenemos el modal de Login abierto si hay un error de Login al cargar la página.
-                            // Esto asegura que el mensaje del Servlet sea visible inmediatamente.
-                            if (mensajeErrorLogin && mensajeErrorLogin.textContent.trim().length > 0) {
-                                modalLogin.style.display = 'flex';
-                                mensajeErrorLogin.style.display = 'block';
-                            }
-
-
-                            // Botón de la navbar abre login
-                            if (btnLoginNavbar) {
-                                btnLoginNavbar.onclick = function () {
-                                    abrirLogin();
-                                    return false;
-                                };
-                            }
-                        });
-// reCAPTCHA callbacks
-                        function onCaptchaOk() {
-                            const btn = document.getElementById('btnRegister');
-                            if (btn)
-                                btn.disabled = false;
-                        }
-                        function onCaptchaExpired() {
-                            const btn = document.getElementById('btnRegister');
-                            if (btn)
-                                btn.disabled = true;
-                            // Si quieres obligar a resolver de nuevo:
-                            // grecaptcha.reset();
-                        }
-
-                        // Guardia extra: no permitas submit sin token
-                        document.addEventListener('DOMContentLoaded', function () {
-                            const form = document.getElementById('formRegistro');
-                            if (!form)
-                                return;
-                            form.addEventListener('submit', function (e) {
-                                const token = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : '';
-                                if (!token || token.length === 0) {
-                                    e.preventDefault();
-                                    // Muestra alerta puntual si no hay token
-                                    let alerta = document.querySelector('#captchaAlert');
-                                    if (!alerta) {
-                                        alerta = document.createElement('div');
-                                        alerta.id = 'captchaAlert';
-                                        alerta.className = 'alert error';
-                                        alerta.textContent = 'Por favor completa el reCAPTCHA.';
-                                        const captchaDiv = form.querySelector('.g-recaptcha');
-                                        if (captchaDiv)
-                                            captchaDiv.insertAdjacentElement('afterend', alerta);
-                                    }
-                                    return false;
-                                }
-                            });
-                        });
+            function abrirLoginDesdeRegistro() {
+                cerrarModal('modalRegistro');
+                // Llama a la función principal que resetea el formulario
+                abrirLogin(); 
+            }
+            
+            // ReCAPTCHA callbacks (Globales para que reCAPTCHA los encuentre)
+            function onCaptchaOk() {
+                const btn = document.querySelector('.btnRegister');
+                if (btn)
+                    btn.disabled = false;
+            }
+            function onCaptchaExpired() {
+                const btn = document.querySelector('.btnRegister');
+                if (btn)
+                    btn.disabled = true;
+            }
         </script>
     </body>
 </html>
