@@ -151,19 +151,7 @@
                 font-weight: bold;
             }
 
-            /* Mejoras para la tabla */
-            .tabla-citas th {
-                background-color: #3aafa9;
-                color: white;
-            }
-
-            .tabla-citas tr:nth-child(even) {
-                background-color: #f2f2f2;
-            }
-
-            .tabla-citas tr:hover {
-                background-color: #e9e9e9;
-            }
+           
         </style>
     </head>
     <body>
