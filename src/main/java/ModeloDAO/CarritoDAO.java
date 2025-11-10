@@ -37,6 +37,7 @@ import java.util.List;
 public class CarritoDAO {
     private Connection con;
 
+    // Constructor que recibe la conexión activa con la base de datos
     public CarritoDAO(Connection con) {
         this.con = con;
     }
@@ -54,6 +55,7 @@ public class CarritoDAO {
         return -1;
     }
 
+    // 🔹 Agregar un producto al carrito de un cliente
     public boolean agregarProducto(int idCliente, int idProducto, int cantidad) {
         try {
             int idCarrito = obtenerCarritoActivo(idCliente);
@@ -80,7 +82,7 @@ public class CarritoDAO {
                 ps.executeUpdate();
             }
 
-            // Actualizar total
+            // Se recalcula el total del carrito sumando los precios
             String sqlTotal = "UPDATE carrito c SET c.total = (SELECT SUM(dc.cantidadProducto * p.precio) " +
                     "FROM detallecarrito dc INNER JOIN producto p ON dc.idProducto=p.idProducto WHERE dc.idCarrito=?) " +
                     "WHERE c.idCarrito=?";
@@ -100,9 +102,7 @@ public class CarritoDAO {
     
     
     
-    // ==============================
     // 🔹 Obtener carrito actual del cliente
-    // ==============================
     public Carrito obtenerCarrito(int idCliente) {
         Carrito carrito = null;
         try {
@@ -129,9 +129,8 @@ public class CarritoDAO {
         return carrito;
     }
 
-    // ==============================
+
     // 🔹 Obtener detalles del carrito
-    // ==============================
     private List<DetalleCarrito> obtenerDetalles(int idCarrito) {
         List<DetalleCarrito> detalles = new ArrayList<>();
         try {
@@ -167,9 +166,8 @@ public class CarritoDAO {
         return detalles;
     }
     
-    // ==============================
-    // 🔹 Obtener historial de compras del cliente (ABIERTO)
-    // ==============================
+
+    // Obtener historial de compras del cliente (ABIERTO)
     public List<Carrito> obtenerHistorial(int idCliente) {
         List<Carrito> historial = new ArrayList<>();
         try  {
@@ -213,7 +211,7 @@ public class CarritoDAO {
         }
     }
     
-    // 🔹 Eliminar producto del carrito por idDetalleCarrito
+    // Eliminar producto del carrito por idDetalleCarrito
     public boolean eliminarProducto(int idDetalleCarrito, int idCarrito) {
         try {
             // eliminar detalle
@@ -243,7 +241,7 @@ public class CarritoDAO {
     
     public boolean actualizarCantidad(int idDetalleCarrito, int idCarrito, String accion) {
         try {
-            // 🔹 Sumar o restar según la acción
+            // Sumar o restar según la acción
             String sqlUpdate = "";
             if ("sumar".equals(accion)) {
                 sqlUpdate = "UPDATE detallecarrito SET cantidadProducto = cantidadProducto + 1 WHERE idDetalleCarrito=?";
@@ -273,6 +271,7 @@ public class CarritoDAO {
         }
     }
     
+    // Obtener lista de carritos CERRADOS (para el recepcionista)
     public List<Carrito> obtenerCarritosCerrados() {
         List<Carrito> lista = new ArrayList<>();
         try {
@@ -309,6 +308,7 @@ public class CarritoDAO {
         return lista;
     }
     
+    // Actualizar estado de entrega (PROCESO / ENTREGADO)
     public boolean actualizarEstadoEntrega(int idCarrito, String nuevoEstado) {
         String sql = "UPDATE Carrito SET estadoEntrega = ? WHERE idCarrito = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {

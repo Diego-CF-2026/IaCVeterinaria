@@ -11,7 +11,6 @@
         <link rel="stylesheet" href="../../css/ModoNoche-Sidebar.css">  
     </head>
     <body>
-        <!-- Sidebar Navigation -->
         <nav class="sidebar">
             <header>
                 <div class="image-text">
