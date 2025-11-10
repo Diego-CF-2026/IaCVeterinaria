@@ -48,7 +48,7 @@ public class CitaDAO {
             return "❌ La fecha y hora de la cita no pueden ser en el pasado o muy cercanas a la hora actual.";
         }
 
-        // B. La hora de la cita debe estar dentro del horario laboral (Ej: 9:00 a 17:00)
+        // B. La hora de la cita debe estar dentro del horario laboral (Ej: 6:00 a 22:00)
         java.time.LocalTime horaInicio = java.time.LocalTime.of(6, 0); // las 6 am
         java.time.LocalTime horaFin = java.time.LocalTime.of(22, 0); // 1as 10
 
@@ -160,11 +160,11 @@ public class CitaDAO {
         
         // SQL: Lee c.* (incluyendo 'precio')
         String sql = "SELECT c.*, v.nombreVeterinario, v.apellidoVeterinario, e.tipoEstado "
-                   + "FROM citas c "
-                   + "JOIN veterinario v ON c.idVeterinario = v.idVeterinario "
-                   + "JOIN estado e ON c.idEstado = e.idEstado "
-                   + "WHERE c.idCliente = ? "
-                   + "ORDER BY c.fecha DESC, c.hora DESC"; 
+                    + "FROM citas c "
+                    + "JOIN veterinario v ON c.idVeterinario = v.idVeterinario "
+                    + "JOIN estado e ON c.idEstado = e.idEstado "
+                    + "WHERE c.idCliente = ? "
+                    + "ORDER BY c.fecha DESC, c.hora DESC"; 
 
         try (Connection con = Conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -198,14 +198,20 @@ public class CitaDAO {
             c.setHora(rs.getTime("hora"));
             c.setMotivo(rs.getString("motivo"));
             c.setIdEstado(rs.getInt("idEstado"));
-            c.setEstadoNombre(rs.getString("tipoEstado"));
-            // Datos del JOIN
-            c.setNombreVeterinario(rs.getString("nombreVeterinario"));
-            c.setApellidoVeterinario(rs.getString("apellidoVeterinario"));
-            // Mapeo del Precio
-            c.setPrecio(rs.getDouble("precio"));
+            
+            // Nota: Aquí se usa "tipoEstado" de la tabla estado
+            try { c.setEstadoNombre(rs.getString("tipoEstado")); } catch (SQLException ex) {}
 
-            // Manejo de campos opcionales (datos de cliente)
+            // Datos del JOIN
+            try {
+                c.setNombreVeterinario(rs.getString("nombreVeterinario"));
+                c.setApellidoVeterinario(rs.getString("apellidoVeterinario"));
+            } catch (SQLException ex) {}
+
+            // Mapeo del Precio
+            try { c.setPrecio(rs.getDouble("precio")); } catch (SQLException ex) {}
+
+            // Manejo de campos opcionales (datos de cliente que vienen en listarCitas() y obtenerCitaPorId())
             try {
                 c.setNombreCliente(rs.getString("nombreCliente"));
                 c.setApellidoCliente(rs.getString("apellidoCliente"));
@@ -257,34 +263,37 @@ public class CitaDAO {
      * Actualiza una cita existente.
      */
     public boolean actualizarCita(Cita cita) {
-        // ... (Tu código para actualizarCita permanece igual)
-        EstadoDAO estadoDAO = new EstadoDAO();
-        int idEstado = estadoDAO.obtenerIdEstadoPorNombre(cita.getEstadoNombre());
-        
-        if (idEstado <= 0) {
-            LOGGER.log(Level.WARNING, "❌ No se pudo encontrar el ID para el estado: " + cita.getEstadoNombre());
-            return false;
-        }
-        
-        // El precio no se actualiza aquí, ya que el precio es fijo al reservar.
+        // 🔴 CORRECCIÓN 1: Usar 'citas' en lugar de 'cita'
         String sql = "UPDATE citas SET idCliente=?, idVeterinario=?, fecha=?, hora=?, motivo=?, idEstado=? WHERE idCita=?";
 
-        try (Connection con = Conexion.getConnection();
+        try (Connection con = Conexion.getConnection(); 
              PreparedStatement ps = con.prepareStatement(sql)) {
 
+            // 🟢 PASO CLAVE: Obtener el ID del estado a partir del nombre
+            // IMPORTANTE: Este método requiere que la clase EstadoDAO tenga un método obtenerIdEstadoPorNombre(String)
+            // o que implementes ese método aquí.
+            int idEstado = obtenerIdEstadoPorNombre(cita.getEstadoNombre()); 
+
+            // 1. Datos de la Cita
             ps.setInt(1, cita.getIdCliente());
             ps.setInt(2, cita.getIdVeterinario());
-            ps.setDate(3, cita.getFecha());
-            ps.setTime(4, cita.getHora());
+            // Se asume que cita.getFecha() y cita.getHora() devuelven java.sql.Date/Time o java.util.Date
+            // Si devuelven java.util.Date, la conversión es necesaria:
+            ps.setDate(3, new java.sql.Date(cita.getFecha().getTime()));
+            ps.setTime(4, new java.sql.Time(cita.getHora().getTime()));
             ps.setString(5, cita.getMotivo());
-            ps.setInt(6, idEstado);
+
+            // 2. ID del Estado (usando el valor obtenido)
+            ps.setInt(6, idEstado); 
+
+            // 3. Condición WHERE
             ps.setInt(7, cita.getIdCita());
 
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
+            // 4. Ejecución y retorno
+            return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "❌ ERROR SQL al actualizar cita.", e);
+            System.err.println("❌ Error al actualizar cita: " + e.getMessage());
             return false;
         }
     }
@@ -310,6 +319,26 @@ public class CitaDAO {
              LOGGER.log(Level.SEVERE, "Error al eliminar cita mediante SP.", e);
         }
         return resultado;
+    }
+    
+    public boolean eliminar(int id) {
+        // 🔴 CORRECCIÓN: Usar la tabla 'citas' en lugar de 'cita'
+        String sql = "DELETE FROM citas WHERE idCita = ?"; 
+
+        try (Connection con = Conexion.getConnection(); // Asumo que usas una clase Conexion
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            int filasAfectadas = ps.executeUpdate(); 
+
+            // Retorna true si al menos una fila fue eliminada (filasAfectadas > 0)
+            return filasAfectadas > 0; 
+
+        } catch (SQLException e) {
+            // En caso de error, loguea y retorna false
+            System.err.println("Error al eliminar la cita: " + e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -365,26 +394,100 @@ public class CitaDAO {
     }
 
     /**
-     * Busca citas mediante un Stored Procedure.
+     * Busca citas por cliente, veterinario o motivo.
      */
-    public List<Cita> buscarCitas(String busqueda) {
-        // ... (Tu código para buscarCitas permanece igual)
-        List<Cita> citas = new ArrayList<>();
-        String sql = "{CALL sp_buscar_citas(?)}";
-        
+    public List<Modelo.Cita> buscarCitas(String termino) {
+        List<Modelo.Cita> lista = new ArrayList<>();
+
+        // Preparar el término de búsqueda para LIKE (ej: '%juan%')
+        String param = "%" + termino.toLowerCase() + "%";
+
+        // SQL: Usa JOINs y busca en múltiples campos (cliente, veterinario, motivo)
+        String sql = "SELECT c.idCita, c.idCliente, c.idVeterinario, c.fecha, c.hora, c.motivo, c.idEstado, c.precio, " // 🔴 Agregado c.precio
+                    + "cl.nombre AS nombreCliente, cl.apellido AS apellidoCliente, cl.dni AS dniCliente, " // 🔴 Agregado cl.dni
+                    + "v.nombreVeterinario AS nombreVeterinario, v.apellidoVeterinario AS apellidoVeterinario, "
+                    + "e.tipoEstado AS tipoEstado " // 🔴 Cambiado alias a tipoEstado para coincidir con mapearCita()
+                    + "FROM citas c " 
+                    + "JOIN cliente cl ON c.idCliente = cl.idCliente "
+                    + "JOIN veterinario v ON c.idVeterinario = v.idVeterinario "
+                    + "JOIN estado e ON c.idEstado = e.idEstado "
+                    + "WHERE LOWER(cl.nombre) LIKE ? OR LOWER(cl.apellido) LIKE ? "
+                    + "OR LOWER(v.nombreVeterinario) LIKE ? OR LOWER(v.apellidoVeterinario) LIKE ? "
+                    + "OR LOWER(c.motivo) LIKE ? "
+                    + "ORDER BY c.fecha DESC";
+
         try (Connection con = Conexion.getConnection();
-             CallableStatement stmt = con.prepareCall(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            stmt.setString(1, busqueda);
+            // Asignar el parámetro a TODAS las condiciones LIKE
+            ps.setString(1, param); // cl.nombre
+            ps.setString(2, param); // cl.apellido
+            ps.setString(3, param); // v.nombreVeterinario
+            ps.setString(4, param); // v.apellidoVeterinario
+            ps.setString(5, param); // c.motivo
 
-            try (ResultSet rs = stmt.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    citas.add(mapearCita(rs));
+                    // ✅ CORRECCIÓN CLAVE: Reutiliza el mapeo completo
+                    lista.add(mapearCita(rs));
                 }
             }
         } catch (SQLException e) {
-             LOGGER.log(Level.SEVERE, "Error al buscar citas con stored procedure", e);
+            System.err.println("❌ Error SQL al buscar citas: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error SQL al buscar citas.", e);
         }
-        return citas;
+        return lista;
     }
+    
+    public List<Cita> listarCitas() { // <--- MÉTODO PARA LISTAR TODAS LAS CITAS
+        List<Cita> lista = new ArrayList<>();
+        
+        // SQL: Similar a obtenerCitaPorId, pero sin la cláusula WHERE idCita = ?
+        String sql = "SELECT c.idCita, c.idCliente, c.idVeterinario, c.fecha, c.hora, c.motivo, c.idEstado, c.precio, e.tipoEstado, " +
+                     "cl.nombre AS nombreCliente, cl.apellido AS apellidoCliente, cl.dni AS dniCliente, " +
+                     "v.nombreVeterinario, v.apellidoVeterinario, v.idEspecialidad " +
+                     "FROM citas c " +
+                     "JOIN cliente cl ON c.idCliente = cl.idCliente " +
+                     "JOIN veterinario v ON c.idVeterinario = v.idVeterinario " +
+                     "JOIN estado e ON c.idEstado = e.idEstado " +
+                     "ORDER BY c.fecha DESC, c.hora DESC"; 
+
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) { // Ejecución directa, sin parámetros
+            
+            while (rs.next()) {
+                lista.add(mapearCita(rs)); // Usamos un mapeo completo
+            }
+            
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "❌ ERROR SQL o JDBC al listar TODAS las citas para Recepción.", e);
+        }
+        return lista;
+    }
+    
+    private int obtenerIdEstadoPorNombre(String estadoNombre) throws SQLException {
+        int idEstado = -1;
+        // 🔴 CORRECCIÓN CLAVE: Cambiar 'estadoNombre' a 'tipoEstado' (si así se llama la columna)
+        String sql = "SELECT idEstado FROM estado WHERE tipoEstado = ?"; 
+
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, estadoNombre);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    idEstado = rs.getInt("idEstado");
+                }
+            }
+        }
+        if (idEstado == -1) {
+            throw new SQLException("El nombre de estado '" + estadoNombre + "' no fue encontrado en la columna tipoEstado.");
+        }
+        return idEstado;
+    }
+    
+    // ❌ MÉTODO ELIMINADO: Se ha eliminado buscarCitasPorNombreCliente(String terminoBusqueda)
+    // porque es redundante y menos potente que el método buscarCitas(String termino)
 }

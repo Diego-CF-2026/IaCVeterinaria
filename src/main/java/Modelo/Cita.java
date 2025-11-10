@@ -92,6 +92,10 @@ public class Cita {
     public void setIdEstado(int idEstado) {
         this.idEstado = idEstado;
     }
+    
+    public String getEstado() { // <--- ¡AÑADE ESTE MÉTODO!
+        return this.estadoNombre;
+    }
 
     public String getEstadoNombre() {
         return estadoNombre;
