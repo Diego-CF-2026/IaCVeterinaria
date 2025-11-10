@@ -2,6 +2,7 @@ package ModeloDAO;
 
 import Modelo.Conexion;  
 import Modelo.Cliente;
+import Modelo.Tratamiento;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -176,4 +177,38 @@ public class ClienteDAO {
         }
         return c;
     }
+    
+    // ----------------------------------------------------
+    // 🟢 NUEVO MÉTODO REQUERIDO: Buscar cliente por DNI
+    // ----------------------------------------------------
+    public Cliente buscarClientePorDni(String dni) {
+        Cliente c = null;
+        String sql = "SELECT * FROM Cliente WHERE dni = ?";
+        try {
+            con = Conexion.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, dni);
+            rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                c = new Cliente();
+                // Importante: Debemos obtener todos los datos, especialmente el idCliente.
+                c.setIdCliente(rs.getInt("idCliente")); 
+                c.setIdUsuario(rs.getInt("idUsuario"));
+                c.setNombre(rs.getString("nombre"));
+                c.setApellido(rs.getString("apellido"));
+                c.setDni(rs.getString("dni"));
+                c.setTelefono(rs.getString("telefono"));
+                c.setFechaRegistro(rs.getDate("fechaRegistro"));
+            }
+        } catch (Exception e) {
+            System.err.println("Error en ClienteDAO.buscarClientePorDni: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+             // Es buena práctica cerrar recursos aquí (rs, ps, con)
+        }
+        return c;
+    }
+    
+    
 }

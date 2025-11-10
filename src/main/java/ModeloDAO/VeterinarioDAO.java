@@ -2,9 +2,12 @@ package ModeloDAO;
 
 import Modelo.Conexion;
 import Modelo.Veterinario;
+import Modelo.Cita;
 import java.sql.*;
 import java.util.*;
 import org.mindrot.jbcrypt.BCrypt;
+import java.sql.Date; // Importante
+import java.sql.Time; // Importante
 
 public class VeterinarioDAO {
 
@@ -321,5 +324,185 @@ public class VeterinarioDAO {
             System.out.println("Error vistaClienteListarPorEspecialidad(): " + e.getMessage()); 
         }
         return lista;
+    }
+    
+    
+    public List<Cita> vistaVeterinarioListarMisCitas(int idVeterinario) {
+    List<Cita> lista = new ArrayList<>();
+
+    // Solo se listan las citas con idEstado = 1 (Pendiente)
+    String sql = "SELECT c.idCita, CONCAT(cli.nombre, ' ', cli.apellido) AS nombreCliente, cli.dni, "
+               + "c.motivo, c.fecha, c.hora, c.idEstado "
+               + "FROM citas c "
+               + "INNER JOIN cliente cli ON c.idCliente = cli.idCliente "
+               + "WHERE c.idVeterinario = ? AND c.idEstado = 1 "
+               + "ORDER BY c.fecha ASC, c.hora ASC";
+
+    try (Connection con = Conexion.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, idVeterinario);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Cita c = new Cita();
+            c.setIdCita(rs.getInt("idCita"));
+            c.setNombreCliente(rs.getString("nombreCliente"));
+            c.setDniCliente(rs.getString("dni"));
+            c.setMotivo(rs.getString("motivo"));
+            c.setFecha(rs.getDate("fecha"));
+            c.setHora(rs.getTime("hora"));
+            c.setIdEstado(rs.getInt("idEstado"));
+            lista.add(c);
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error vistaVeterinarioListarMisCitas(): " + e.getMessage());
+    }
+    return lista;
+}
+
+    // =========================================================================
+    // 2️⃣ REGISTRAR TRATAMIENTO Y COMPLETAR CITA (MEJORADO CON TRANSACCIÓN)
+    // =========================================================================
+    public boolean registrarTratamientoCompletarCita(
+            int idCita, String nombreMascota, String diagnostico, String tratamiento, String notas) {
+
+        boolean resultado = false;
+
+        // 🩺 Obtenemos el DNI automáticamente desde la cita
+        String dniCliente = obtenerDniPorCita(idCita);
+
+        if (dniCliente == null) {
+            System.out.println("Error: no se encontró el DNI del cliente para la cita " + idCita);
+            return false;
+        }
+
+        // Concatenamos el nombre de la mascota
+        String diagnosticoFinal = "Mascota: " + nombreMascota + " - Diagnóstico: " + diagnostico;
+
+        // Aseguramos que el tratamiento también incluya el nombre de la mascota si es necesario
+        // (Esto ya estaba en tu ejemplo de inserción en la tabla, por lo que lo mantengo)
+        String tratamientoFinal = "Mascota: " + nombreMascota + " - Tratamiento: " + tratamiento;
+
+
+        String sqlInsertTrat = "INSERT INTO tratamientomedico (idCita, diagnostico, tratamiento, notas, dniCliente) "
+                + "VALUES (?, ?, ?, ?, ?)";
+        // idEstado = 2 es 'Completado'
+        String sqlUpdateCita = "UPDATE citas SET idEstado = 2 WHERE idCita = ?"; 
+
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement psTrat = con.prepareStatement(sqlInsertTrat);
+             PreparedStatement psCita = con.prepareStatement(sqlUpdateCita)) {
+
+            con.setAutoCommit(false); // Inicia la transacción
+
+            psTrat.setInt(1, idCita);
+            psTrat.setString(2, diagnosticoFinal);
+            psTrat.setString(3, tratamientoFinal); 
+            psTrat.setString(4, notas);
+            psTrat.setString(5, dniCliente);
+
+            int filasTrat = psTrat.executeUpdate();
+
+            psCita.setInt(1, idCita);
+            int filasCita = psCita.executeUpdate();
+
+            if (filasTrat > 0 && filasCita > 0) {
+                con.commit(); // Confirma si ambas operaciones son exitosas
+                resultado = true;
+            } else {
+                con.rollback(); // Deshace si alguna falla
+            }
+            
+            con.setAutoCommit(true); // Restaura el modo de autocommit
+
+        } catch (SQLException e) {
+            System.out.println("Error registrarTratamientoCompletarCita(): " + e.getMessage());
+        }
+
+        return resultado;
+    }
+
+    // =========================================================================
+    // 3️⃣ REPROGRAMAR CITA (CORREGIDO ID ESTADO)
+    // =========================================================================
+    public boolean reprogramarCita(int idCita, Date nuevaFecha, Time nuevaHora) {
+        boolean exito = false;
+        // CORRECCIÓN: Se usa idEstado = 1 ('Pendiente') para reprogramar, no 3 ('Cancelado')
+        String sql = "UPDATE citas SET fecha = ?, hora = ?, idEstado = 1 WHERE idCita = ?"; 
+
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setDate(1, nuevaFecha);
+            ps.setTime(2, nuevaHora);
+            ps.setInt(3, idCita);
+
+            exito = ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Error reprogramarCita(): " + e.getMessage());
+        }
+
+        return exito;
+    }
+
+    // =========================================================================
+    // 4️⃣ OBTENER DNI POR ID DE CITA
+    // =========================================================================
+    public String obtenerDniPorCita(int idCita) {
+        String dni = null;
+        String sql = "SELECT cli.dni FROM citas c "
+                    + "INNER JOIN cliente cli ON c.idCliente = cli.idCliente "
+                    + "WHERE c.idCita = ?";
+
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idCita);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    dni = rs.getString("dni");
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error obtenerDniPorCita(): " + e.getMessage());
+        }
+
+        return dni;
+    }
+    
+    /**
+     * Obtiene el ID del veterinario asociado a un ID de usuario específico.
+     * @param idUsuario El ID del usuario (de la tabla 'usuario').
+     * @return El idVeterinario (Integer) o null si no se encuentra.
+     */
+    public Integer obtenerIdVeterinarioPorIdUsuario(int idUsuario) {
+        Integer idVeterinario = null;
+        
+        // La consulta busca el idVeterinario en la tabla 'veterinario' usando el idUsuario
+        String sql = "SELECT idVeterinario FROM veterinario WHERE idUsuario = ?";
+
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idUsuario);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // El método devuelve un Integer (objeto), por lo que puede ser null.
+                    // Esto permite al LoginServlet manejar el caso en que no haya un veterinario asociado.
+                    idVeterinario = rs.getInt("idVeterinario");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error obtenerIdVeterinarioPorIdUsuario(): " + e.getMessage());
+            // En caso de error de BD, devolvemos null
+            return null; 
+        }
+
+        return idVeterinario;
     }
 }

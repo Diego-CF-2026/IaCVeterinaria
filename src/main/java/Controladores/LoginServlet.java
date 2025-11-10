@@ -5,6 +5,7 @@ import Modelo.Usuario;
 import Modelo.Veterinario;
 import ModeloDAO.ClienteDAO;
 import ModeloDAO.UsuarioDAO;
+import ModeloDAO.VeterinarioDAO; // 💡 1. Importar el DAO del Veterinario
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,13 +13,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.Timestamp; // ¡esto descargue para el tiempo
+import java.sql.Timestamp; 
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
 
     private UsuarioDAO usuarioDAO = new UsuarioDAO();
     private ClienteDAO clienteDAO = new ClienteDAO();
+    private VeterinarioDAO veterinarioDAO = new VeterinarioDAO(); // 💡 2. Inicializar VeterinarioDAO
 
     private static final int MAX_INTENTOS = 3;      // Límite de fallos
     private static final int TIEMPO_BLOQUEO_MINUTOS = 2; // Bloqueo en minutos
@@ -54,7 +56,6 @@ public class LoginServlet extends HttpServlet {
 
             HttpSession sesion = request.getSession();
             sesion.setAttribute("usuario", usuario);
-            //  Guarda el ID de Rol para que el Filtro/JSP de seguridad lo lea.
             sesion.setAttribute("idRol", usuario.getIdRol());
 
             switch (usuario.getIdRol()) {
@@ -70,25 +71,34 @@ public class LoginServlet extends HttpServlet {
                     Cliente cliente = clienteDAO.buscarPorIdUsuario(usuario.getIdUsuario());
                     if (cliente != null) {
                         sesion.setAttribute("cliente", cliente);
-                        
-                        // 🟢 CORRECCIÓN CLAVE 1: Usar el nombre de atributo correcto
-                        // que espera el CitaServlet ("idClienteSesion")
                         sesion.setAttribute("idClienteSesion", cliente.getIdCliente()); 
-                        
                         sesion.setAttribute("NombreCliente", cliente.getNombre());
                     }
                     
-                    // 🟢 CORRECCIÓN CLAVE 2: Redirigir al CitaServlet
-                    // Esto fuerza la ejecución del Servlet para que liste las citas
-                    response.sendRedirect(contextPath + "/VistasWeb/VistasCliente/Nosotros.jsp"); 
+                    response.sendRedirect(contextPath + "/VistasWeb/VistasCliente/Nosotros.jsp");  
+                    break;
+                    
+                case 4: // Veterinario
+                    // 💡 LÓGICA CLAVE AÑADIDA: Obtener y guardar idVeterinario
+                    int idUsuario = usuario.getIdUsuario();
+                    Integer idVeterinario = veterinarioDAO.obtenerIdVeterinarioPorIdUsuario(idUsuario);
+                    
+                    if (idVeterinario != null) {
+                        // 🟢 Guardar el ID que necesita VeterinarioCitasServlet
+                        sesion.setAttribute("idVeterinario", idVeterinario);
+                    } else {
+                        // Manejo de error si el usuario existe pero no está en la tabla 'veterinario'
+                        sesion.setAttribute("errorLogin", "Error de configuración: Usuario Veterinario incompleto. Contacte a soporte.");
+                        response.sendRedirect(contextPath + "/index.jsp"); 
+                        return;
+                    }
+
+                    response.sendRedirect(contextPath + "/VistasWeb/VistasVeterinario/VeterinarioDash.jsp");
                     break;
 
                 default:
                     request.setAttribute("errorLogin", "Rol no válido.");
                     request.getRequestDispatcher("index.jsp").forward(request, response);
-                    break;
-                case 4: // Veterinario
-                    response.sendRedirect(contextPath + "/VistasWeb/VistasVeterinario/VeterinarioDash.jsp");
                     break;
             }
 
