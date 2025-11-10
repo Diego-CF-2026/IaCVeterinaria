@@ -496,10 +496,7 @@
                     <a href="${pageContext.request.contextPath}/ReporteEmpleadosServlet" class="btn-pdf">
                         <i class='bx bxs-file-pdf'></i> Generar Reporte PDF
                     </a>
-                    <%-- Nuevo Botón para generar reporte Excel --%>
-                    <a href="${pageContext.request.contextPath}/ReporteEmpleadosExcelServlet" class="btn-excel">
-                        <i class='bx bxs-file-excel'></i> Generar Reporte Excel
-                    </a>
+                    
                 </div>
                 <div id="veterinarios" class="tab-content active">
                     <button type="button" class="btn-agregar" onclick="mostrarModalAgregar()">
@@ -581,7 +578,7 @@
                     <table class="tabla-empleados" style="margin-top:8px">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                               
                                 <th>Nombre</th>
                                 <th>Precio (S/)</th>
                                 <th>Acciones</th>
@@ -593,7 +590,7 @@
                                     for (Especialidad e : listaEspecialidades) {
                             %>
                             <tr>
-                                <td><%= e.getIdEspecialidad()%></td>
+                                
                                 <td><%= escapeHtmlAttribute.apply(e.getNombreEspecialidad())%></td>
                                 <td><%= String.format(java.util.Locale.US, "%.2f", e.getPrecio())%></td>
                                 <td class="acciones">

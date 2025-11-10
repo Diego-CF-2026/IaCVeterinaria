@@ -102,13 +102,20 @@
             </div>
             <table class="tabla-clientes">
                 <thead>
-                    <tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <% if (productos != null && !productos.isEmpty()) {
                             for (Producto prod : productos) {%>
                     <tr>
-                        <td><%= prod.getIdProducto()%></td>
+                        
                         <td><%= prod.getNombreProducto()%></td>
                         <td><%= prod.getDescripcion()%></td>
                         <td>S/ <%= prod.getPrecio()%></td>

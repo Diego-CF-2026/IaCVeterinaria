@@ -80,7 +80,7 @@
             <table class="tabla-clientes">
                 <thead> 
                     <tr>
-                        <th class="columna-oculta">ID Usuario</th>
+                        
                         <th>Nombres</th>
                         <th>Apellidos</th>
                         <th>Correo Electrónico</th>
@@ -92,7 +92,7 @@
                 <tbody>
                     <c:forEach var="r" items="${requestScope.recepcionistas}"> 
                         <tr>
-                            <td class="columna-oculta"><c:out value="${r.getIdUsuario()}" /></td>
+                           
                             <td><c:out value="${r.getNombreRecepcionista()}" /></td>
                             <td><c:out value="${r.getApellidoRecepcionista()}" /></td>
                             <td><c:out value="${r.getUsuario().getCorreo()}" /></td> 

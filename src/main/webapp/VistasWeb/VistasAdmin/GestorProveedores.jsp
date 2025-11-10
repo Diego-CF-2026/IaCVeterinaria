@@ -98,7 +98,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                 
                         <th>Razón Social</th>
                         <th>RUC</th>
                         <th>Dirección</th>
@@ -111,7 +111,7 @@
                     <% if (listaProveedores != null && !listaProveedores.isEmpty()) {
                             for (Proveedor p : listaProveedores) {%>
                     <tr>
-                        <td><%= p.getIdProveedor()%></td>
+                   
                         <td><%= p.getRazonSocial()%></td>
                         <td><%= p.getRuc()%></td>
                         <td><%= p.getDireccion()%></td>

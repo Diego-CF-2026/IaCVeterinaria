@@ -417,7 +417,7 @@
                     <table class="tabla-clientes">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                
                                 <th>Nombre Completo</th>
                                 <th>DNI</th>
                                 <th>Teléfono</th>
@@ -429,7 +429,7 @@
                             <% if (listaClientes != null && !listaClientes.isEmpty()) { %>
                                 <% for (Cliente c : listaClientes) { %>
                                     <tr>
-                                        <td><%= c.getIdCliente() %></td>
+                                       
                                         <td><%= c.getNombre() %> <%= c.getApellido() %></td>
                                         <td><%= c.getDni() %></td>
                                         <td><%= c.getTelefono() %></td>
