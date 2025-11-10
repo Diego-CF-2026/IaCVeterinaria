@@ -530,7 +530,7 @@
           contenedor.innerHTML = `
             <div style="text-align:center;">
               <p>Escanea este código QR para completar tu pago:</p>
-              <img src="${pageContext.request.contextPath}/Recursos/QrYape/Captura2025.png" 
+              <img src="${pageContext.request.contextPath}/Recursos/QrYape/Capturayape.png" 
                    alt="QR ${metodo}" 
                    style="width:180px;height:180px;border-radius:10px;box-shadow:0 3px 8px rgba(0,0,0,0.2);">
             </div>
