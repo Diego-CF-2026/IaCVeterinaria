@@ -24,22 +24,21 @@ import java.util.logging.Logger;
  * Servlet principal para gestión de Citas.
  *
  * GET:
- *  - accion=listar            -> Lista citas del cliente logueado (MisCitas.jsp).
- *  - accion=verGlobal         -> Vista global (Recepción/Admin) con todas las citas.
- *  - accion=buscar            -> Búsqueda global por término.
- *  - accion=ver               -> Prepara datos para editar una cita específica.
- *  - accion=cancelar          -> Cambia estado de una cita a "Cancelada".
- *  - accion=eliminar          -> Elimina físicamente una cita (uso administrativo).
- *  - accion=verCitasCliente   -> Lista citas de un cliente específico (Recepción).
+ * - accion=listar             -> Lista **Pendientes** del cliente logueado (MisCitas.jsp).
+ * - accion=verGlobal          -> Vista global (Recepción/Admin), lista **Pendientes** por defecto.
+ * - accion=buscar             -> Búsqueda global por término.
+ * - accion=ver                -> Prepara datos para editar una cita específica.
+ * - accion=cancelar           -> Cambia estado de una cita a "Cancelada".
+ * - accion=eliminar           -> Elimina físicamente una cita (uso administrativo).
+ * - accion=verCitasCliente    -> Lista citas de un cliente específico (Recepción).
  *
  * POST:
- *  - accion=guardarNuevaCitaGlobal -> Crea una cita desde la vista global.
- *  - accion=actualizar             -> Actualiza una cita (modal universal).
- *  - accion=crearCita              -> Crea una cita desde MisCitas (cliente).
+ * - accion=guardarNuevaCitaGlobal -> Crea una cita desde la vista global.
+ * - accion=actualizar             -> Actualiza una cita (modal universal).
+ * - accion=crearCita              -> Crea una cita desde MisCitas (cliente).
  *
  * Notas:
- *  - Usa DATE_FORMATTER/TIME_FORMATTER para parsear fecha/hora de formularios.
- *  - Los mensajes de feedback viajan en sesión (mensaje/tipoMensaje) tras redirects.
+ * - Los mensajes de feedback viajan en sesión (mensaje/tipoMensaje) tras redirects.
  */
 @WebServlet("/CitaServlet")
 public class CitaServlet extends HttpServlet {
@@ -71,16 +70,16 @@ public class CitaServlet extends HttpServlet {
 
         switch (accion) {
             case "listar":
-                listarCitasPorCliente(request, response);
+                listarCitasPorCliente(request, response); // MisCitas.jsp
                 break;
             case "verGlobal":
-                verTodasCitasGlobal(request, response);
+                verTodasCitasGlobal(request, response); // GestionCitas.jsp
                 break;
             case "buscar":
                 buscarCitasGlobal(request, response);
                 break;
             case "ver":
-                verCita(request, response); 
+                verCita(request, response); // Edición/modal (puede no usarse si es modal en la misma página)
                 break;
             case "cancelar":
                 cancelarCita(request, response);
@@ -100,7 +99,7 @@ public class CitaServlet extends HttpServlet {
     // ========================== RUTAS POST ==========================
     
     /**
-     * Enrutador POST según 'accion'. Si no hay acción, redirige al índice del servlet.
+     * Enrutador POST según 'accion'.
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -133,13 +132,25 @@ public class CitaServlet extends HttpServlet {
     // ===================================================================
 
     /**
-     * Vista global (Recepción/Admin): carga todas las citas y datos de combos.
+     * Vista global (Recepción/Admin): carga citas **Pendientes** por defecto y datos de combos.
      */
     private void verTodasCitasGlobal(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // Tabla principal + combos para modales (cliente/veterinario)
-            request.setAttribute("listaCitas", citaDAO.listarCitas());
+            String estadoFiltro = request.getParameter("estado");
+            List<Cita> listaCitas;
+            
+            // Si el parámetro 'estado' es 'todas', lista todo. Sino, lista solo Pendientes.
+            if ("todas".equalsIgnoreCase(estadoFiltro)) {
+                listaCitas = citaDAO.listarCitas(); // Todas las citas
+                request.setAttribute("filtroActivo", "todas");
+            } else {
+                listaCitas = citaDAO.listarCitasPendientes(); // Solo pendientes (DEFAULT)
+                request.setAttribute("filtroActivo", "pendiente");
+            }
+            
+            request.setAttribute("listaCitas", listaCitas);
+            // Combos para modales
             request.setAttribute("listaClientes", clienteDAO.listarClientesParaDropdown());
             request.setAttribute("listaVeterinarios", veterinarioDAO.listarVeterinariosParaDropdown());
             
@@ -153,8 +164,369 @@ public class CitaServlet extends HttpServlet {
     }
     
     /**
-     * Búsqueda global por término; recarga la misma vista con resultados/alertas.
+     * Carga citas de un cliente específico para Recepción (filtro por cliente).
      */
+    private void verCitasPorClienteEspec(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        String idClienteStr = request.getParameter("idCliente");
+        String urlVista = "/VistasWeb/VistasRecep/GestionCitas.jsp"; 
+        
+        try {
+            if (idClienteStr != null && !idClienteStr.isEmpty()) {
+                int idCliente = Integer.parseInt(idClienteStr.trim());
+                
+                Cliente cliente = clienteDAO.buscarIdCliente(idCliente); 
+                if (cliente == null) {
+                    request.setAttribute("mensaje", "Cliente no encontrado.");
+                    request.setAttribute("tipoMensaje", "advertencia");
+                    verTodasCitasGlobal(request, response);
+                    return;
+                }
+                
+                // Lista todas las citas del cliente, sin filtro de estado
+                request.setAttribute("listaCitas", citaDAO.listarCitasPorCliente(idCliente));
+                request.setAttribute("clienteActual", cliente); 
+                request.setAttribute("filtroActivo", "cliente"); // Para feedback visual
+                
+                // Mantener combos cargados
+                request.setAttribute("listaClientes", clienteDAO.listarClientesParaDropdown());
+                request.setAttribute("listaVeterinarios", veterinarioDAO.listarVeterinariosParaDropdown());
+                
+            } else {
+                request.setAttribute("mensaje", "ID de Cliente no proporcionado.");
+                request.setAttribute("tipoMensaje", "error");
+            }
+        } catch (NumberFormatException e) {
+            request.setAttribute("mensaje", "ID de Cliente inválido.");
+            request.setAttribute("tipoMensaje", "error");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al ver citas de cliente específico.", e);
+            request.setAttribute("mensaje", "❌ Error al cargar las citas del cliente.");
+            request.setAttribute("tipoMensaje", "error");
+        }
+        
+        request.getRequestDispatcher(urlVista).forward(request, response);
+    }
+
+    // ===================================================================
+    // ===================== CREAR / EDITAR (POST) =======================
+    // ===================================================================
+
+    /**
+     * Crea una cita desde la vista global (Recepción/Admin).
+     */
+    private void guardarNuevaCitaGlobal(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        Cita cita = new Cita();
+        
+        try {
+            // IDs foráneos + motivo + estado (nombre)
+            cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
+            cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
+            cita.setMotivo(request.getParameter("motivo"));
+            cita.setEstadoNombre(request.getParameter("estado")); 
+            
+            // ✅ Nuevo: Manejo de Precio
+            String precioStr = request.getParameter("precio");
+            cita.setPrecio(Double.parseDouble(precioStr.trim()));
+
+            // Parseo de fecha y hora
+            String fechaStr = request.getParameter("fecha");
+            String horaStr = request.getParameter("hora");
+            java.util.Date parsedDate = DATE_FORMATTER.parse(fechaStr);
+            cita.setFecha(new Date(parsedDate.getTime()));
+            java.util.Date parsedTime = TIME_FORMATTER.parse(horaStr);
+            cita.setHora(new Time(parsedTime.getTime()));
+
+            // Inserción
+            String resultadoDAO = citaDAO.agregarCita(cita); 
+            if (resultadoDAO.startsWith("✅")) {
+                request.getSession().setAttribute("mensaje", resultadoDAO);
+                request.getSession().setAttribute("tipoMensaje", "exito");
+            } else {
+                request.getSession().setAttribute("mensaje", resultadoDAO);
+                request.getSession().setAttribute("tipoMensaje", "error");
+            }
+            
+        } catch (NumberFormatException | ParseException e) {
+            LOGGER.log(Level.SEVERE, "Error de formato/parseo al guardar nueva cita global.", e);
+            request.getSession().setAttribute("mensaje", "❌ Error de formato en los datos de la cita (Fecha, Hora, ID o Precio).");
+            request.getSession().setAttribute("tipoMensaje", "error");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al guardar nueva cita global.", e);
+            request.getSession().setAttribute("mensaje", "❌ Error al intentar agendar la cita.");
+            request.getSession().setAttribute("tipoMensaje", "error");
+        }
+        response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=verGlobal");
+    }
+    
+    /**
+     * Crea una cita desde MisCitas (cliente). El estado por defecto es "Pendiente" y el Precio es 0.0.
+     */
+    private void crearCitaDesdeCliente(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        Cita cita = new Cita();
+        
+        try {
+            cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
+            cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
+            cita.setMotivo(request.getParameter("motivo"));
+            cita.setEstadoNombre("Pendiente"); // Estado inicial para cliente
+            cita.setPrecio(0.0); // Precio por defecto 0.0 o un valor predefinido
+
+            String fechaStr = request.getParameter("fecha");
+            String horaStr = request.getParameter("hora");
+            java.util.Date parsedDate = DATE_FORMATTER.parse(fechaStr);
+            cita.setFecha(new Date(parsedDate.getTime()));
+            java.util.Date parsedTime = TIME_FORMATTER.parse(horaStr);
+            cita.setHora(new Time(parsedTime.getTime()));
+            
+            String resultadoDAO = citaDAO.agregarCita(cita); 
+            if (resultadoDAO.startsWith("✅")) {
+                request.getSession().setAttribute("mensaje", resultadoDAO);
+                request.getSession().setAttribute("tipoMensaje", "exito");
+            } else {
+                request.getSession().setAttribute("mensaje", resultadoDAO);
+                request.getSession().setAttribute("tipoMensaje", "error");
+            }
+            
+        } catch (NumberFormatException | ParseException e) {
+            LOGGER.log(Level.SEVERE, "Error de formato/parseo al crear cita desde cliente.", e);
+            request.getSession().setAttribute("mensaje", "❌ Error de formato en los datos de la cita (Fecha, Hora, ID).");
+            request.getSession().setAttribute("tipoMensaje", "error");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al guardar nueva cita desde cliente.", e);
+            request.getSession().setAttribute("mensaje", "❌ Error al intentar agendar la cita.");
+            request.getSession().setAttribute("tipoMensaje", "error");
+        }
+        
+        response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=listar"); 
+    }
+
+    /**
+     * Actualiza una cita (modal universal).
+     */
+    private void actualizarCita(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        Cita cita = new Cita();
+        String idCitaStr = request.getParameter("idCita");
+        String origen = request.getParameter("origen") != null ? request.getParameter("origen") : "global"; 
+
+        if (idCitaStr == null || idCitaStr.isEmpty()) {
+            request.getSession().setAttribute("mensaje", "❌ ID de cita no proporcionado para la actualización.");
+            request.getSession().setAttribute("tipoMensaje", "error");
+            redirigirOrigen(request, response, origen);
+            return;
+        }
+
+        try {
+            // 1) IDs y FKs
+            cita.setIdCita(Integer.parseInt(idCitaStr));
+            cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
+            cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
+            
+            // 2) Fecha/Hora
+            String fechaStr = request.getParameter("fecha");
+            String horaStr = request.getParameter("hora");
+            java.util.Date parsedDate = DATE_FORMATTER.parse(fechaStr);
+            cita.setFecha(new Date(parsedDate.getTime()));
+            java.util.Date parsedTime = TIME_FORMATTER.parse(horaStr);
+            cita.setHora(new Time(parsedTime.getTime()));
+            
+            // 3) Campos texto/estado/precio
+            cita.setMotivo(request.getParameter("motivo"));
+            cita.setEstadoNombre(request.getParameter("estado"));
+            String precioStr = request.getParameter("precio");
+            cita.setPrecio(Double.parseDouble(precioStr.trim())); // ✅ Nuevo: Parseo de Precio
+
+        } catch (NumberFormatException | ParseException e) {
+            LOGGER.log(Level.SEVERE, "Error de formato/parseo al actualizar la cita.", e);
+            request.getSession().setAttribute("mensaje", "❌ Error de formato en los datos de la cita (Fecha, Hora, ID o Precio).");
+            request.getSession().setAttribute("tipoMensaje", "error");
+            redirigirOrigen(request, response, origen);
+            return;
+        }
+        
+        // 4) Persistencia
+        boolean operacionExitosa = citaDAO.actualizarCita(cita); 
+        
+        // 5) Feedback + redirect
+        if (operacionExitosa) {
+            request.getSession().setAttribute("mensaje", "✅ Cita actualizada con éxito!");
+            request.getSession().setAttribute("tipoMensaje", "exito");
+        } else {
+            request.getSession().setAttribute("mensaje", "❌ Error al actualizar la cita (Verifique datos o conexión).");
+            request.getSession().setAttribute("tipoMensaje", "error");
+        }
+        redirigirOrigen(request, response, origen);
+    }
+    
+    /**
+     * Redirige al origen de la petición (global o lista del cliente).
+     */
+    private void redirigirOrigen(HttpServletRequest request, HttpServletResponse response, String origen)
+            throws IOException {
+        if ("cliente".equals(origen)) {
+            response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=listar");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=verGlobal");
+        }
+    }
+
+    // ===================================================================
+    // ===================== CLIENTE (GET MisCitas) ======================
+    // ===================================================================
+
+    /**
+     * Lista citas **Pendientes** del cliente autenticado (MisCitas.jsp).
+     */
+    private void listarCitasPorCliente(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        Integer idCliente = null;
+        jakarta.servlet.http.HttpSession sesion = request.getSession(false);
+
+        // 1. Extrae idCliente de la sesión
+        if (sesion != null) {
+            Object idSesion = sesion.getAttribute("idClienteSesion");
+            if (idSesion != null) {
+                try {
+                    idCliente = (idSesion instanceof Integer) ? (Integer) idSesion
+                                 : Integer.parseInt(idSesion.toString());
+                } catch (NumberFormatException e) {
+                    LOGGER.log(Level.SEVERE, "ID de sesión inválido para listar citas.", e);
+                }
+            }
+        }
+
+        // 2. Si no hay sesión válida
+        if (idCliente == null || idCliente <= 0) {
+            request.getSession().setAttribute("mensaje", "⚠️ Debes iniciar sesión para ver tus citas.");
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            return;
+        }
+
+        // 3. Carga de datos
+        try {
+            // ✅ Solo lista las citas PENDIENTES para el cliente.
+            List<Cita> misCitas = citaDAO.listarCitasPendientesPorCliente(idCliente);
+            
+            // Opcionalmente, carga todos los veterinarios para el modal de agendar
+            List<Veterinario> veterinarios = veterinarioDAO.listarVeterinariosParaDropdown(); 
+
+            if (misCitas.isEmpty()) {
+                request.setAttribute("avisoCitas", "Aún no tienes citas **Pendientes** agendadas.");
+            }
+
+            request.setAttribute("misCitas", misCitas);
+            request.setAttribute("listaVeterinarios", veterinarios);
+            request.getRequestDispatcher("/VistasWeb/VistasCliente/MisCitas.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error fatal al cargar citas para ID: " + idCliente, e);
+            request.setAttribute("errorMensaje", "Ocurrió un error en el servidor al cargar tus citas.");
+            request.getRequestDispatcher("/VistasWeb/error.jsp").forward(request, response);
+        }
+    }
+    
+    // ===================================================================
+    // ===================== ACCIONES SIMPLES (GET) ======================
+    // ===================================================================
+
+    /**
+     * Cambia estado de una cita a "Cancelada". Redirige a origen (global/listar).
+     */
+    private void cancelarCita(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String idCitaStr = request.getParameter("id");
+        String origen = request.getParameter("origen") != null ? request.getParameter("origen") : "listar";
+        
+        try {
+            int idCita = Integer.parseInt(idCitaStr);
+            boolean exito = citaDAO.cancelarCita(idCita); 
+            if (exito) {
+                request.getSession().setAttribute("mensaje", "✅ La cita N° " + idCita + " ha sido **cancelada** correctamente.");
+                request.getSession().setAttribute("tipoMensaje", "exito");
+            } else {
+                request.getSession().setAttribute("mensaje", "⚠️ No se pudo cancelar la cita N° " + idCita + ". (Solo se cancelan citas Pendientes).");
+                request.getSession().setAttribute("tipoMensaje", "advertencia");
+            }
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.WARNING, "ID de cita inválido para cancelar: " + idCitaStr, e);
+            request.getSession().setAttribute("mensaje", "❌ Error: ID de cita no válido.");
+            request.getSession().setAttribute("tipoMensaje", "error");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al procesar la cancelación de cita ID: " + idCitaStr, e);
+            request.getSession().setAttribute("mensaje", "❌ Error interno al procesar la cancelación.");
+            request.getSession().setAttribute("tipoMensaje", "error");
+        }
+        
+        redirigirOrigen(request, response, origen);
+    }
+    
+    /**
+     * Eliminación física de cita (uso administrativo).
+     */
+    private void eliminarCitaFisica(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String idCitaStr = request.getParameter("id");
+        
+        try {
+            int idCita = Integer.parseInt(idCitaStr);
+            if (citaDAO.eliminar(idCita)) { 
+                request.getSession().setAttribute("mensaje", "✅ Cita eliminada (físicamente) correctamente.");
+                request.getSession().setAttribute("tipoMensaje", "exito");
+            } else {
+                request.getSession().setAttribute("mensaje", "⚠️ No se pudo eliminar la cita.");
+                request.getSession().setAttribute("tipoMensaje", "advertencia");
+            }
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.WARNING, "ID de cita inválido para eliminar: " + idCitaStr, e);
+            request.getSession().setAttribute("mensaje", "❌ ID de cita inválido.");
+            request.getSession().setAttribute("tipoMensaje", "error");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al eliminar la cita.", e);
+            request.getSession().setAttribute("mensaje", "❌ Error al intentar eliminar la cita.");
+            request.getSession().setAttribute("tipoMensaje", "error");
+        }
+        // Siempre regresar a la vista global
+        response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=verGlobal");
+    }
+
+    // ===================================================================
+    // ===================== DEPRECADO (MANTENIDO) =======================
+    // ===================================================================
+
+    /**
+     * Prepara datos de una cita específica para edición (vista separada).
+     * Nota: Este método es a menudo reemplazado por un modal que llama a obtenerCitaPorId() vía AJAX/JavaScript.
+     */
+    private void verCita(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String idStr = request.getParameter("id");
+        if (idStr != null) {
+            try {
+                int idCita = Integer.parseInt(idStr);
+                Cita citaSeleccionada = citaDAO.obtenerCitaPorId(idCita); 
+                request.setAttribute("citaSeleccionada", citaSeleccionada);
+
+                request.setAttribute("listaClientes", clienteDAO.listarClientesParaDropdown());
+                request.setAttribute("listaVeterinarios", veterinarioDAO.listarVeterinariosParaDropdown());
+
+                request.getRequestDispatcher("/VistasWeb/VistasAdmin/editarCita.jsp").forward(request, response); 
+
+            } catch (NumberFormatException e) {
+                LOGGER.log(Level.WARNING, "ID de cita inválido para ver: " + idStr, e);
+                response.sendRedirect(request.getContextPath() + "/CitaServlet");
+            }
+        } else {
+            response.sendRedirect(request.getContextPath() + "/CitaServlet");
+        }
+    }
+    
     private void buscarCitasGlobal(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String termino = request.getParameter("busqueda");
@@ -187,360 +559,6 @@ public class CitaServlet extends HttpServlet {
             request.setAttribute("mensaje", "❌ Error al realizar la búsqueda.");
             request.setAttribute("tipoMensaje", "error");
             verTodasCitasGlobal(request, response);
-        }
-    }
-    
-    /**
-     * Eliminación física de cita (uso administrativo).
-     */
-    private void eliminarCitaFisica(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String idCitaStr = request.getParameter("id");
-        
-        try {
-            int idCita = Integer.parseInt(idCitaStr);
-            // Llama al método 'eliminar' del DAO
-            if (citaDAO.eliminar(idCita)) { 
-                request.getSession().setAttribute("mensaje", "✅ Cita eliminada (físicamente) correctamente.");
-                request.getSession().setAttribute("tipoMensaje", "exito");
-            } else {
-                request.getSession().setAttribute("mensaje", "⚠️ No se pudo eliminar la cita.");
-                request.getSession().setAttribute("tipoMensaje", "advertencia");
-            }
-        } catch (NumberFormatException e) {
-            LOGGER.log(Level.WARNING, "ID de cita inválido para eliminar: " + idCitaStr, e);
-            request.getSession().setAttribute("mensaje", "❌ ID de cita inválido.");
-            request.getSession().setAttribute("tipoMensaje", "error");
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error al eliminar la cita.", e);
-            request.getSession().setAttribute("mensaje", "❌ Error al intentar eliminar la cita.");
-            request.getSession().setAttribute("tipoMensaje", "error");
-        }
-        // Siempre regresar a la vista global
-        response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=verGlobal");
-    }
-
-    /**
-     * Carga citas de un cliente específico para Recepción (filtro por cliente).
-     */
-    private void verCitasPorClienteEspec(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        String idClienteStr = request.getParameter("idCliente");
-        String urlVista = "/VistasWeb/VistasRecep/GestionCitas.jsp"; 
-        
-        try {
-            if (idClienteStr != null && !idClienteStr.isEmpty()) {
-                int idCliente = Integer.parseInt(idClienteStr.trim());
-                
-                Cliente cliente = clienteDAO.buscarIdCliente(idCliente); 
-                if (cliente == null) {
-                    request.setAttribute("mensaje", "Cliente no encontrado.");
-                    request.setAttribute("tipoMensaje", "advertencia");
-                    verTodasCitasGlobal(request, response);
-                    return;
-                }
-                
-                request.setAttribute("listaCitas", citaDAO.listarCitasPorCliente(idCliente));
-                request.setAttribute("clienteActual", cliente); 
-                
-                // Mantener combos cargados
-                request.setAttribute("listaClientes", clienteDAO.listarClientesParaDropdown());
-                request.setAttribute("listaVeterinarios", veterinarioDAO.listarVeterinariosParaDropdown());
-                
-            } else {
-                request.setAttribute("mensaje", "ID de Cliente no proporcionado.");
-                request.setAttribute("tipoMensaje", "error");
-            }
-        } catch (NumberFormatException e) {
-            request.setAttribute("mensaje", "ID de Cliente inválido.");
-            request.setAttribute("tipoMensaje", "error");
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error al ver citas de cliente específico.", e);
-            request.setAttribute("mensaje", "❌ Error al cargar las citas del cliente.");
-            request.setAttribute("tipoMensaje", "error");
-        }
-        
-        request.getRequestDispatcher(urlVista).forward(request, response);
-    }
-
-    // ===================================================================
-    // ===================== CREAR / EDITAR (POST) =======================
-    // ===================================================================
-
-    /**
-     * Crea una cita desde la vista global (Recepción/Admin).
-     * Usa estadoNombre desde el form para que DAO resuelva idEstado.
-     */
-    private void guardarNuevaCitaGlobal(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        Cita cita = new Cita();
-        
-        try {
-            // IDs foráneos + motivo + estado (nombre)
-            cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
-            cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
-            cita.setMotivo(request.getParameter("motivo"));
-            cita.setEstadoNombre(request.getParameter("estado")); // nombre de estado desde el form
-
-            // Parseo de fecha y hora (según inputs)
-            String fechaStr = request.getParameter("fecha");
-            String horaStr = request.getParameter("hora");
-            java.util.Date parsedDate = DATE_FORMATTER.parse(fechaStr);
-            cita.setFecha(new Date(parsedDate.getTime()));
-            java.util.Date parsedTime = TIME_FORMATTER.parse(horaStr);
-            cita.setHora(new Time(parsedTime.getTime()));
-
-            // Inserción
-            String resultadoDAO = citaDAO.agregarCita(cita); 
-            if (resultadoDAO.startsWith("✅")) {
-                request.getSession().setAttribute("mensaje", resultadoDAO);
-                request.getSession().setAttribute("tipoMensaje", "exito");
-            } else {
-                request.getSession().setAttribute("mensaje", resultadoDAO);
-                request.getSession().setAttribute("tipoMensaje", "error");
-            }
-            
-        } catch (NumberFormatException | ParseException e) {
-            LOGGER.log(Level.SEVERE, "Error de formato/parseo al guardar nueva cita global.", e);
-            request.getSession().setAttribute("mensaje", "❌ Error de formato en los datos de la cita.");
-            request.getSession().setAttribute("tipoMensaje", "error");
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error al guardar nueva cita global.", e);
-            request.getSession().setAttribute("mensaje", "❌ Error al intentar agendar la cita.");
-            request.getSession().setAttribute("tipoMensaje", "error");
-        }
-        response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=verGlobal");
-    }
-    
-    /**
-     * Crea una cita desde MisCitas (cliente). El estado por defecto es "Pendiente".
-     */
-    private void crearCitaDesdeCliente(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        Cita cita = new Cita();
-        
-        try {
-            cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
-            cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
-            cita.setMotivo(request.getParameter("motivo"));
-            cita.setEstadoNombre("Pendiente"); // estado inicial para cliente
-
-            String fechaStr = request.getParameter("fecha");
-            String horaStr = request.getParameter("hora");
-            java.util.Date parsedDate = DATE_FORMATTER.parse(fechaStr);
-            cita.setFecha(new Date(parsedDate.getTime()));
-            java.util.Date parsedTime = TIME_FORMATTER.parse(horaStr);
-            cita.setHora(new Time(parsedTime.getTime()));
-            
-            String resultadoDAO = citaDAO.agregarCita(cita); 
-            if (resultadoDAO.startsWith("✅")) {
-                request.getSession().setAttribute("mensaje", resultadoDAO);
-                request.getSession().setAttribute("tipoMensaje", "exito");
-            } else {
-                request.getSession().setAttribute("mensaje", resultadoDAO);
-                request.getSession().setAttribute("tipoMensaje", "error");
-            }
-            
-        } catch (NumberFormatException | ParseException e) {
-            LOGGER.log(Level.SEVERE, "Error de formato/parseo al crear cita desde cliente.", e);
-            request.getSession().setAttribute("mensaje", "❌ Error de formato en los datos de la cita.");
-            request.getSession().setAttribute("tipoMensaje", "error");
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error al guardar nueva cita desde cliente.", e);
-            request.getSession().setAttribute("mensaje", "❌ Error al intentar agendar la cita.");
-            request.getSession().setAttribute("tipoMensaje", "error");
-        }
-        
-        response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=listar"); 
-    }
-
-    /**
-     * Actualiza una cita (modal universal). Redirige a origen (global/cliente).
-     * El DAO se encarga de mapear estadoNombre -> idEstado.
-     */
-    private void actualizarCita(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        Cita cita = new Cita();
-        String idCitaStr = request.getParameter("idCita");
-        String origen = request.getParameter("origen") != null ? request.getParameter("origen") : "global"; 
-
-        // Validación mínima: debe existir idCita
-        if (idCitaStr == null || idCitaStr.isEmpty()) {
-            request.getSession().setAttribute("mensaje", "❌ ID de cita no proporcionado para la actualización.");
-            request.getSession().setAttribute("tipoMensaje", "error");
-            if (origen.equals("cliente")) {
-                response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=listar");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=verGlobal");
-            }
-            return;
-        }
-
-        try {
-            // 1) IDs y FKs
-            cita.setIdCita(Integer.parseInt(idCitaStr));
-            cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
-            cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
-            // 2) Fecha/Hora
-            String fechaStr = request.getParameter("fecha");
-            String horaStr = request.getParameter("hora");
-            java.util.Date parsedDate = DATE_FORMATTER.parse(fechaStr);
-            cita.setFecha(new Date(parsedDate.getTime()));
-            java.util.Date parsedTime = TIME_FORMATTER.parse(horaStr);
-            cita.setHora(new Time(parsedTime.getTime()));
-        } catch (NumberFormatException | ParseException e) {
-            LOGGER.log(Level.SEVERE, "Error de formato/parseo al actualizar la cita: " + e.getMessage(), e);
-            request.getSession().setAttribute("mensaje", "❌ Error de formato en los datos de la cita.");
-            request.getSession().setAttribute("tipoMensaje", "error");
-            if (origen.equals("cliente")) {
-                response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=listar");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=verGlobal");
-            }
-            return;
-        }
-        
-        // 3) Campos texto/estado
-        cita.setMotivo(request.getParameter("motivo"));
-        cita.setEstadoNombre(request.getParameter("estado")); // nombre del estado
-
-        // 4) Persistencia
-        boolean operacionExitosa = citaDAO.actualizarCita(cita); 
-        
-        // 5) Feedback + redirect
-        if (operacionExitosa) {
-            request.getSession().setAttribute("mensaje", "✅ Cita actualizada con éxito!");
-            request.getSession().setAttribute("tipoMensaje", "exito");
-        } else {
-            request.getSession().setAttribute("mensaje", "❌ Error al actualizar la cita.");
-            request.getSession().setAttribute("tipoMensaje", "error");
-        }
-        if (origen.equals("cliente")) {
-            response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=listar");
-        } else {
-            response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=verGlobal");
-        }
-    }
-
-    /**
-     * Cambia estado de una cita a "Cancelada". Redirige a origen (global/listar).
-     */
-    private void cancelarCita(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String idCitaStr = request.getParameter("id");
-        int idCita;
-        
-        try {
-            idCita = Integer.parseInt(idCitaStr);
-            boolean exito = citaDAO.cancelarCita(idCita); 
-            if (exito) {
-                request.getSession().setAttribute("mensaje", "✅ La cita N° " + idCita + " ha sido cancelada correctamente.");
-                request.getSession().setAttribute("tipoMensaje", "exito");
-            } else {
-                request.getSession().setAttribute("mensaje", "⚠️ No se pudo cancelar la cita N° " + idCita + ".");
-                request.getSession().setAttribute("tipoMensaje", "advertencia");
-            }
-        } catch (NumberFormatException e) {
-            LOGGER.log(Level.WARNING, "ID de cita inválido para cancelar: " + idCitaStr, e);
-            request.getSession().setAttribute("mensaje", "❌ Error: ID de cita no válido.");
-            request.getSession().setAttribute("tipoMensaje", "error");
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error al procesar la cancelación de cita ID: " + idCitaStr, e);
-            request.getSession().setAttribute("mensaje", "❌ Error interno al procesar la cancelación.");
-            request.getSession().setAttribute("tipoMensaje", "error");
-        }
-        
-        // Decide a dónde volver (vista global o lista del cliente)
-        String origen = request.getParameter("origen") != null ? request.getParameter("origen") : "listar";
-        if (origen.equals("global")) {
-             response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=verGlobal"); 
-        } else {
-             response.sendRedirect(request.getContextPath() + "/CitaServlet?accion=listar"); 
-        }
-    }
-
-    // ===================================================================
-    // ===================== CLIENTE (GET MisCitas) ======================
-    // ===================================================================
-
-    /**
-     * Lista citas del cliente autenticado (usa idClienteSesion de la sesión).
-     */
-    private void listarCitasPorCliente(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        Integer idCliente = null;
-        jakarta.servlet.http.HttpSession sesion = request.getSession(false);
-
-        // Extrae idClienteSesion con tolerancia a Integer/String
-        if (sesion != null) {
-            Object idSesion = sesion.getAttribute("idClienteSesion");
-            if (idSesion != null) {
-                try {
-                    idCliente = (idSesion instanceof Integer) ? (Integer) idSesion
-                               : Integer.parseInt(idSesion.toString());
-                } catch (NumberFormatException e) {
-                    LOGGER.log(Level.SEVERE, "ID de sesión inválido para listar citas. Valor: " + idSesion, e);
-                }
-            }
-        }
-
-        // Si no hay sesión válida, enviar a login/index
-        if (idCliente == null || idCliente <= 0) {
-            request.getSession().setAttribute("mensaje", "⚠️ Debes iniciar sesión para ver tus citas.");
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
-            return;
-        }
-
-        try {
-            List<Cita> misCitas = citaDAO.listarCitasPorCliente(idCliente);
-            if (misCitas.isEmpty()) {
-                request.setAttribute("avisoCitas", "Aún no tienes citas agendadas.");
-            }
-
-            request.setAttribute("misCitas", misCitas);
-            request.getRequestDispatcher("/VistasWeb/VistasCliente/MisCitas.jsp").forward(request, response);
-
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error fatal al cargar citas para ID: " + idCliente, e);
-            request.setAttribute("errorMensaje", "Ocurrió un error en el servidor al cargar tus citas.");
-            request.getRequestDispatcher("/VistasWeb/error.jsp").forward(request, response);
-        }
-    }
-
-    // ===================================================================
-    // ===================== PREPARAR EDICIÓN (GET) ======================
-    // ===================================================================
-
-    /**
-     * Prepara datos de una cita específica para edición (vista separada).
-     * Carga también listas de clientes y veterinarios para los select.
-     */
-    private void verCita(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String idStr = request.getParameter("id");
-        if (idStr != null) {
-            try {
-                int idCita = Integer.parseInt(idStr);
-                // obtenerCitaPorId debe cargar estadoNombre si el JSP lo usa
-                Cita citaSeleccionada = citaDAO.obtenerCitaPorId(idCita); 
-                request.setAttribute("citaSeleccionada", citaSeleccionada);
-
-                request.setAttribute("listaClientes", clienteDAO.listarClientesParaDropdown());
-                request.setAttribute("listaVeterinarios", veterinarioDAO.listarVeterinariosParaDropdown());
-
-                // Nota: Ajusta esta ruta si usas modal dentro de la gestión
-                request.getRequestDispatcher("/VistasWeb/VistasAdmin/editarCita.jsp").forward(request, response); 
-
-            } catch (NumberFormatException e) {
-                LOGGER.log(Level.WARNING, "ID de cita inválido para ver: " + idStr, e);
-                response.sendRedirect(request.getContextPath() + "/CitaServlet");
-            }
-        } else {
-            response.sendRedirect(request.getContextPath() + "/CitaServlet");
         }
     }
 }
