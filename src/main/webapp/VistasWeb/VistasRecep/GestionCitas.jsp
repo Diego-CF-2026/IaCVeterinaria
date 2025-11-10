@@ -9,14 +9,19 @@
 <%@ page import="java.sql.Date" %>
 <%@ page import="java.sql.Time" %>
 
-<%  List<Cita> listaCitas = (List<Cita>) request.getAttribute("listaCitas");
-    Cita citaSel = (Cita) request.getAttribute("citaSeleccionada");
+<%
+    // Inicialización de Variables y Datos de Sesión/Request
+    List<Cita> listaCitas = (List<Cita>) request.getAttribute("listaCitas");
+    Cita citaSel = (Cita) request.getAttribute("citaSeleccionada"); 
     String mensaje = (String) request.getAttribute("mensaje");
     String tipoMensaje = (String) request.getAttribute("tipoMensaje");
-
+    
+    // Estos datos se necesitan para el dropdown del Modal de Edición, asumiendo
+    // que CitaServlet los carga en la acción 'editar' o por defecto.
     List<Cliente> listaClientes = (List<Cliente>) request.getAttribute("listaClientes");
     List<Veterinario> listaVeterinarios = (List<Veterinario>) request.getAttribute("listaVeterinarios");
 
+    // Prevenir NullPointerExceptions (CRÍTICO para listas)
     if (listaCitas == null) {
         listaCitas = new ArrayList<>();
     }
@@ -27,20 +32,28 @@
         listaVeterinarios = new ArrayList<>();
     }
 
+    // Formateadores de fecha y hora
     SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
-    SimpleDateFormat dateTimeDisplayFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+    // Determinar si es la vista global o la vista de un cliente específico
+    String tituloPagina = "Gestión Global de Citas";
+    Cliente clienteActual = (Cliente) request.getAttribute("clienteActual");
+    if (clienteActual != null) {
+        tituloPagina = "Citas de Cliente: " + clienteActual.getNombre() + " " + clienteActual.getApellido();
+    }
 %>
 
 <!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="UTF-8">
-        <title>Gestión de Citas</title>
+        <title><%= tituloPagina%></title>
         <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ModoNoche-Sidebar.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/GestorCitas.css">
         <style>
+            /* --- Estilos CSS (Sin cambios, se mantienen tus estilos) --- */
             .modal {
                 display: none; /* Oculto por defecto */
                 position: fixed; /* Fijo en la pantalla */
@@ -70,7 +83,7 @@
                 margin-top: 20px;
             }
 
-            .btn-eliminar {
+            .btn-cancelar {
                 background-color: #f44336;
                 color: white;
                 border: none;
@@ -79,7 +92,7 @@
                 cursor: pointer;
             }
 
-            .btn-eliminar:hover {
+            .btn-cancelar:hover {
                 background-color: #d32f2f;
             }
 
@@ -155,6 +168,7 @@
     </head>
     <body>
 
+        <%-- Sidebar (se mantiene) --%>
         <nav class="sidebar">
             <header>
                 <div class="image-text">
@@ -178,15 +192,14 @@
 
                     <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/CitaServlet">
-                            <i class='bx bxs-calendar icon'></i><span class="text">Citas</span></a>
+                            <i class='bx bxs-calendar icon'></i><span class="text">Citas Globales</span></a>
                     </li>
 
                     <li class="nav-link">
-                        <a href="${pageContext.request.contextPath}/UsuarioCitaRecepServlet">
-                            <i class='bx bx-calendar-alt icon'></i><span class="text">Citas de Usuarios</span></a>
+                        <%-- Ahora Citas de Usuarios apunta al flujo de búsqueda (RecepcionCitaServlet) --%>
+                        <a href="${pageContext.request.contextPath}/RecepcionCitaServlet"> 
+                            <i class='bx bx-calendar-alt icon'></i><span class="text">Agendar Cita</span></a>
                     </li>
-
-                    
 
                     <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/LogoutServlet">
@@ -201,16 +214,23 @@
 
         <main>
             <div class="header-actions">
-                <h1>Gestión de Citas</h1>
+                <h1><%= tituloPagina%></h1>
                 <div class="acciones">
+                    <%-- El buscador solo se muestra en la vista global --%>
+                    <% if (clienteActual == null) { %>
                     <form method="get" action="${pageContext.request.contextPath}/CitaServlet">
                         <input type="hidden" name="accion" value="buscar" />
-                        <input type="text" name="busqueda" placeholder="Buscar citas..." 
+                        <input type="text" name="busqueda" placeholder="Buscar por cliente, vet, motivo..." 
                                value="${param.busqueda != null ? param.busqueda : ''}" />
                         <button type="submit" class="btn btn-editar">Buscar</button>
                         <a href="${pageContext.request.contextPath}/CitaServlet" class="btn btn-limpiar">Limpiar</a>
                     </form>
-                    <button class="btn btn-agregar" onclick="abrirModal('modalAgregarCita')">Agregar Cita</button>
+                    <% } %>
+                    
+                    <%-- Redirige para iniciar el flujo de agendar cita (buscar cliente) --%>
+                    <a href="${pageContext.request.contextPath}/RecepcionCitaServlet" class="btn btn-agregar">
+                        Agendar Nueva Cita
+                    </a>
                 </div>
             </div>
 
@@ -223,7 +243,6 @@
                 <table class="tabla-citas th">
                     <thead>
                         <tr>
-                            <th>ID Cita</th>
                             <th>Cliente</th>
                             <th>Veterinario</th>
                             <th>Fecha</th>
@@ -236,29 +255,30 @@
                     <tbody>
                         <% if (!listaCitas.isEmpty()) {
                                 for (Cita c : listaCitas) {
-                                    String claseEstado = "";
-                                    switch (c.getEstado()) {
-                                        case "Pendiente":
-                                            claseEstado = "estado-pendiente";
-                                            break;
-                                        case "Confirmada":
-                                            claseEstado = "estado-confirmada";
-                                            break;
-                                        case "Cancelada":
-                                            claseEstado = "estado-cancelada";
-                                            break;
-                                        case "Completada":
-                                            claseEstado = "estado-completada";
-                                            break;
-                                    }
+                                        String claseEstado = "";
+                                        // 🛑 CLAVE: Usa c.getEstado() (String) para determinar la clase CSS
+                                        String nombreEstado = c.getEstado();
+                                        switch (nombreEstado) {
+                                            case "Pendiente":
+                                                claseEstado = "estado-pendiente";
+                                                break;
+                                            case "Completado":
+                                                claseEstado = "estado-completado";
+                                                break;
+                                            case "Cancelado": // Asegúrate que el nombre coincide con tu DB/DAO
+                                                claseEstado = "estado-cancelado";
+                                                break;
+                                            default:
+                                                claseEstado = ""; 
+                                        }
                         %>
                         <tr>
-                            <td><%= c.getIdCita()%></td>
                             <td><%= c.getNombreCliente()%> <%= c.getApellidoCliente()%></td>
                             <td>Dr(a). <%= c.getNombreVeterinario()%> <%= c.getApellidoVeterinario()%></td>
                             <td><%= dateFormatter.format(c.getFecha())%></td>
                             <td><%= timeFormatter.format(c.getHora())%></td>
                             <td><%= c.getMotivo()%></td>
+                            <%-- 🛑 CLAVE: Muestra el nombre del estado (String) --%>
                             <td><span class="<%= claseEstado%>"><%= c.getEstado()%></span></td>
                             <td>
                                 <button class="btn btn-editar"
@@ -268,12 +288,12 @@
                                             '<%= c.getIdVeterinario()%>',
                                             '<%= dateFormatter.format(c.getFecha())%>',
                                             '<%= timeFormatter.format(c.getHora())%>',
-                                            '<%= c.getMotivo()%>',
+                                            '<%= c.getMotivo().replace("'", "\\'")%>', 
                                             '<%= c.getEstado()%>'
                                         )">Editar</button>
 
-                                <a href="${pageContext.request.contextPath}/CitaServlet?accion=eliminar&id=<%= c.getIdCita()%>" 
-                                   class="btn btn-eliminar" onclick="return confirm('¿Está seguro de eliminar esta cita?')">Eliminar</a>
+                                <a href="${pageContext.request.contextPath}/CitaServlet?accion=cancelar&id=<%= c.getIdCita()%>" 
+                                   class="btn btn-cancelar" onclick="return confirm('¿Está seguro de cancelar esta cita?')">Cancelar</a>
                             </td>
                         </tr>
                         <% }
@@ -285,85 +305,8 @@
                     </tbody>
                 </table>
             </div>
-
-            <%-- Modal Agregar Cita --%>
-            <div id="modalAgregarCita" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="cerrarModal('modalAgregarCita')">&times;</span>
-                    <h2>Agregar Nueva Cita</h2> <%-- Mantengo solo "Agregar Nueva Cita" aquí para evitar confusión con el modal de editar --%>
-
-                    <form action="${pageContext.request.contextPath}/CitaServlet" method="post">
-                        <input type="hidden" name="accion" value="guardar"> <%-- Siempre "guardar" para este modal --%>
-                        
-
-                        <div class="form-group">
-                            <label for="idCliente">Cliente:</label>
-                            <select name="idCliente" id="idCliente" required class="form-control">
-                                <option value="">Seleccione un cliente</option>
-                                <% for (Cliente cli : listaClientes) {%>
-                                <option value="<%= cli.getIdCliente()%>" 
-                                        <%= (citaSel != null && cli.getIdCliente() == citaSel.getIdCliente()) ? "selected" : ""%>>
-                                    <%= cli.getNombre()%> <%= cli.getApellido()%> - <%= cli.getDni()%>
-                                </option>
-                                <% } %>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="idVeterinario">Veterinario:</label>
-                            <select name="idVeterinario" id="idVeterinario" required class="form-control">
-                                <option value="">Seleccione un veterinario</option>
-                                <% for (Veterinario vet : listaVeterinarios) {%>
-                                <option value="<%= vet.getIdVeterinario()%>"
-                                        <%= (citaSel != null && vet.getIdVeterinario() == citaSel.getIdVeterinario()) ? "selected" : ""%>>
-                                    Dr(a). <%= vet.getNombre()%> <%= vet.getApellido()%> - <%= vet.getEspecialidad()%>
-                                </option>
-                                <% }%>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="fecha">Fecha:</label>
-                            <input type="date" name="fecha" id="fecha" 
-                                   value="<%= citaSel != null ? dateFormatter.format(citaSel.getFecha()) : ""%>" 
-                                   required class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="hora">Hora:</label>
-                            <input type="time" name="hora" id="hora" 
-                                   value="<%= citaSel != null ? timeFormatter.format(citaSel.getHora()) : ""%>" 
-                                   required class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="motivo">Motivo:</label>
-                            <%-- CAMBIO AQUÍ: input type="text" en lugar de select --%>
-                            <input type="text" name="motivo" id="motivo" 
-                                   value="<%= citaSel != null ? citaSel.getMotivo() : ""%>" 
-                                   required class="form-control" placeholder="Ej: Consulta de rutina, Vacunación, etc.">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="estado">Estado:</label>
-                            <select name="estado" id="estado" required class="form-control">
-                                <option value="Pendiente" <%= citaSel != null && "Pendiente".equals(citaSel.getEstado()) ? "selected" : ""%>>Pendiente</option>
-                                <option value="Confirmada" <%= citaSel != null && "Confirmada".equals(citaSel.getEstado()) ? "selected" : ""%>>Confirmada</option>
-                                <option value="Cancelada" <%= citaSel != null && "Cancelada".equals(citaSel.getEstado()) ? "selected" : ""%>>Cancelada</option>
-                                <option value="Completada" <%= citaSel != null && "Completada".equals(citaSel.getEstado()) ? "selected" : ""%>>Completada</option>
-                            </select>
-                        </div>
-
-                        <div class="modal-actions">
-                            <div>
-                                <button type="button" class="btn-cerrar" onclick="cerrarModal('modalAgregarCita')">Cancelar</button>
-                                <button type="submit" class="btn-guardar">Guardar</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
             
+            <%-- Modal Editar Cita --%>
             <div id="modalEditarCita" class="modal">
                 <div class="modal-content">
                     <span class="close" onclick="cerrarModal('modalEditarCita')">&times;</span>
@@ -375,6 +318,7 @@
 
                         <div class="form-group">
                             <label for="editar_idCliente">Cliente:</label>
+                            <%-- Nota: Para que este dropdown funcione, CitaServlet debe cargar listaClientes antes de reenviar --%>
                             <select name="idCliente" id="editar_idCliente" required class="form-control">
                                 <option value="">Seleccione un cliente</option>
                                 <% for (Cliente cli : listaClientes) {%>
@@ -387,11 +331,12 @@
 
                         <div class="form-group">
                             <label for="editar_idVeterinario">Veterinario:</label>
+                             <%-- Nota: Para que este dropdown funcione, CitaServlet debe cargar listaVeterinarios antes de reenviar --%>
                             <select name="idVeterinario" id="editar_idVeterinario" required class="form-control">
                                 <option value="">Seleccione un veterinario</option>
                                 <% for (Veterinario vet : listaVeterinarios) {%>
                                 <option value="<%= vet.getIdVeterinario()%>">
-                                    Dr(a). <%= vet.getNombre()%> <%= vet.getApellido()%> - <%= vet.getEspecialidad()%>
+                                    Dr(a). <%= vet.getNombreVeterinario()%> <%= vet.getApellidoVeterinario()%> 
                                 </option>
                                 <% } %>
                             </select>
@@ -407,16 +352,14 @@
                         </div>
                         <div class="form-group">
                             <label for="editar_motivo">Motivo:</label>
-                            <%-- CAMBIO AQUÍ: input type="text" en lugar de select para el modal de edición --%>
                             <input type="text" name="motivo" id="editar_motivo" required class="form-control" placeholder="Ej: Consulta de rutina, Vacunación, etc.">
                         </div>
                         <div class="form-group">
                             <label for="editar_estado">Estado:</label>
                             <select name="estado" id="editar_estado" required class="form-control">
                                 <option value="Pendiente">Pendiente</option>
-                                <option value="Confirmada">Confirmada</option>
-                                <option value="Cancelada">Cancelada</option>
-                                <option value="Completada">Completada</option>
+                                <option value="Completado">Completado</option>
+                                <option value="Cancelado">Cancelado</option>
                             </select>
                         </div>
 
@@ -432,13 +375,6 @@
         <button id="modoNocheBtn" class="modo-noche-flotante" aria-label="Cambiar a modo noche">🌙</button>
         <script src="<%= request.getContextPath()%>/Js/JsAdmin/ModoNoche-Sidebar.js"></script>
         <script>
-            // Mostrar modal si hay una cita seleccionada (para edición) del modal agregar cita
-            <% if (citaSel != null) { %>
-            document.addEventListener('DOMContentLoaded', function () {
-                abrirModal('modalAgregarCita');
-            });
-            <% }%>
-
             function abrirModal(modalId) {
                 const modal = document.getElementById(modalId);
                 if (modal) {
@@ -450,21 +386,10 @@
                 const modal = document.getElementById(modalId);
                 if (modal) {
                     modal.style.display = 'none';
-                    // Redirigir para limpiar parámetros si es necesario al cerrar el modal de agregar
-                    if (modalId === 'modalAgregarCita' && <%= citaSel != null%>) {
+                    // Al cerrar el modal de edición, redirige para limpiar el estado del servlet (si es necesario)
+                    if (modalId === 'modalEditarCita') {
                         window.location.href = '${pageContext.request.contextPath}/CitaServlet';
                     }
-                     // Opcional: Recargar la página o hacer una nueva solicitud AJAX para refrescar la tabla si el modal de edición se cierra.
-                     // Esto puede ser útil para asegurar que la tabla se actualice si el usuario cancela la edición.
-                    if (modalId === 'modalEditarCita') {
-                         window.location.href = '${pageContext.request.contextPath}/CitaServlet';
-                    }
-                }
-            }
-
-            function confirmarEliminar(idCita) {
-                if (confirm('¿Está seguro que desea eliminar esta cita?')) {
-                    window.location.href = '${pageContext.request.contextPath}/CitaServlet?accion=eliminar&id=' + idCita;
                 }
             }
 
@@ -474,24 +399,12 @@
                 for (let modal of modals) {
                     if (event.target == modal) {
                         modal.style.display = "none";
-                        // Redirigir para limpiar parámetros si es necesario
-                        if (modal.id === 'modalAgregarCita' && <%= citaSel != null%>) {
+                        if (modal.id === 'modalEditarCita') {
                             window.location.href = '${pageContext.request.contextPath}/CitaServlet';
                         }
                     }
                 }
             }
-
-            // Validación de fecha (no permitir fechas pasadas)
-            document.getElementById('fecha')?.addEventListener('change', function () {
-                const fechaInput = this.value;
-                const hoy = new Date().toISOString().split('T')[0];
-
-                if (fechaInput < hoy) {
-                    alert('No se pueden agendar citas en fechas pasadas');
-                    this.value = hoy;
-                }
-            });
 
             // Función para abrir el modal de edición y prellenar los campos
             function abrirModalEditar(idCita, idCliente, idVeterinario, fecha, hora, motivo, estado) {
@@ -501,8 +414,11 @@
                 document.getElementById('editar_idVeterinario').value = idVeterinario;
                 document.getElementById('editar_fecha').value = fecha;
                 document.getElementById('editar_hora').value = hora;
-                document.getElementById('editar_motivo').value = motivo; // Motivo ahora es un campo de texto
+                document.getElementById('editar_motivo').value = motivo; 
                 document.getElementById('editar_estado').value = estado;
+                
+                // Si tienes la validación de fecha, guarda la fecha original
+                document.getElementById('editar_fecha').dataset.originalDate = fecha;
             }
         </script>
     </body>

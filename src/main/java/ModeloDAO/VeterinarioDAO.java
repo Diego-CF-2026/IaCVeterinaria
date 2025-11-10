@@ -505,4 +505,33 @@ public class VeterinarioDAO {
 
         return idVeterinario;
     }
+    
+        public List<Modelo.Veterinario> listarVeterinariosParaDropdown() {
+        List<Modelo.Veterinario> lista = new ArrayList<>();
+
+        // 🔴 SQL CORREGIDO: Usando 'nombreVeterinario' y 'apellidoVeterinario'
+        String sql = "SELECT idVeterinario, nombreVeterinario, apellidoVeterinario FROM veterinario ORDER BY nombreVeterinario"; 
+
+        try (Connection con = Conexion.getConnection(); 
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Modelo.Veterinario veterinario = new Modelo.Veterinario();
+                veterinario.setIdVeterinario(rs.getInt("idVeterinario"));
+
+                // 🟢 Mapeo a los nombres de columna correctos
+                veterinario.setNombreVeterinario(rs.getString("nombreVeterinario"));
+                veterinario.setApellidoVeterinario(rs.getString("apellidoVeterinario"));
+
+                lista.add(veterinario);
+            }
+            System.out.println("DEBUG: Veterinarios cargados para Dropdown: " + lista.size() + " registros.");
+
+        } catch (SQLException e) {
+            System.err.println("❌ Error SQL al listar veterinarios para dropdown: " + e.getMessage());
+            e.printStackTrace(); 
+        }
+        return lista;
+    }
 }

@@ -210,5 +210,58 @@ public class ClienteDAO {
         return c;
     }
     
-    
+        public List<Cliente> buscarClientes(String termino) {
+        List<Cliente> lista = new ArrayList<>();
+        // Consulta SQL con LIKE para búsqueda flexible
+        String sql = "SELECT * FROM Cliente WHERE nombre LIKE ? OR apellido LIKE ? OR dni LIKE ?";
+        String patron = "%" + termino + "%"; 
+        
+        try {
+            con = Conexion.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, patron);
+            ps.setString(2, patron);
+            ps.setString(3, patron);
+            rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                Cliente c = new Cliente();
+                c.setIdCliente(rs.getInt("idCliente"));
+                c.setIdUsuario(rs.getInt("idUsuario"));
+                c.setNombre(rs.getString("nombre"));
+                c.setApellido(rs.getString("apellido"));
+                c.setDni(rs.getString("dni"));
+                c.setTelefono(rs.getString("telefono"));
+                c.setFechaRegistro(rs.getDate("fechaRegistro"));
+                lista.add(c);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    public List<Modelo.Cliente> listarClientesParaDropdown() {
+        List<Modelo.Cliente> lista = new ArrayList<>();
+        // Las columnas son 'nombre' y 'apellido' según tu esquema
+        String sql = "SELECT idCliente, nombre, apellido FROM cliente ORDER BY nombre"; 
+
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) { // <-- rs.next() devuelve un boolean, es correcto
+                Modelo.Cliente cliente = new Modelo.Cliente();
+                cliente.setIdCliente(rs.getInt("idCliente")); // <-- Esto es un int, pero se usa para setInt
+                cliente.setNombre(rs.getString("nombre")); // <-- Esto es un String, se usa para setString
+                cliente.setApellido(rs.getString("apellido")); // <-- Esto es un String, se usa para setString
+                lista.add(cliente);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error SQL al listar clientes para dropdown: " + e.getMessage());
+            e.printStackTrace(); 
+        }
+        System.out.println("DEBUG: Clientes cargados para Dropdown: " + lista.size() + " registros.");
+        return lista;
+    }
 }

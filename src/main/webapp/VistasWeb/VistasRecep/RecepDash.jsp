@@ -33,7 +33,7 @@
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="${pageContext.request.contextPath}/CitasRecepServlet">
+                        <a href="${pageContext.request.contextPath}/RecepcionCitaServlet">
                             <i class='bx bx-calendar-check icon'></i><span class="text">Citas</span>
                         </a>
                     </li>
