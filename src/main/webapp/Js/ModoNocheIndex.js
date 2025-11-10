@@ -28,16 +28,15 @@ function actualizarImagenesUsuario(activado) {
         if (imagen.src) {
             const esUsuario = imagen.classList.contains('icono-usuario');
             const original = esUsuario ? 'IconUser.svg' : 'Logo.png';
-            const oscuro = esUsuario ? 'IconUser-dark.svg' : 'Logo-dark.png'; 
+            
+            // CORRECCIÓN CLAVE: Usar 'Logo-oscuro.png' para que coincida con tu archivo
+            const oscuro = esUsuario ? 'IconUser-dark.svg' : 'Logo-oscuro.png'; 
             
             if (activado) {
-                // Cambiar a la versión oscura si no lo está
                 if (imagen.src.includes(original)) {
-                    // El 404 ocurre aquí si 'Logo-dark.png' no existe.
                     imagen.src = imagen.src.replace(original, oscuro);
                 }
             } else {
-                // Cambiar a la versión clara si no lo está
                 if (imagen.src.includes(oscuro)) {
                     imagen.src = imagen.src.replace(oscuro, original);
                 }

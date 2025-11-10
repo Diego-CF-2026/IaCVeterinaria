@@ -15,7 +15,7 @@ function abrirModal(idModal) {
 
 function cerrarModal(idModal) {
     const modal = getElement(idModal);
-    // VERIFICACIÓN CLAVE: Si modal es null, sale sin error.
+    // VERIFICACIÓN CLAVE: Si modal es null, sale sin error. Esto soluciona el TypeError.
     if (modal) modal.style.display = 'none';
     
     // Comprobar si hay otros modales abiertos antes de ocultar el overlay
@@ -35,8 +35,9 @@ function cerrarModal(idModal) {
 function abrirLogin(rol) {
     rolSeleccionado = rol || '';
     
+    // Si 'modalSeleccionInicial' y 'modalEquipo' no existen, cerrarModal los ignora sin error.
     cerrarModal('modalSeleccionInicial');
-    cerrarModal('modalEquipo'); // Intenta cerrar, si no existe no hay error
+    cerrarModal('modalEquipo'); 
     
     const modalLogin = getElement('modalLogin');
     const titulo = getElement('tituloLogin');
@@ -56,15 +57,13 @@ function mostrarModalEquipo() {
 }
 
 function abrirRegistro() {
-    // CORRECCIÓN LÓGICA: Esta línea está causando el error si 'modalEquipo' no existe.
-    // La verificación dentro de cerrarModal previene el error.
+    // La función que se llamó y causó el error
     cerrarModal('modalEquipo'); 
     abrirModal('modalRegistro');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ... (Asignación de eventos de navbar, lógica de hamburguesa, etc.) ...
-
+    // 1. Asignación de eventos de la barra de navegación (Navbar)
     const btnLogin = document.querySelector('.btn.login');
     const btnRegister = document.querySelector('.btn.register');
     const hamburger = getElement('hamburger');
@@ -78,16 +77,54 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (btnRegister) {
-        // CORRECCIÓN LÓGICA: La llamada a abrirRegistro está en la línea 79, 
-        // y esta llama a cerrarModal('modalEquipo'), causando el error si 'modalEquipo' es null.
+        // Listener que llama a abrirRegistro
         btnRegister.addEventListener('click', (e) => {
             e.preventDefault();
             abrirRegistro();
         });
     }
-    
-    // ... (resto del código) ...
 
+    // Toggle del menú hamburguesa
+    if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('activo');
+            navLinks.classList.toggle('activo');
+            navLinks.getAttribute('aria-expanded') === 'true' ? 
+                navLinks.setAttribute('aria-expanded', 'false') : 
+                navLinks.setAttribute('aria-expanded', 'true');
+        });
+    }
+
+    // 2. Control de modales por errores de JSP
+    const modalLogin = getElement('modalLogin');
+    const mensajeErrorLogin = getElement('mensajeErrorLogin');
+    const modalRegistro = getElement('modalRegistro');
+    const overlay = getElement('overlay');
+
+    if (mensajeErrorLogin && mensajeErrorLogin.textContent.trim().length > 0) {
+        if (modalLogin) {
+            modalLogin.style.display = 'flex';
+            mensajeErrorLogin.style.display = 'block';
+            if (overlay) overlay.style.display = 'block';
+        }
+    }
+    
+    if (modalRegistro && modalRegistro.style.display === 'flex') {
+        if (overlay) overlay.style.display = 'block';
+    }
+
+    // Evento para cerrar modales al hacer click en el overlay
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            cerrarModal('modalLogin');
+            cerrarModal('modalRegistro');
+            cerrarModal('modalEquipo');
+            cerrarModal('modalSeleccionInicial'); // Asegurar que todo se cierra
+            overlay.style.display = 'none'; 
+        });
+    }
+    
+    // 3. Animación de Header
     const animacionHeader = document.querySelector('.image-text');
     if (animacionHeader) {
         animacionHeader.classList.add('animar-header');
