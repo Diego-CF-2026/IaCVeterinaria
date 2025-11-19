@@ -365,65 +365,57 @@ public class VeterinarioDAO {
     // =========================================================================
     // 2️⃣ REGISTRAR TRATAMIENTO Y COMPLETAR CITA (MEJORADO CON TRANSACCIÓN)
     // =========================================================================
-    public boolean registrarTratamientoCompletarCita(
-            int idCita, String nombreMascota, String diagnostico, String tratamiento, String notas) {
+   public boolean registrarTratamientoCompletarCita(
+        int idCita, String diagnosticoFinal, String tratamientoFinal, String notas, String dniCliente) {
 
-        boolean resultado = false;
+    boolean resultado = false;
 
-        // 🩺 Obtenemos el DNI automáticamente desde la cita
-        String dniCliente = obtenerDniPorCita(idCita);
-
-        if (dniCliente == null) {
-            System.out.println("Error: no se encontró el DNI del cliente para la cita " + idCita);
-            return false;
-        }
-
-        // Concatenamos el nombre de la mascota
-        String diagnosticoFinal = "Mascota: " + nombreMascota + " - Diagnóstico: " + diagnostico;
-
-        // Aseguramos que el tratamiento también incluya el nombre de la mascota si es necesario
-        // (Esto ya estaba en tu ejemplo de inserción en la tabla, por lo que lo mantengo)
-        String tratamientoFinal = "Mascota: " + nombreMascota + " - Tratamiento: " + tratamiento;
-
-
-        String sqlInsertTrat = "INSERT INTO tratamientomedico (idCita, diagnostico, tratamiento, notas, dniCliente) "
-                + "VALUES (?, ?, ?, ?, ?)";
-        // idEstado = 2 es 'Completado'
-        String sqlUpdateCita = "UPDATE citas SET idEstado = 2 WHERE idCita = ?"; 
-
-        try (Connection con = Conexion.getConnection();
-             PreparedStatement psTrat = con.prepareStatement(sqlInsertTrat);
-             PreparedStatement psCita = con.prepareStatement(sqlUpdateCita)) {
-
-            con.setAutoCommit(false); // Inicia la transacción
-
-            psTrat.setInt(1, idCita);
-            psTrat.setString(2, diagnosticoFinal);
-            psTrat.setString(3, tratamientoFinal); 
-            psTrat.setString(4, notas);
-            psTrat.setString(5, dniCliente);
-
-            int filasTrat = psTrat.executeUpdate();
-
-            psCita.setInt(1, idCita);
-            int filasCita = psCita.executeUpdate();
-
-            if (filasTrat > 0 && filasCita > 0) {
-                con.commit(); // Confirma si ambas operaciones son exitosas
-                resultado = true;
-            } else {
-                con.rollback(); // Deshace si alguna falla
-            }
-            
-            con.setAutoCommit(true); // Restaura el modo de autocommit
-
-        } catch (SQLException e) {
-            System.out.println("Error registrarTratamientoCompletarCita(): " + e.getMessage());
-        }
-
-        return resultado;
+    // Se asume que el DNI ya fue verificado en el Servlet antes de llamar a este método.
+    if (dniCliente == null || dniCliente.isEmpty()) {
+        System.out.println("Error: DNI del cliente nulo o vacío en el DAO.");
+        return false;
     }
 
+    String sqlInsertTrat = "INSERT INTO tratamientomedico (idCita, diagnostico, tratamiento, notas, dniCliente) "
+                + "VALUES (?, ?, ?, ?, ?)";
+    // idEstado = 2 es 'Completado'
+    String sqlUpdateCita = "UPDATE citas SET idEstado = 2 WHERE idCita = ?"; 
+
+    try (Connection con = Conexion.getConnection();
+         PreparedStatement psTrat = con.prepareStatement(sqlInsertTrat);
+         PreparedStatement psCita = con.prepareStatement(sqlUpdateCita)) {
+
+        con.setAutoCommit(false); // Inicia la transacción
+
+        // 1. Inserción en tratamientomedico
+        psTrat.setInt(1, idCita);
+        // Usa las cadenas finales preparadas en el Servlet
+        psTrat.setString(2, diagnosticoFinal); 
+        psTrat.setString(3, tratamientoFinal); 
+        psTrat.setString(4, notas);
+        psTrat.setString(5, dniCliente);
+
+        int filasTrat = psTrat.executeUpdate();
+
+        // 2. Actualización de citas
+        psCita.setInt(1, idCita);
+        int filasCita = psCita.executeUpdate();
+
+        if (filasTrat > 0 && filasCita > 0) {
+            con.commit(); // Confirma si ambas operaciones son exitosas
+            resultado = true;
+        } else {
+            con.rollback(); // Deshace si alguna falla
+        }
+        
+        con.setAutoCommit(true); // Restaura el modo de autocommit
+
+    } catch (SQLException e) {
+        System.out.println("Error registrarTratamientoCompletarCita(): " + e.getMessage());
+    }
+
+    return resultado;
+}
     // =========================================================================
     // 3️⃣ REPROGRAMAR CITA (CORREGIDO ID ESTADO)
     // =========================================================================

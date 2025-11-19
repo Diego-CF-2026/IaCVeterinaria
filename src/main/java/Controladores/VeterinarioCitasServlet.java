@@ -120,56 +120,55 @@ public class VeterinarioCitasServlet extends HttpServlet {
      * Maneja el registro de diagnóstico, tratamiento y completa el estado de la cita.
      * También requiere obtener el DNI del cliente asociado para fines de auditoría/registro.
      */
-    private void registrarTratamiento(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+   private void registrarTratamiento(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        try {
-            // 1. **Recolección de datos del formulario**
-            // Convertir el ID de Cita a entero. Puede lanzar NumberFormatException.
-            int idCita = Integer.parseInt(request.getParameter("idCita"));
-            String nombreMascota = request.getParameter("nombreMascota");
-            String diagnostico = request.getParameter("diagnostico");
-            String tratamiento = request.getParameter("tratamiento");
-            String notas = request.getParameter("notas");
+    try {
+        // 1. **Recolección de datos del formulario**
+        int idCita = Integer.parseInt(request.getParameter("idCita"));
+        String nombreMascota = request.getParameter("nombreMascota");
+        String diagnostico = request.getParameter("diagnostico");
+        String tratamiento = request.getParameter("tratamiento");
+        String notas = request.getParameter("notas");
 
-            // 2. Obtener el DNI del cliente asociado a la cita
-            String dniCliente = veterinarioDAO.obtenerDniPorCita(idCita);
-            
-            if (dniCliente == null) {
-                 // Si no se encuentra el DNI, notificar error y redirigir.
-                 request.getSession().setAttribute("alertaError", "Error: No se encontró DNI para la cita.");
-                 response.sendRedirect("VeterinarioCitasServlet");
-                 return;
-            }
+        // 2. Obtener el DNI del cliente asociado a la cita
+        String dniCliente = veterinarioDAO.obtenerDniPorCita(idCita);
 
-            // 3. Concatenar y preparar datos para el DAO (Formato de registro interno)
-            String diagnosticoFinal = "Mascota: " + nombreMascota + " - Diagnóstico: " + diagnostico;
-            String tratamientoFinal = "Mascota: " + nombreMascota + " - Tratamiento: " + tratamiento;
-
-            // 4. Ejecutar la operación en el DAO
-            // El DAO actualiza el tratamiento y cambia el estado de la cita a "Completada".
-            boolean exito = veterinarioDAO.registrarTratamientoCompletarCita(
-                         idCita, diagnosticoFinal, tratamientoFinal, notas, dniCliente);
-
-            // 5. Gestión de la respuesta y alertas
-            if (exito) {
-                request.getSession().setAttribute("alerta", "Tratamiento registrado y cita completada correctamente.");
-            } else {
-                request.getSession().setAttribute("alertaError", "Error al registrar tratamiento o completar cita.");
-            }
-
-        } catch (NumberFormatException e) {
-             // Captura si idCita no es un número válido.
-             request.getSession().setAttribute("alertaError", "Error de formato de ID. Verifique los datos.");
-        } catch (Exception e) {
-            // Captura cualquier otra excepción (ej. error de base de datos)
-            e.printStackTrace();
-            request.getSession().setAttribute("alertaError", "Excepción al registrar tratamiento: " + e.getMessage());
+        if (dniCliente == null) {
+             request.getSession().setAttribute("alertaError", "Error: No se encontró DNI para la cita.");
+             response.sendRedirect("VeterinarioCitasServlet");
+             return;
         }
 
-        // Redirigir para evitar el reenvío del formulario (patrón Post/Redirect/Get).
-        response.sendRedirect("VeterinarioCitasServlet");
+        // 3. Concatenar y preparar datos para el DAO (Formato de registro interno)
+        // **ESTO ES LO QUE SE GUARDARÁ EN LA COLUMNA `diagnostico`**
+        String diagnosticoFinal = "  Nombre de Mascota: " + nombreMascota + " - Diagnóstico: " + diagnostico;
+
+        // **ESTO ES LO QUE SE GUARDARÁ EN LA COLUMNA `tratamiento`**
+        String tratamientoFinal = tratamiento; // Ya no incluye " - Tratamiento: "
+
+        // 4. Ejecutar la operación en el DAO
+        // Se llama al DAO con la nueva estructura de parámetros.
+        boolean exito = veterinarioDAO.registrarTratamientoCompletarCita(
+                         idCita, diagnosticoFinal, tratamientoFinal, notas, dniCliente);
+        // NOTA: EL DAO AHORA NECESITA EL DNI QUE OBTUVISTE AQUÍ.
+
+        // 5. Gestión de la respuesta y alertas
+        if (exito) {
+            request.getSession().setAttribute("alerta", "Tratamiento registrado y cita completada correctamente.");
+        } else {
+            request.getSession().setAttribute("alertaError", "Error al registrar tratamiento o completar cita.");
+        }
+
+    } catch (NumberFormatException e) {
+         request.getSession().setAttribute("alertaError", "Error de formato de ID. Verifique los datos.");
+    } catch (Exception e) {
+        e.printStackTrace();
+        request.getSession().setAttribute("alertaError", "Excepción al registrar tratamiento: " + e.getMessage());
     }
+
+    response.sendRedirect("VeterinarioCitasServlet");
+}
 
     // -------------------------------------------------------------------------
     // 💡 Método 2: Reprogramar Cita
