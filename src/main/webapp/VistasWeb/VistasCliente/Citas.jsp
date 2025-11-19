@@ -95,7 +95,7 @@
                             onchange="actualizarCostoYFiltrarVets()">
                         <option value="">Seleccione una especialidad</option>
                         <c:forEach var="esp" items="${listaEspecialidades}">
-                            <option value="${esp.idEspecialidad}" data-precio="${esp.precio}">${esp.nombreEspecialidad} (S/. ${esp.precio})</option>
+                            <option value="${esp.idEspecialidad}" data-precio="${esp.precio}">${esp.nombreEspecialidad}</option>
                         </c:forEach>
                     </select>
                 </div>
@@ -125,7 +125,7 @@
                 <input type="hidden" name="precio" id="precioCita" value="0.0">
                 
                 <div class="alert alert-info mt-3" role="alert">
-                    Costo Estimado de la Cita: **S/. <span id="displayPrecio">0.00</span>**
+                    Costo Estimado de la Cita: **S/ <span id="displayPrecio"></span>**
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 mt-3">Registrar Cita</button>
