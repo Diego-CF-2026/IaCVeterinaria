@@ -23,8 +23,7 @@
         <link rel="stylesheet" href="<%= request.getContextPath()%>/css/ModoNoche-Sidebar.css">
         <link rel="stylesheet" href="<%= request.getContextPath()%>/css/GestorProductos.css">
     </head>
-    <body>
-        <!-- Sidebar Navigation -->
+     <body>
         <nav class="sidebar">
             <header>
                 <div class="image-text">
@@ -45,11 +44,15 @@
                             <i class='bx bx-home-alt icon'></i><span class="text">General</span>
                         </a>
                     </li>
-
                     <li class="nav-link">
-                       <a href="<%= request.getContextPath()%>/AdminEmpleadoServlet"><i class='bx bx-group icon'></i><span class="text">Veterinarios</span></a>
-                   </li>
-                   <li class="nav-link">
+                            <a href="<%= request.getContextPath()%>/ReporteGananciasServlet">
+                            <i class='bx bx-bar-chart-alt-2 icon'></i><span class="text">Ganancias de Citas</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="<%= request.getContextPath()%>/AdminEmpleadoServlet"><i class='bx bx-group icon'></i><span class="text">Veterinarios</span></a>
+                    </li>
+                    <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/AdminRecepServlet?accion=listar">
                             <i class='bx bx-user-check icon'></i> <span class="text">Recepcionistas</span>
                         </a>

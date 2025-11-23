@@ -11,7 +11,6 @@
         <link rel="stylesheet" href="../../css/ModoNoche-Sidebar.css">  
     </head>
     <body>
-        <!-- Sidebar Navigation -->
         <nav class="sidebar">
             <header>
                 <div class="image-text">
@@ -27,12 +26,16 @@
 
             <div class="menu-bar">
                 <ul class="menu-links">
-                    <li class="nav-link">
+                    <li class="nav-link ">
                         <a href="<%= request.getContextPath()%>/VistasWeb/VistasAdmin/AdminDash.jsp">
                             <i class='bx bx-home-alt icon'></i><span class="text">General</span>
                         </a>
                     </li>
-   
+                    <li class="nav-link">
+                            <a href="<%= request.getContextPath()%>/ReporteGananciasServlet">
+                            <i class='bx bx-bar-chart-alt-2 icon'></i><span class="text">Ganancias de Citas</span>
+                        </a>
+                    </li>
                     <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/AdminEmpleadoServlet"><i class='bx bx-group icon'></i><span class="text">Veterinarios</span></a>
                     </li>

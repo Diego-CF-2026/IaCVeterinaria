@@ -2,8 +2,6 @@ package ModeloDAO;
 
 import Modelo.Conexion;
 import Modelo.Cita;
-import Modelo.Cliente;
-import Modelo.Veterinario;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,34 +18,54 @@ import java.util.logging.Logger;
  * Maneja la interacción con la tabla 'citas' y sus JOINs.
  */
 public class CitaDAO {
-
+    
     private static final Logger LOGGER = Logger.getLogger(CitaDAO.class.getName());
     // Asumiendo que el ID 3 corresponde a "Cancelada" en la tabla 'estado'
-    private static final int ID_ESTADO_CANCELADA = 3; 
-    
+    private static final int ID_ESTADO_CANCELADA = 3;
+
     private static final String SQL_CANCELAR_CITA =
             // Solo permite cancelar si el estado actual es Pendiente (Asumiendo que 1 es 'Pendiente')
             "UPDATE citas SET idEstado = ? WHERE idCita = ? AND idEstado = 1";
-            
-    private static final String SQL_BASE_SELECT = 
+
+    /**
+     * Consulta base para el LISTADO GENERAL (ListarCitas, ListarCitasPendientes, etc.)
+     * Incluye todos los campos de JOIN necesarios.
+     */
+    private static final String SQL_BASE_SELECT =
             "SELECT c.idCita, c.idCliente, c.idVeterinario, c.fecha, c.hora, c.motivo, c.idEstado, c.precio, e.tipoEstado, " +
             "cl.nombre AS nombreCliente, cl.apellido AS apellidoCliente, cl.dni AS dniCliente, " +
             "v.nombreVeterinario, v.apellidoVeterinario " +
             "FROM citas c " +
             "JOIN cliente cl ON c.idCliente = cl.idCliente " +
             "JOIN veterinario v ON c.idVeterinario = v.idVeterinario " +
-            "JOIN estado e ON c.idEstado = e.idEstado ";
+            "JOIN estado e ON c.idEstado = e.idEstado "; // ✅ ESPACIO AL FINAL PARA CONCATENAR WHERE
+
+    /**
+     * Consulta base SIMPLIFICADA para el REPORTE DE GANANCIAS.
+     * Solo incluye las columnas pedidas: Cliente, Veterinario, Precio, Estado y Fechas/Horas.
+     */
+    // En CitaDAO.java
+
+    private static final String SQL_SELECT_REPORT_BASE
+            = "SELECT c.idCita, c.fecha, c.hora, c.precio, "
+            + "cl.nombre AS nombreCliente, cl.apellido AS apellidoCliente, cl.dni AS dniCliente, "
+            // ⚠️ CORRECCIÓN AQUÍ: Usar los nombres de columna reales de la tabla veterinario
+            + "v.nombreVeterinario, v.apellidoVeterinario, e.tipoEstado AS estadoNombre "
+            + "FROM citas c "
+            + "INNER JOIN cliente cl ON c.idCliente = cl.idCliente "
+            + "INNER JOIN veterinario v ON c.idVeterinario = v.idVeterinario "
+            + "INNER JOIN estado e ON c.idEstado = e.idEstado "; // ✅ ESPACIO FINAL INCLUIDO
 
 
     // --- MÉTODOS AUXILIARES Y DE VALIDACIÓN ---
-    
+
     /**
      * ✅ Implementación para obtener el ID del estado a partir de su nombre.
      */
     private int obtenerIdEstadoPorNombre(String estadoNombre) throws SQLException {
         int idEstado = -1;
         // Consulta la columna 'tipoEstado' en la tabla 'estado'
-        String sql = "SELECT idEstado FROM estado WHERE tipoEstado = ?"; 
+        String sql = "SELECT idEstado FROM estado WHERE tipoEstado = ?";
 
         try (Connection con = Conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -75,7 +93,7 @@ public class CitaDAO {
         if (cita.getFecha() == null || cita.getHora() == null) {
             return "❌ Error de validación: La fecha o la hora están nulas.";
         }
-        
+
         java.time.LocalDate citaLocalDate = cita.getFecha().toLocalDate();
         java.time.LocalTime citaLocalTime = cita.getHora().toLocalTime();
         java.time.LocalDateTime citaDateTime = java.time.LocalDateTime.of(citaLocalDate, citaLocalTime);
@@ -94,7 +112,7 @@ public class CitaDAO {
         if (citaLocalTime.isBefore(horaInicio) || citaLocalTime.isAfter(horaFin)) {
             return "❌ La hora de la cita debe estar entre las 06:00 y las 22:00.";
         }
-        
+
         // C. No puede ser en domingo
         if (citaLocalDate.getDayOfWeek() == java.time.DayOfWeek.SUNDAY) {
             return "❌ No se pueden programar citas en día Domingo.";
@@ -102,9 +120,10 @@ public class CitaDAO {
 
         return null;
     }
-    
+
     /**
      * Método auxiliar para mapear un ResultSet a un objeto Cita.
+     * **NOTA**: Este método espera todos los campos definidos en SQL_BASE_SELECT.
      */
     private Cita mapearCita(ResultSet rs) throws SQLException {
         Cita c = new Cita();
@@ -117,22 +136,22 @@ public class CitaDAO {
             c.setHora(rs.getTime("hora"));
             c.setMotivo(rs.getString("motivo"));
             c.setIdEstado(rs.getInt("idEstado"));
-            
+
             // Datos del JOIN
-            c.setEstadoNombre(rs.getString("tipoEstado")); 
+            c.setEstadoNombre(rs.getString("tipoEstado"));
             c.setPrecio(rs.getDouble("precio"));
             c.setNombreVeterinario(rs.getString("nombreVeterinario"));
             c.setApellidoVeterinario(rs.getString("apellidoVeterinario"));
-            
-            // Campos opcionales (datos de cliente, pueden no estar en todos los resultsets)
-            try { 
+
+            // Campos opcionales (datos de cliente)
+            try {
                 c.setNombreCliente(rs.getString("nombreCliente"));
                 c.setApellidoCliente(rs.getString("apellidoCliente"));
                 c.setDniCliente(rs.getString("dniCliente"));
             } catch (SQLException ex) {
-                // Se ignora si las columnas de cliente no están en este ResultSet
+                // Se ignora si las columnas de cliente no están en este ResultSet (aunque deberían estarlo para SQL_BASE_SELECT)
             }
-            
+
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "❌ ERROR FATAL en mapearCita. Revise si las columnas SQL coinciden con el mapeo.", e);
             throw e;
@@ -140,30 +159,30 @@ public class CitaDAO {
         return c;
     }
 
-    // --- MÉTODOS CRUD PRINCIPALES ---
+    // --- MÉTODOS CRUD PRINCIPALES (No modificados) ---
 
     /**
      * Agrega una nueva cita con validaciones.
      * @return String con mensaje de éxito (✅) o error (❌).
      */
     public String agregarCita(Cita cita) {
-        
+
         // 1. LLAMAR A LA VALIDACIÓN E INTERRUMPIR SI FALLA
         String validacionError = validarFechaYHora(cita);
         if (validacionError != null) {
             LOGGER.log(Level.WARNING, "❌ Validación de cita falló: {0}", validacionError);
-            return validacionError; 
+            return validacionError;
         }
-        
+
         int idEstadoPendiente;
         try {
             // Asume que la cita del cliente o la nueva siempre inician como "Pendiente"
-            idEstadoPendiente = obtenerIdEstadoPorNombre("Pendiente"); 
+            idEstadoPendiente = obtenerIdEstadoPorNombre("Pendiente");
         } catch (SQLException e) {
-             LOGGER.log(Level.SEVERE, "❌ ERROR: No se pudo obtener el ID para el estado 'Pendiente'.", e);
-             return "❌ Error: No se pudo verificar el estado de la cita. Contacte al administrador."; 
+              LOGGER.log(Level.SEVERE, "❌ ERROR: No se pudo obtener el ID para el estado 'Pendiente'.", e);
+              return "❌ Error: No se pudo verificar el estado de la cita. Contacte al administrador.";
         }
-        
+
         // 4. SQL de Inserción
         String sql = "INSERT INTO citas (idCliente, idVeterinario, fecha, hora, motivo, precio, idEstado) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -181,9 +200,9 @@ public class CitaDAO {
             ps.setDate(3, cita.getFecha());
             ps.setTime(4, cita.getHora());
             ps.setString(5, cita.getMotivo());
-            ps.setDouble(6, cita.getPrecio()); 
+            ps.setDouble(6, cita.getPrecio());
             ps.setInt(7, idEstadoPendiente); // idEstado
-            
+
             int filasAfectadas = ps.executeUpdate();
 
             if (filasAfectadas > 0) {
@@ -199,7 +218,7 @@ public class CitaDAO {
             return "❌ Error en la base de datos: La cita no pudo ser registrada (Verifique IDs o formato).";
         }
     }
-    
+
     /**
      * Actualiza una cita existente (usada desde Recepción/Admin).
      * @return true si la actualización fue exitosa.
@@ -207,24 +226,24 @@ public class CitaDAO {
     public boolean actualizarCita(Cita cita) {
         String sql = "UPDATE citas SET idCliente=?, idVeterinario=?, fecha=?, hora=?, motivo=?, idEstado=?, precio=? WHERE idCita=?";
 
-        try (Connection con = Conexion.getConnection(); 
+        try (Connection con = Conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             // 🟢 PASO CLAVE: Obtener el ID del estado a partir del nombre
-            int idEstado = obtenerIdEstadoPorNombre(cita.getEstadoNombre()); 
+            int idEstado = obtenerIdEstadoPorNombre(cita.getEstadoNombre());
 
             // 1. Datos de la Cita
             ps.setInt(1, cita.getIdCliente());
             ps.setInt(2, cita.getIdVeterinario());
-            ps.setDate(3, new java.sql.Date(cita.getFecha().getTime()));
-            ps.setTime(4, new java.sql.Time(cita.getHora().getTime()));
+            ps.setDate(3, cita.getFecha());
+            ps.setTime(4, cita.getHora());
             ps.setString(5, cita.getMotivo());
 
             // 2. ID del Estado
-            ps.setInt(6, idEstado); 
-            
+            ps.setInt(6, idEstado);
+
             // 3. Precio (permitir que se actualice el precio si es necesario)
-            ps.setDouble(7, cita.getPrecio()); 
+            ps.setDouble(7, cita.getPrecio());
 
             // 4. Condición WHERE
             ps.setInt(8, cita.getIdCita());
@@ -237,20 +256,20 @@ public class CitaDAO {
             return false;
         }
     }
-    
+
     /**
      * Elimina físicamente una cita.
      */
     public boolean eliminar(int id) {
-        String sql = "DELETE FROM citas WHERE idCita = ?"; 
+        String sql = "DELETE FROM citas WHERE idCita = ?";
 
         try (Connection con = Conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
-            int filasAfectadas = ps.executeUpdate(); 
+            int filasAfectadas = ps.executeUpdate();
 
-            return filasAfectadas > 0; 
+            return filasAfectadas > 0;
 
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error al eliminar la cita ID: " + id, e);
@@ -258,48 +277,48 @@ public class CitaDAO {
         }
     }
 
-    // --- MÉTODOS DE BÚSQUEDA Y LISTADO ---
+    // --- MÉTODOS DE BÚSQUEDA Y LISTADO (Usan SQL_BASE_SELECT) ---
 
     /**
      * Lista todas las citas, incluyendo todos los datos de cliente y veterinario.
      */
     public List<Cita> listarCitas() { // <--- MÉTODO PARA LISTAR TODAS LAS CITAS (Global)
         List<Cita> lista = new ArrayList<>();
-        
-        String sql = SQL_BASE_SELECT + "ORDER BY c.fecha DESC, c.hora DESC"; 
+
+        String sql = SQL_BASE_SELECT + "ORDER BY c.fecha DESC, c.hora DESC";
 
         try (Connection con = Conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            
+
             while (rs.next()) {
                 lista.add(mapearCita(rs));
             }
-            
+
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "❌ ERROR SQL o JDBC al listar TODAS las citas para Recepción.", e);
         }
         return lista;
     }
-    
+
     /**
      * ✅ NUEVO: Lista solo las citas con estado "Pendiente" (Global).
      * Requiere que el ID del estado "Pendiente" sea 1.
      */
-    public List<Cita> listarCitasPendientes() { 
+    public List<Cita> listarCitasPendientes() {
         List<Cita> lista = new ArrayList<>();
-        
+
         // Asumiendo que idEstado = 1 es "Pendiente"
-        String sql = SQL_BASE_SELECT + "WHERE c.idEstado = 1 ORDER BY c.fecha ASC, c.hora ASC"; 
+        String sql = SQL_BASE_SELECT + "WHERE c.idEstado = 1 ORDER BY c.fecha ASC, c.hora ASC";
 
         try (Connection con = Conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            
+
             while (rs.next()) {
                 lista.add(mapearCita(rs));
             }
-            
+
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "❌ ERROR SQL al listar citas PENDIENTES.", e);
         }
@@ -311,50 +330,50 @@ public class CitaDAO {
      */
     public List<Cita> listarCitasPorCliente(int idCliente) {
         List<Cita> lista = new ArrayList<>();
-        
-        String sql = SQL_BASE_SELECT 
+
+        String sql = SQL_BASE_SELECT
                      + "WHERE c.idCliente = ? "
-                     + "ORDER BY c.fecha DESC, c.hora DESC"; 
+                     + "ORDER BY c.fecha DESC, c.hora DESC";
 
         try (Connection con = Conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            
+
             ps.setInt(1, idCliente);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     lista.add(mapearCita(rs));
                 }
             }
-            
+
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "❌ ERROR SQL o JDBC al listar citas por cliente.", e);
         }
         return lista;
     }
-    
+
     /**
      * ✅ NUEVO: Lista solo las citas con estado "Pendiente" para un cliente específico (usado en MisCitas.jsp).
      * Requiere que el ID del estado "Pendiente" sea 1.
      */
     public List<Cita> listarCitasPendientesPorCliente(int idCliente) {
         List<Cita> lista = new ArrayList<>();
-        
-        String sql = SQL_BASE_SELECT 
+
+        String sql = SQL_BASE_SELECT
                      + "WHERE c.idCliente = ? AND c.idEstado = 1 " // ⚠️ Condición de filtro por Pendiente
-                     + "ORDER BY c.fecha DESC, c.hora DESC"; 
+                     + "ORDER BY c.fecha DESC, c.hora DESC";
 
         try (Connection con = Conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            
+
             ps.setInt(1, idCliente);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     lista.add(mapearCita(rs));
                 }
             }
-            
+
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "❌ ERROR SQL al listar citas PENDIENTES por cliente.", e);
         }
@@ -367,14 +386,14 @@ public class CitaDAO {
      */
     public Cita obtenerCitaPorId(int id) {
         Cita cita = null;
-        
+
         String sql = SQL_BASE_SELECT + "WHERE c.idCita = ?";
-        
+
         try (Connection con = Conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            
+
             ps.setInt(1, id);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     cita = mapearCita(rs);
@@ -385,7 +404,7 @@ public class CitaDAO {
         }
         return cita;
     }
-    
+
     /**
      * Busca citas por cliente, veterinario o motivo.
      */
@@ -420,37 +439,8 @@ public class CitaDAO {
         }
         return lista;
     }
-    
-    // --- MÉTODOS DE ESTADO ---
-    
-    /**
-     * Cambia el estado de una cita de 'Pendiente' (1) a 'Cancelada' (3).
-     */
-    public boolean cancelarCita(int idCita) {
-        try (Connection con = Conexion.getConnection();
-             PreparedStatement ps = con.prepareStatement(SQL_CANCELAR_CITA)) {
 
-            ps.setInt(1, ID_ESTADO_CANCELADA);
-            ps.setInt(2, idCita);
-            
-            int filasAfectadas = ps.executeUpdate();
-            
-            if (filasAfectadas > 0) {
-                LOGGER.log(Level.INFO, "✅ Éxito: Cita ID {0} cancelada.", idCita);
-            } else {
-                // Puede ser 0 si la cita ya estaba en otro estado que no fuera 'Pendiente' (1)
-                LOGGER.log(Level.WARNING, "⚠️ Advertencia: No se pudo cancelar la cita ID {0}. Posiblemente ya no estaba Pendiente.", idCita);
-            }
-            
-            return filasAfectadas > 0;
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "❌ ERROR SQL al intentar cancelar cita ID " + idCita, e);
-            return false;
-        }
-    }
-    
-    // --- MÉTODOS OBSOLETOS/DEPRECADOS (Se mantienen para referencia) ---
+    // --- MÉTODOS OBSOLETOS/DEPRECADOS (No modificados) ---
 
     /**
      * ⚠️ ELIMINADO en el código final. Usar 'eliminar(int id)' o 'cancelarCita(int id)'.
@@ -472,5 +462,101 @@ public class CitaDAO {
              LOGGER.log(Level.SEVERE, "Error al eliminar cita mediante SP.", e);
         }
         return resultado;
+    }
+
+    // --- MÉTODOS DE ESTADO (No modificados) ---
+
+    /**
+     * Cambia el estado de una cita de 'Pendiente' (1) a 'Cancelada' (3).
+     */
+    public boolean cancelarCita(int idCita) {
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(SQL_CANCELAR_CITA)) {
+
+            ps.setInt(1, ID_ESTADO_CANCELADA);
+            ps.setInt(2, idCita);
+
+            int filasAfectadas = ps.executeUpdate();
+
+            if (filasAfectadas > 0) {
+                LOGGER.log(Level.INFO, "✅ Éxito: Cita ID {0} cancelada.", idCita);
+            } else {
+                // Puede ser 0 si la cita ya estaba en otro estado que no fuera 'Pendiente' (1)
+                LOGGER.log(Level.WARNING, "⚠️ Advertencia: No se pudo cancelar la cita ID {0}. Posiblemente ya no estaba Pendiente.", idCita);
+            }
+
+            return filasAfectadas > 0;
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "❌ ERROR SQL al intentar cancelar cita ID " + idCita, e);
+            return false;
+        }
+    }
+    
+    // --- visualizacion en vista administrador---
+    
+    // --- IMPLEMENTACIÓN DEL REPORTE DE GANANCIAS ---
+
+    /**
+     * ✅ CORREGIDO: Lista las citas con estado "Completado" (2) para un mes y año específicos.
+     * @param mes El mes a filtrar (1-12).
+     * @param anio El año a filtrar.
+     * @return Lista de objetos Cita con los datos simplificados.
+     */
+    public List<Cita> listarCitasCompletadasPorMesYAnio(int mes, int anio) throws SQLException{
+        List<Cita> listaCitas = new ArrayList<>();
+
+        // ⚠️ CORRECCIÓN CLAVE EN EL SQL: Usamos MONTH() y YEAR() con dos placeholders (?)
+        String sql = SQL_SELECT_REPORT_BASE
+                + " WHERE c.idEstado = 2 AND MONTH(c.fecha) = ? AND YEAR(c.fecha) = ? "
+                + " ORDER BY c.fecha ASC, c.hora ASC";
+
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            // ⚠️ CORRECCIÓN DE PARÁMETROS:
+            // 1. Asignamos el MES al primer '?' (MONTH(c.fecha) = ?)
+            ps.setInt(1, mes);
+            // 2. Asignamos el AÑO al segundo '?' (YEAR(c.fecha) = ?)
+            ps.setInt(2, anio);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    // Mapeo específico para el reporte
+                    Cita cita = new Cita();
+                    
+                    // Campos de Cita (Precio, Fecha, Hora)
+                    cita.setIdCita(rs.getInt("idCita"));
+                    cita.setFecha(rs.getDate("fecha"));
+                    cita.setHora(rs.getTime("hora"));
+                    cita.setPrecio(rs.getDouble("precio"));
+                    
+                    // ⚠️ NOTA: El campo 'idEstado' NO se selecciona en SQL_SELECT_REPORT_BASE, 
+                    // por lo que esta línea puede causar un error de columna no encontrada o devolver 0.
+                    // La he comentado, ya que el reporte solo busca citas con idEstado=2.
+                    // cita.setIdEstado(rs.getInt("idEstado")); 
+                    
+                    // Datos del JOIN
+                    cita.setEstadoNombre(rs.getString("estadoNombre")); 
+                    
+                    // Cliente
+                    cita.setNombreCliente(rs.getString("nombreCliente"));
+                    cita.setApellidoCliente(rs.getString("apellidoCliente"));
+                    cita.setDniCliente(rs.getString("dniCliente"));
+                    
+                    // Veterinario
+                    cita.setNombreVeterinario(rs.getString("nombreVeterinario"));
+                    cita.setApellidoVeterinario(rs.getString("apellidoVeterinario"));
+                    
+                    listaCitas.add(cita);
+                }
+            }
+
+        } catch (SQLException e) {
+            // Es buena práctica lanzar una excepción para que el Servlet sepa que falló el DAO.
+            LOGGER.log(Level.SEVERE, "❌ ERROR SQL al listar citas completadas por mes y año. Mes: " + mes + ", Año: " + anio, e);
+            throw new RuntimeException("Error en la BD al generar el reporte de ganancias.", e);
+        }
+        return listaCitas;
     }
 }

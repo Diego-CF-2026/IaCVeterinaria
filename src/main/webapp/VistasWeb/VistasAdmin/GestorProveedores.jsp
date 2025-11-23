@@ -25,8 +25,7 @@
         <link rel="stylesheet" href="<%= request.getContextPath()%>/css/ModoNoche-Sidebar.css">
         <link rel="stylesheet" href="<%= request.getContextPath()%>/css/GestorProveedores.css">
     </head>
-    <body>
-
+     <body>
         <nav class="sidebar">
             <header>
                 <div class="image-text">
@@ -48,6 +47,11 @@
                         </a>
                     </li>
                     <li class="nav-link">
+                            <a href="<%= request.getContextPath()%>/ReporteGananciasServlet">
+                            <i class='bx bx-bar-chart-alt-2 icon'></i><span class="text">Ganancias de Citas</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/AdminEmpleadoServlet"><i class='bx bx-group icon'></i><span class="text">Veterinarios</span></a>
                     </li>
                     <li class="nav-link">
@@ -56,7 +60,7 @@
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="<%= request.getContextPath()%>/ProductoServlet?accion=listar">
+                        <a href="<%= request.getContextPath()%>/ProductoServlet?accion=listar&idProveedor=1">
                             <i class='bx bx-package icon'></i><span class="text">Productos</span>
                         </a>
                     </li>
