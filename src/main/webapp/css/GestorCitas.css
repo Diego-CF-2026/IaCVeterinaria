@@ -52,7 +52,7 @@ main {
 
 /* ===== TABLA DE CLIENTES ===== */
 .tabla-citas {
-     width: 100%;
+     width: 80%;
     border-collapse: collapse;
     background-color: white;
     border-radius: 8px;
@@ -89,14 +89,14 @@ td a:hover, td button:hover {
 .tabla-citas th {
     background-color: #007BFF;
     color: white;
-    padding: 14px 18px;
+    padding: 14px 12px;
     text-align: left;
     font-weight: 600;
     font-size: 15px;
 }
 
 .tabla-citas td {
-    padding: 14px 18px;
+    padding: 14px 12px;
     text-align: left;
     border-bottom: 1px solid #e0e0e0;
     font-size: 15px;

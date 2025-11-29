@@ -309,59 +309,97 @@ public class CitaServlet extends HttpServlet {
     /**
      * Actualiza una cita (modal universal).
      */
+    /**
+     * Actualiza una cita (modal universal) con validación de fecha/hora.
+     */
     private void actualizarCita(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Cita cita = new Cita();
+        
+        Cita citaActualizada = new Cita();
         String idCitaStr = request.getParameter("idCita");
-        String origen = request.getParameter("origen") != null ? request.getParameter("origen") : "global"; 
-
+        String origen = request.getParameter("origen") != null ? request.getParameter("origen") : "global";
+        
+        // 1. Manejo de ID no proporcionado
         if (idCitaStr == null || idCitaStr.isEmpty()) {
-            request.getSession().setAttribute("mensaje", "❌ ID de cita no proporcionado para la actualización.");
-            request.getSession().setAttribute("tipoMensaje", "error");
-            redirigirOrigen(request, response, origen);
+            request.setAttribute("mensaje", "❌ ID de cita no proporcionado para la actualización.");
+            request.setAttribute("tipoMensaje", "error");
+            // Usar forward para recargar la vista global con el error
+            verTodasCitasGlobal(request, response);
             return;
         }
 
         try {
-            // 1) IDs y FKs
-            cita.setIdCita(Integer.parseInt(idCitaStr));
-            cita.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
-            cita.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
+            // 2. Extracción y Parseo de Parámetros
+            citaActualizada.setIdCita(Integer.parseInt(idCitaStr));
+            citaActualizada.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
+            citaActualizada.setIdVeterinario(Integer.parseInt(request.getParameter("idVeterinario")));
+            citaActualizada.setMotivo(request.getParameter("motivo"));
+            citaActualizada.setEstadoNombre(request.getParameter("estado"));
             
-            // 2) Fecha/Hora
+            // Precio: Usamos 0.0 si el campo está vacío o no existe, o lo parseamos
+            String precioStr = request.getParameter("precio");
+            citaActualizada.setPrecio((precioStr != null && !precioStr.isEmpty()) ? Double.parseDouble(precioStr.trim()) : 0.0);
+
+            // Parseo de fecha y hora
             String fechaStr = request.getParameter("fecha");
             String horaStr = request.getParameter("hora");
             java.util.Date parsedDate = DATE_FORMATTER.parse(fechaStr);
-            cita.setFecha(new Date(parsedDate.getTime()));
+            citaActualizada.setFecha(new Date(parsedDate.getTime()));
             java.util.Date parsedTime = TIME_FORMATTER.parse(horaStr);
-            cita.setHora(new Time(parsedTime.getTime()));
+            citaActualizada.setHora(new Time(parsedTime.getTime()));
             
-            // 3) Campos texto/estado/precio
-            cita.setMotivo(request.getParameter("motivo"));
-            cita.setEstadoNombre(request.getParameter("estado"));
-            String precioStr = request.getParameter("precio");
-            cita.setPrecio(Double.parseDouble(precioStr.trim())); // ✅ Nuevo: Parseo de Precio
-
         } catch (NumberFormatException | ParseException e) {
             LOGGER.log(Level.SEVERE, "Error de formato/parseo al actualizar la cita.", e);
-            request.getSession().setAttribute("mensaje", "❌ Error de formato en los datos de la cita (Fecha, Hora, ID o Precio).");
-            request.getSession().setAttribute("tipoMensaje", "error");
-            redirigirOrigen(request, response, origen);
+            request.setAttribute("mensaje", "❌ Error de formato en los datos de la cita (Fecha, Hora, ID o Precio).");
+            request.setAttribute("tipoMensaje", "alert-danger"); // Usar alert-danger para que se vea en JSP
+
+            // Prepara la vista para que el modal se abra con los datos fallidos
+            request.setAttribute("citaSeleccionada", citaActualizada);
+            verTodasCitasGlobal(request, response);
             return;
         }
         
-        // 4) Persistencia
-        boolean operacionExitosa = citaDAO.actualizarCita(cita); 
+        // 3. Validación de Negocio (solo si el estado no es terminal)
+        String estado = citaActualizada.getEstadoNombre();
         
-        // 5) Feedback + redirect
-        if (operacionExitosa) {
-            request.getSession().setAttribute("mensaje", "✅ Cita actualizada con éxito!");
-            request.getSession().setAttribute("tipoMensaje", "exito");
-        } else {
-            request.getSession().setAttribute("mensaje", "❌ Error al actualizar la cita (Verifique datos o conexión).");
-            request.getSession().setAttribute("tipoMensaje", "error");
+        if (!estado.equalsIgnoreCase("Cancelado") && !estado.equalsIgnoreCase("Completado")) {
+            String validacionError = null;
+            
+            try {
+                // Llama al método de validación del DAO
+                validacionError = citaDAO.validarFechaYHora(citaActualizada);
+            } catch (Exception e) {
+                // Captura cualquier error que ocurra dentro del DAO durante la validación (como ClassCastException o conversiones fallidas)
+                LOGGER.log(Level.SEVERE, "Error en la validación de fecha y hora de la cita.", e);
+                validacionError = "❌ Error interno en la validación de fecha/hora. Consulte logs.";
+            }
+            
+            if (validacionError != null) {
+                // Si la validación falla (sea por regla de negocio o por error interno)
+                request.setAttribute("mensaje", validacionError);
+                request.setAttribute("tipoMensaje", "alert-danger"); 
+                
+                // Prepara la vista para que el modal se abra con los datos fallidos
+                request.setAttribute("citaSeleccionada", citaActualizada);
+                verTodasCitasGlobal(request, response);
+                return;
+            }
         }
-        redirigirOrigen(request, response, origen);
+
+        // 4. Persistencia (Si todo pasó)
+        boolean operacionExitosa = citaDAO.actualizarCita(citaActualizada);
+        
+        // 5. Feedback + Redirección (Éxito o Error de BD)
+        if (operacionExitosa) {
+            request.setAttribute("mensaje", "✅ Cita ID " + citaActualizada.getIdCita() + " actualizada con éxito!");
+            request.setAttribute("tipoMensaje", "alert-success");
+        } else {
+            request.setAttribute("mensaje", "❌ Error al actualizar la cita (Verifique datos o conexión).");
+            request.setAttribute("tipoMensaje", "alert-danger");
+        }
+        
+        // Carga la vista de nuevo.
+        verTodasCitasGlobal(request, response);
     }
     
     /**

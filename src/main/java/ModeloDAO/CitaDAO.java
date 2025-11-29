@@ -89,7 +89,7 @@ public class CitaDAO {
      * Valida reglas de negocio (pasado, horario, domingo).
      * @return String con mensaje de error (❌) o null si es válida.
      */
-    private String validarFechaYHora(Cita cita) {
+    public String validarFechaYHora(Cita cita) {
         if (cita.getFecha() == null || cita.getHora() == null) {
             return "❌ Error de validación: La fecha o la hora están nulas.";
         }
@@ -226,33 +226,46 @@ public class CitaDAO {
     public boolean actualizarCita(Cita cita) {
         String sql = "UPDATE citas SET idCliente=?, idVeterinario=?, fecha=?, hora=?, motivo=?, idEstado=?, precio=? WHERE idCita=?";
 
-        try (Connection con = Conexion.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            // 🟢 PASO CLAVE: Obtener el ID del estado a partir del nombre
+        try {
+            // 🟢 PASO CLAVE 1: Obtener el ID del estado a partir del nombre
             int idEstado = obtenerIdEstadoPorNombre(cita.getEstadoNombre());
+            cita.setIdEstado(idEstado); // Asigna el ID para consistencia interna si es necesario
 
-            // 1. Datos de la Cita
-            ps.setInt(1, cita.getIdCliente());
-            ps.setInt(2, cita.getIdVeterinario());
-            ps.setDate(3, cita.getFecha());
-            ps.setTime(4, cita.getHora());
-            ps.setString(5, cita.getMotivo());
+            // ⚠️ VALIDACIÓN MEJORADA: Solo validar fecha/hora si el estado es Pendiente.
+            // Asumiendo que el estado 1 es "Pendiente" (o si quieres validar todos menos Cancelado/Completado)
+            // Usaremos el ID en lugar del nombre para mayor precisión si el método lo usa
 
-            // 2. ID del Estado
-            ps.setInt(6, idEstado);
+            // Asumimos: 1=Pendiente, 2=Completado, 3=Cancelado
+            if (idEstado == 1) { 
+                String validacionError = validarFechaYHora(cita);
+                if (validacionError != null) {
+                    LOGGER.log(Level.WARNING, "❌ No se puede actualizar cita ID {0} debido a: {1}", new Object[]{cita.getIdCita(), validacionError});
+                    // Podrías lanzar una excepción o retornar false. Retornar false es más simple.
+                    return false; 
+                }
+            } 
+            // Nota: Si cambias de Completado/Cancelado a Pendiente, la validación se aplica.
 
-            // 3. Precio (permitir que se actualice el precio si es necesario)
-            ps.setDouble(7, cita.getPrecio());
 
-            // 4. Condición WHERE
-            ps.setInt(8, cita.getIdCita());
+            try (Connection con = Conexion.getConnection();
+                 PreparedStatement ps = con.prepareStatement(sql)) {
 
-            // 5. Ejecución y retorno
-            return ps.executeUpdate() > 0;
+                // Asignación de parámetros
+                ps.setInt(1, cita.getIdCliente());
+                ps.setInt(2, cita.getIdVeterinario());
+                ps.setDate(3, cita.getFecha());
+                ps.setTime(4, cita.getHora());
+                ps.setString(5, cita.getMotivo());
+
+                ps.setInt(6, idEstado); // ID ya convertido
+                ps.setDouble(7, cita.getPrecio());
+                ps.setInt(8, cita.getIdCita()); // Condición WHERE
+
+                return ps.executeUpdate() > 0;
+            }
 
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "❌ Error al actualizar cita.", e);
+            LOGGER.log(Level.SEVERE, "❌ Error al actualizar cita. Causa: " + e.getMessage(), e);
             return false;
         }
     }
