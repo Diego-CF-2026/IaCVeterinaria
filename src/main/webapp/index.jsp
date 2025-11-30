@@ -68,9 +68,9 @@
                 <h2>Iniciar Sesión</h2>
                 <img src="Recursos/IconUser.svg" alt="Icono Usuario" class="icono-usuario">
 
-                <form id="formLogin" action="LoginServlet" method="post">
+                <form id="formLogin" action="LoginServlet" method="post" onsubmit="return hashearContrasenaLogin(event);">
                     <input type="email" name="correo" placeholder="Correo electrónico" required>
-                    <input type="password" name="contrasena" placeholder="Contraseña" required>
+                    <input type="password" name="contrasena" placeholder="Contraseña" required autocomplete="off">
 
 
                     <button type="submit" class="btn1 iniciar-sesion">Ingresar</button>
@@ -121,7 +121,7 @@
                 <div class="alert success">¡Registro exitoso! Ya puedes iniciar sesión.</div>
                 <% }%>
 
-                <form class="form-registro" action="RegistrarServlet" method="post">
+                <form class="form-registro" action="RegistrarServlet" method="post" onsubmit="return hashearContrasenaRegistro(event);">
                     <div class="input-group">
                         <input type="text" name="nombres" placeholder="Nombres" required 
                                pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" title="Solo letras"
@@ -151,7 +151,7 @@
                            value="<%= request.getAttribute("valCorreo") != null ? request.getAttribute("valCorreo") : ""%>"
                            class="<%= "correo".equals(request.getAttribute("errorRegistro")) ? "campo-error" : ""%>">
 
-                    <input type="password" name="contrasena" placeholder="Contraseña" required minlength="8" maxlength="45">
+                    <input type="password" name="contrasena" placeholder="Contraseña" required minlength="8" maxlength="45" autocomplete="off">
 
                     <div class="g-recaptcha" data-sitekey="6LdCzuorAAAAAELJNXsllBliNLKG8Ko2Yg-Jd2Mj"></div>  
                     <% if ("captcha".equals(request.getAttribute("errorRegistro"))) { %>
@@ -409,7 +409,66 @@
         </footer>
         <script src="Js/Index.js"></script>
         <script src="Js/ModoNocheIndex.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/build/sha256.min.js"></script>
+        <script>
+                // Variables de control (flags) para evitar que las funciones se ejecuten dos veces.
+                let isLoginHashed = false;
+                let isRegistroHashed = false;
 
+                // Función para hashear la contraseña de REGISTRO
+                function hashearContrasenaRegistro(event) {
+                    const form = event.target;
+                    const contrasenaInput = form.querySelector('input[name="contrasena"]');
+
+                    // Solo hashear si no se ha hasheado aún
+                    if (!isRegistroHashed && contrasenaInput && contrasenaInput.value) {
+                        const contrasenaOriginal = contrasenaInput.value;
+
+                        // Aplicamos el hash SHA-256
+                        const hashedContrasena = sha256(contrasenaOriginal);
+
+                        // Reemplazamos el valor original con el hash SHA-256
+                        contrasenaInput.value = hashedContrasena;
+                        isRegistroHashed = true; // Marcamos que ya está hasheado
+                    }
+                    // Permitimos el envío del formulario.
+                    return true; 
+                }
+
+                // 🌟 FUNCIÓN CLAVE MODIFICADA para LOGIN 🌟
+                function hashearContrasenaLogin(event) {
+                    const form = event.target;
+                    const contrasenaInput = form.querySelector('input[name="contrasena"]');
+                    // NUEVO: Referencia al botón de submit
+                    const submitButton = form.querySelector('button[type="submit"]'); 
+
+                    // Solo hashear si no se ha hasheado aún
+                    if (!isLoginHashed && contrasenaInput && contrasenaInput.value) {
+
+                        // 1. Deshabilitar el botón para prevenir el doble click
+                        if (submitButton) {
+                            submitButton.disabled = true;
+                            submitButton.textContent = 'Ingresando...'; 
+                        }
+
+                        const contrasenaOriginal = contrasenaInput.value;
+
+                        // Aplicamos el hash SHA-256
+                        const hashedContrasena = sha256(contrasenaOriginal);
+
+                        // Reemplazamos el valor original con el hash SHA-256
+                        contrasenaInput.value = hashedContrasena;
+                        isLoginHashed = true; // Marcamos que ya está hasheado
+                    } else if (isLoginHashed) {
+                        // Si ya está hasheado (doble submit en la misma acción), 
+                        // ya debería estar deshabilitado, pero permitimos el envío.
+                        return true; 
+                    }
+
+                    // Permitimos el envío.
+                    return true;
+                }
+        </script>
         <script>
                         // Funciones para abrir y cerrar modales
                         function abrirModal(idModal) {
