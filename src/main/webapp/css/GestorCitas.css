@@ -51,15 +51,25 @@ main {
 }
 
 /* ===== TABLA DE CLIENTES ===== */
+.tabla-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;   /* Centra horizontalmente la tabla */
+    margin-top: 15spx;
+}
+
 .tabla-citas {
-     width: 80%;
+    width: 80%;
+    max-width: 1200px;          /* opcional, para que no se haga enorme en monitores grandes */
     border-collapse: collapse;
     background-color: white;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     transition: background-color 0.3s ease;
+    margin: 0 auto;             /* por si no quieres usar flex, refuerza el centrado */
 }
+
 
 thead {
     background-color: #007BFF;
@@ -336,3 +346,4 @@ body.modo-noche .mensaje.error {
     background-color: #f8d7da;
     color: #721c24;
 }
+

@@ -9,8 +9,7 @@
 <%@ page import="java.sql.Date" %>
 <%@ page import="java.sql.Time" %>
 
-<%
-    // ======== Recuperación de datos enviados desde el Servlet ========
+<%    // ======== Recuperación de datos enviados desde el Servlet ========
     List<Cita> listaCitas = (List<Cita>) request.getAttribute("listaCitas");
     Cita citaSel = (Cita) request.getAttribute("citaSeleccionada");
     String mensaje = (String) request.getAttribute("mensaje");
@@ -93,14 +92,14 @@
             <div class="header-actions">
                 <h1><%= tituloPagina%></h1>
 
-                <div class="acciones-grupo">
+                <div class="header-actions">
                     <% if (clienteActual == null) { %>
                     <form method="get" action="${pageContext.request.contextPath}/CitaServlet" class="busqueda-form">
                         <input type="hidden" name="accion" value="buscar" />
                         <input type="text" name="busqueda" placeholder="Buscar por cliente, vet, motivo..."
-                            value="${param.busqueda != null ? param.busqueda : ''}" />
+                               value="${param.busqueda != null ? param.busqueda : ''}" />
                         <button type="submit" class="btn btn-editar">Buscar</button>
-                        <a href="${pageContext.request.contextPath}/CitaServlet" class="btn btn-limpiar">Limpiar</a>
+                        <button href="${pageContext.request.contextPath}/CitaServlet" class="btn btn-limpiar">Limpiar</button>
                     </form>
                     <% } %>
 
@@ -114,12 +113,12 @@
                 String mensajeSesion = (String) session.getAttribute("mensaje");
                 String tipoMensajeSesion = (String) session.getAttribute("tipoMensaje");
 
-                if (mensajeSesion != null) { %>
+                if (mensajeSesion != null) {%>
             <div class="alert <%= tipoMensajeSesion != null ? tipoMensajeSesion : ""%>"><%= mensajeSesion%></div>
             <%
                 session.removeAttribute("mensaje");
                 session.removeAttribute("tipoMensaje");
-                } else if (mensaje != null) { %>
+            } else if (mensaje != null) {%>
             <div class="alert <%= tipoMensaje != null ? tipoMensaje : ""%>"><%= mensaje%></div>
             <% } %>
 
@@ -169,15 +168,15 @@
                             <td>
                                 <button class="btn btn-editar"
                                         onclick="abrirModalEditar(
-                                                '<%= c.getIdCita()%>',
-                                                '<%= c.getIdCliente()%>',
-                                                '<%= c.getIdVeterinario()%>',
-                                                '<%= dateFormatter.format(c.getFecha())%>',
-                                                '<%= timeFormatter.format(c.getHora())%>',
-                                                '<%= c.getMotivo().replace("'", "\\'")%>',
-                                                '<%= c.getEstado()%>',
-                                                '<%= c.getPrecio()%>'
-                                                )">Editar</button>
+                                                        '<%= c.getIdCita()%>',
+                                                        '<%= c.getIdCliente()%>',
+                                                        '<%= c.getIdVeterinario()%>',
+                                                        '<%= dateFormatter.format(c.getFecha())%>',
+                                                        '<%= timeFormatter.format(c.getHora())%>',
+                                                        '<%= c.getMotivo().replace("'", "\\'")%>',
+                                                        '<%= c.getEstado()%>',
+                                                        '<%= c.getPrecio()%>'
+                                                        )">Editar</button>
 
                                 <a href="${pageContext.request.contextPath}/CitaServlet?accion=cancelar&id=<%= c.getIdCita()%>"
                                    class="btn-cancelar-inline" onclick="return confirm('¿Está seguro de cancelar esta cita?')">Cancelar</a>
@@ -265,7 +264,7 @@
                                 <option value="">Seleccione un cliente</option>
                                 <% for (Cliente cli : listaClientes) {%>
                                 <option value="<%= cli.getIdCliente()%>">
-                                    <%= cli.getNombre()%> <%= cli.getApellido()%> - <%= cli.getDni()%>
+                                    <%= cli.getNombre()%> <%= cli.getApellido()%>
                                 </option>
                                 <% } %>
                             </select>
@@ -318,69 +317,69 @@
         <button id="modoNocheBtn" class="modo-noche-flotante" aria-label="Cambiar a modo noche">🌙</button>
         <script src="${pageContext.request.contextPath}/Js/JsAdmin/ModoNoche-Sidebar.js"></script>
         <script>
-            // ====== FUNCIONES DEL MODAL ======
-            function abrirModal(modalId) {
-                const modal = document.getElementById(modalId);
-                if (modal) {
-                    modal.style.display = 'block';
-                }
-            }
+                                // ====== FUNCIONES DEL MODAL ======
+                                function abrirModal(modalId) {
+                                    const modal = document.getElementById(modalId);
+                                    if (modal) {
+                                        modal.style.display = 'block';
+                                    }
+                                }
 
-            function cerrarModal(modalId) {
-                const modal = document.getElementById(modalId);
-                if (modal) {
-                    modal.style.display = 'none';
+                                function cerrarModal(modalId) {
+                                    const modal = document.getElementById(modalId);
+                                    if (modal) {
+                                        modal.style.display = 'none';
 
-                    if (modalId === 'modalEditarCita' && document.querySelector('.alert-danger')) {
-                        window.location.href = '${pageContext.request.contextPath}/CitaServlet';
-                    }
-                }
-            }
+                                        if (modalId === 'modalEditarCita' && document.querySelector('.alert-danger')) {
+                                            window.location.href = '${pageContext.request.contextPath}/CitaServlet';
+                                        }
+                                    }
+                                }
 
-            // Cierra el modal si el usuario hace clic fuera del cuadro
-            window.onclick = function (event) {
-                const modals = document.getElementsByClassName("modal");
-                for (let modal of modals) {
-                    if (event.target == modal) {
-                        modal.style.display = "none";
-                        if (modal.id === 'modalEditarCita' && document.querySelector('.alert-danger')) {
-                            window.location.href = '${pageContext.request.contextPath}/CitaServlet';
-                        }
-                    }
-                }
-            }
+                                // Cierra el modal si el usuario hace clic fuera del cuadro
+                                window.onclick = function (event) {
+                                    const modals = document.getElementsByClassName("modal");
+                                    for (let modal of modals) {
+                                        if (event.target == modal) {
+                                            modal.style.display = "none";
+                                            if (modal.id === 'modalEditarCita' && document.querySelector('.alert-danger')) {
+                                                window.location.href = '${pageContext.request.contextPath}/CitaServlet';
+                                            }
+                                        }
+                                    }
+                                }
 
-            // Prellena el modal con los datos de la cita seleccionada
-            function abrirModalEditar(idCita, idCliente, idVeterinario, fecha, hora, motivo, estado, precio) {
-                abrirModal('modalEditarCita');
-                document.getElementById('editar_idCita').value = idCita;
-                document.getElementById('editar_idCliente').value = idCliente;
-                document.getElementById('editar_idVeterinario').value = idVeterinario;
-                document.getElementById('editar_fecha').value = fecha;
-                document.getElementById('editar_hora').value = hora;
-                document.getElementById('editar_motivo').value = motivo;
-                document.getElementById('editar_estado').value = estado;
-                document.getElementById('editar_precio').value = precio;
-                document.getElementById('editar_fecha').dataset.originalDate = fecha;
-            }
+                                // Prellena el modal con los datos de la cita seleccionada
+                                function abrirModalEditar(idCita, idCliente, idVeterinario, fecha, hora, motivo, estado, precio) {
+                                    abrirModal('modalEditarCita');
+                                    document.getElementById('editar_idCita').value = idCita;
+                                    document.getElementById('editar_idCliente').value = idCliente;
+                                    document.getElementById('editar_idVeterinario').value = idVeterinario;
+                                    document.getElementById('editar_fecha').value = fecha;
+                                    document.getElementById('editar_hora').value = hora;
+                                    document.getElementById('editar_motivo').value = motivo;
+                                    document.getElementById('editar_estado').value = estado;
+                                    document.getElementById('editar_precio').value = precio;
+                                    document.getElementById('editar_fecha').dataset.originalDate = fecha;
+                                }
 
-            // ====== LÓGICA PARA ABRIR MODAL TRAS REDIRECCIÓN/FORWARD DEL SERVLET (Con error) ======
+                                // ====== LÓGICA PARA ABRIR MODAL TRAS REDIRECCIÓN/FORWARD DEL SERVLET (Con error) ======
             <%
                 if (citaSel != null) {
             %>
-                window.onload = function() {
-                    abrirModalEditar(
-                        '<%= citaSel.getIdCita()%>',
-                        '<%= citaSel.getIdCliente()%>',
-                        '<%= citaSel.getIdVeterinario()%>',
-                        '<%= dateFormatter.format(citaSel.getFecha())%>',
-                        '<%= timeFormatter.format(citaSel.getHora())%>',
-                        '<%= citaSel.getMotivo().replace("'", "\\'")%>',
-                        '<%= citaSel.getEstadoNombre() != null ? citaSel.getEstadoNombre() : citaSel.getEstado()%>',
-                        '<%= citaSel.getPrecio()%>'
-                    );
-                };
-            <% } %>
+                                window.onload = function () {
+                                    abrirModalEditar(
+                                            '<%= citaSel.getIdCita()%>',
+                                            '<%= citaSel.getIdCliente()%>',
+                                            '<%= citaSel.getIdVeterinario()%>',
+                                            '<%= dateFormatter.format(citaSel.getFecha())%>',
+                                            '<%= timeFormatter.format(citaSel.getHora())%>',
+                                            '<%= citaSel.getMotivo().replace("'", "\\'")%>',
+                                            '<%= citaSel.getEstadoNombre() != null ? citaSel.getEstadoNombre() : citaSel.getEstado()%>',
+                                            '<%= citaSel.getPrecio()%>'
+                                            );
+                                };
+            <% }%>
         </script>
     </body>
 </html>

@@ -1,221 +1,137 @@
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
-*/
-/* 
-    Created on : 30 nov. 2025, 3:07:19 p. m.
-    Author     : PC
-*/
-/* ==================== 🎨 ESTILOS PARA REPLICAR LA IMAGEN 🎨 ==================== */
+/* ================= MODALES CITA ================= */
 
-            /* 1. Fondo Oscuro General */
-            body {
-                background-color: #1e1e1e; /* Fondo negro muy oscuro */
-                color: #e0e0e0; /* Texto predeterminado claro */
-                margin: 0;
-                padding: 0;
-                font-family: sans-serif;
-            }
+/* Fondo oscuro que cubre toda la pantalla */
+.modal {
+    display: none;                 /* el JS lo cambia a block */
+    position: fixed;
+    inset: 0;                      /* top:0; right:0; bottom:0; left:0; */
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1200;
+}
 
-            /* 2. Contenido Principal y su Espacio (Ajuste para Sidebar de 250px) */
-            main {
-                position: relative;
-                margin-left: 250px;
-                padding: 20px 40px;
-                min-height: 100vh;
-                box-sizing: border-box;
-                background-color: #1e1e1e; /* Asegura el fondo oscuro del área principal */
-            }
+/* Caja del modal centrada */
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 95%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
 
-            /* 3. Estilos del Sidebar (Ajustes para estructura de la imagen) */
-            .sidebar {
-                background-color: #242424; /* Fondo de la barra lateral */
-                width: 250px;
-                border-right: none;
-                padding: 10px 0;
-                /* Asegúrate de que tu ModoNoche-Sidebar.css aplique position: fixed */
-            }
-            .sidebar .header-text .profession {
-                 font-size: 14px;
-                 color: #a0a0a0;
-                 margin-top: 2px;
-            }
-            .sidebar .nav-link a {
-                color: #a0a0a0;
-            }
-            .sidebar .nav-link.active a {
-                color: #ffffff;
-                background-color: #1e1e1e; /* Resalta el activo con un fondo más oscuro */
-                border-radius: 0; /* Si quieres el estilo sin bordes redondeados */
-            }
-             .sidebar .image-text .image i {
-                font-size: 50px; /* Tamaño de la huella */
-                color: #e0e0e0;
-                margin-bottom: 5px;
-            }
-            .sidebar header {
-                padding: 20px 0;
-                margin-bottom: 20px;
-                text-align: center;
-                border-bottom: 1px solid #333333;
-            }
+    background-color: #ffffff;
+    color: #222;
+    padding: 24px 28px 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
 
-            /* 4. Cabecera y Acciones (Título, Búsqueda, Botón) */
-            .header-actions {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                width: 100%;
-                margin-bottom: 20px;
-                padding-right: 0px;
-                padding-left: 0px;
-            }
+/* Título del modal */
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 22px;
+}
 
-            .header-actions h1 {
-                color: #ffffff;
-                font-size: 28px;
-                margin: 0;
-            }
+/* Botón X de cerrar */
+.modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+}
 
-            .acciones-grupo {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
+.modal-content .close:hover {
+    color: #d11;
+}
 
-            /* Inputs y Botones de Búsqueda */
-            .busqueda-form {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
+/* Campos del formulario */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+    gap: 4px;
+}
 
-            .busqueda-form input[type="text"] {
-                height: 35px;
-                padding: 6px 10px;
-                border: 1px solid #4a4a4a;
-                border-radius: 4px;
-                width: 250px;
-                background-color: #333333;
-                color: #e0e0e0;
-            }
+.form-group label {
+    font-weight: 600;
+    font-size: 14px;
+}
 
-            .busqueda-form button[type="submit"] {
-                background-color: #4a4a4a; /* Gris oscuro para Buscar */
-                color: white;
-                border: none;
-                font-weight: bold;
-                height: 35px;
-                padding: 6px 12px;
-                border-radius: 4px;
-            }
+.form-group .form-control,
+.form-group input[type="date"],
+.form-group input[type="time"],
+.form-group input[type="text"],
+.form-group select {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
 
-            .btn-limpiar {
-                background: none;
-                border: none;
-                color: #A0A0A0;
-                text-decoration: none;
-                padding: 0;
-                height: 35px;
-                display: flex;
-                align-items: center;
-            }
+.form-group .form-control:focus,
+.form-group input[type="date"]:focus,
+.form-group input[type="time"]:focus,
+.form-group input[type="text"]:focus,
+.form-group select:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
 
-            .btn-agregar {
-                background-color: #28a745; /* Verde para Agendar Nueva Cita */
-                color: white;
-                border: none;
-                font-weight: bold;
-                height: 35px;
-                padding: 6px 12px;
-                border-radius: 4px;
-            }
-            .btn-editar {
-                background-color: #333333; 
-                color: #e0e0e0;
-                border: 1px solid #555555;
-                padding: 6px 12px;
-                border-radius: 4px;
-            }
-            .btn-cancelar-inline {
-                color: #b0b0b0; /* Gris claro para el enlace Cancelar */
-                text-decoration: none;
-                margin-left: 10px;
-                font-size: 14px;
-            }
+/* Botones del pie del modal */
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
 
-            /* 5. Estilos de la Tabla (Clave para la imagen) */
-            .tabla-container {
-                /* Fondo que envuelve toda la tabla */
-                background-color: #333333;
-                border-radius: 0px; /* La imagen no muestra bordes redondeados en la tabla */
-                overflow: hidden;
-            }
+.btn-cerrar,
+.btn-guardar {
+    min-width: 100px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+}
 
-            .tabla-citas {
-                width: 100%;
-                border-collapse: collapse;
-                border-spacing: 0;
-                margin: 0;
-            }
+.btn-cerrar {
+    background-color: #e0e0e0;
+    color: #333;
+}
 
-            .tabla-citas thead {
-                background-color: #333333; /* Usar el mismo color del cuerpo de la tabla */
-                color: white;
-            }
-            
-            /* Ajuste para el color de la cabecera (similar al de la imagen) */
-            .tabla-citas th {
-                padding: 10px 12px;
-                text-align: left;
-                font-weight: 600;
-                font-size: 15px;
-                color: #b0b0b0; /* Color gris suave para las cabeceras */
-                border-bottom: 1px solid #444444; /* Línea de separación sutil */
-            }
-            
-            .tabla-citas td {
-                padding: 10px 12px;
-                text-align: left;
-                border-bottom: 1px solid #444444;
-                color: #e0e0e0;
-            }
+.btn-cerrar:hover {
+    background-color: #d0d0d0;
+}
 
-            .tabla-citas tbody tr:last-child td {
-                border-bottom: none;
-            }
+.btn-guardar {
+    background-color: #28a745;
+    color: #fff;
+}
 
-            .tabla-citas .no-data {
-                padding: 10px 12px; 
-                height: auto;
-                color: #b0b0b0;
-            }
+.btn-guardar:hover {
+    background-color: #218838;
+}
 
-            /* 6. Estilos de Estado */
-            .estado-pendiente { background-color: #5d4000; color: #ffeb3b; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;}
-            .estado-completado { background-color: #1a4f29; color: #a4e1ae; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;}
-            .estado-cancelado { background-color: #5e1c1c; color: #ff9999; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;}
-            .estado-confirmada { background-color: #1c3c5e; color: #a0c3ff; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;}
+/* Opcional: pequeño ajuste para modo noche si lo usas */
+body.modo-noche .modal-content {
+    background-color: #242526;
+    color: #f5f5f5;
+}
 
-
-            /* 7. Estilos de Modal */
-            .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
-            .modal-content { 
-                background-color: #333333; 
-                color: #e0e0e0; 
-                margin: 10% auto; 
-                padding: 20px; 
-                border: 1px solid #4a4a4a; 
-                width: 80%; 
-                max-width: 600px; 
-                border-radius: 8px; 
-            }
-            .form-control {
-                background-color: #4a4a4a; 
-                color: #e0e0e0;
-                border: 1px solid #555;
-            }
-            .modal-actions { display: flex; justify-content: space-between; margin-top: 20px; }
-            .btn-cerrar { background-color: #555; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
-            .btn-guardar { background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+body.modo-noche .form-group .form-control,
+body.modo-noche .form-group input[type="date"],
+body.modo-noche .form-group input[type="time"],
+body.modo-noche .form-group input[type="text"],
+body.modo-noche .form-group select {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #f5f5f5;
+}
