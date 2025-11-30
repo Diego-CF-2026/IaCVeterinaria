@@ -1,0 +1,221 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 30 nov. 2025, 3:07:19 p. m.
+    Author     : PC
+*/
+/* ==================== 🎨 ESTILOS PARA REPLICAR LA IMAGEN 🎨 ==================== */
+
+            /* 1. Fondo Oscuro General */
+            body {
+                background-color: #1e1e1e; /* Fondo negro muy oscuro */
+                color: #e0e0e0; /* Texto predeterminado claro */
+                margin: 0;
+                padding: 0;
+                font-family: sans-serif;
+            }
+
+            /* 2. Contenido Principal y su Espacio (Ajuste para Sidebar de 250px) */
+            main {
+                position: relative;
+                margin-left: 250px;
+                padding: 20px 40px;
+                min-height: 100vh;
+                box-sizing: border-box;
+                background-color: #1e1e1e; /* Asegura el fondo oscuro del área principal */
+            }
+
+            /* 3. Estilos del Sidebar (Ajustes para estructura de la imagen) */
+            .sidebar {
+                background-color: #242424; /* Fondo de la barra lateral */
+                width: 250px;
+                border-right: none;
+                padding: 10px 0;
+                /* Asegúrate de que tu ModoNoche-Sidebar.css aplique position: fixed */
+            }
+            .sidebar .header-text .profession {
+                 font-size: 14px;
+                 color: #a0a0a0;
+                 margin-top: 2px;
+            }
+            .sidebar .nav-link a {
+                color: #a0a0a0;
+            }
+            .sidebar .nav-link.active a {
+                color: #ffffff;
+                background-color: #1e1e1e; /* Resalta el activo con un fondo más oscuro */
+                border-radius: 0; /* Si quieres el estilo sin bordes redondeados */
+            }
+             .sidebar .image-text .image i {
+                font-size: 50px; /* Tamaño de la huella */
+                color: #e0e0e0;
+                margin-bottom: 5px;
+            }
+            .sidebar header {
+                padding: 20px 0;
+                margin-bottom: 20px;
+                text-align: center;
+                border-bottom: 1px solid #333333;
+            }
+
+            /* 4. Cabecera y Acciones (Título, Búsqueda, Botón) */
+            .header-actions {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                margin-bottom: 20px;
+                padding-right: 0px;
+                padding-left: 0px;
+            }
+
+            .header-actions h1 {
+                color: #ffffff;
+                font-size: 28px;
+                margin: 0;
+            }
+
+            .acciones-grupo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            /* Inputs y Botones de Búsqueda */
+            .busqueda-form {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .busqueda-form input[type="text"] {
+                height: 35px;
+                padding: 6px 10px;
+                border: 1px solid #4a4a4a;
+                border-radius: 4px;
+                width: 250px;
+                background-color: #333333;
+                color: #e0e0e0;
+            }
+
+            .busqueda-form button[type="submit"] {
+                background-color: #4a4a4a; /* Gris oscuro para Buscar */
+                color: white;
+                border: none;
+                font-weight: bold;
+                height: 35px;
+                padding: 6px 12px;
+                border-radius: 4px;
+            }
+
+            .btn-limpiar {
+                background: none;
+                border: none;
+                color: #A0A0A0;
+                text-decoration: none;
+                padding: 0;
+                height: 35px;
+                display: flex;
+                align-items: center;
+            }
+
+            .btn-agregar {
+                background-color: #28a745; /* Verde para Agendar Nueva Cita */
+                color: white;
+                border: none;
+                font-weight: bold;
+                height: 35px;
+                padding: 6px 12px;
+                border-radius: 4px;
+            }
+            .btn-editar {
+                background-color: #333333; 
+                color: #e0e0e0;
+                border: 1px solid #555555;
+                padding: 6px 12px;
+                border-radius: 4px;
+            }
+            .btn-cancelar-inline {
+                color: #b0b0b0; /* Gris claro para el enlace Cancelar */
+                text-decoration: none;
+                margin-left: 10px;
+                font-size: 14px;
+            }
+
+            /* 5. Estilos de la Tabla (Clave para la imagen) */
+            .tabla-container {
+                /* Fondo que envuelve toda la tabla */
+                background-color: #333333;
+                border-radius: 0px; /* La imagen no muestra bordes redondeados en la tabla */
+                overflow: hidden;
+            }
+
+            .tabla-citas {
+                width: 100%;
+                border-collapse: collapse;
+                border-spacing: 0;
+                margin: 0;
+            }
+
+            .tabla-citas thead {
+                background-color: #333333; /* Usar el mismo color del cuerpo de la tabla */
+                color: white;
+            }
+            
+            /* Ajuste para el color de la cabecera (similar al de la imagen) */
+            .tabla-citas th {
+                padding: 10px 12px;
+                text-align: left;
+                font-weight: 600;
+                font-size: 15px;
+                color: #b0b0b0; /* Color gris suave para las cabeceras */
+                border-bottom: 1px solid #444444; /* Línea de separación sutil */
+            }
+            
+            .tabla-citas td {
+                padding: 10px 12px;
+                text-align: left;
+                border-bottom: 1px solid #444444;
+                color: #e0e0e0;
+            }
+
+            .tabla-citas tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+            .tabla-citas .no-data {
+                padding: 10px 12px; 
+                height: auto;
+                color: #b0b0b0;
+            }
+
+            /* 6. Estilos de Estado */
+            .estado-pendiente { background-color: #5d4000; color: #ffeb3b; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;}
+            .estado-completado { background-color: #1a4f29; color: #a4e1ae; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;}
+            .estado-cancelado { background-color: #5e1c1c; color: #ff9999; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;}
+            .estado-confirmada { background-color: #1c3c5e; color: #a0c3ff; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;}
+
+
+            /* 7. Estilos de Modal */
+            .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+            .modal-content { 
+                background-color: #333333; 
+                color: #e0e0e0; 
+                margin: 10% auto; 
+                padding: 20px; 
+                border: 1px solid #4a4a4a; 
+                width: 80%; 
+                max-width: 600px; 
+                border-radius: 8px; 
+            }
+            .form-control {
+                background-color: #4a4a4a; 
+                color: #e0e0e0;
+                border: 1px solid #555;
+            }
+            .modal-actions { display: flex; justify-content: space-between; margin-top: 20px; }
+            .btn-cerrar { background-color: #555; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+            .btn-guardar { background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }

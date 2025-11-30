@@ -1,0 +1,160 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 30 nov. 2025, 3:13:31 p. m.
+    Author     : PC
+*/
+
+ body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            background-color: var(--body-color);
+            color: var(--text-color);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        main {
+            margin-left: 270px;
+            padding: 40px;
+            width: calc(100% - 270px);
+            min-height: 100vh;
+            transition: 0.3s ease;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+        }
+
+        .table-container {
+            background: var(--sidebar-color);
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            padding: 20px;
+            overflow-x: auto;
+            transition: background-color 0.3s ease;
+        }
+
+        body.modo-claro .table-container {
+            background-color: #fff !important;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            padding: 12px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        tr:hover {
+            background-color: var(--hover-color);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-tratamiento { background-color: #28a745; }
+        .btn-tratamiento:hover { background-color: #218838; }
+
+        .btn-reprogramar { background-color: #007bff; }
+        .btn-reprogramar:hover { background-color: #0069d9; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            inset: 0;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            background-color: var(--sidebar-color);
+            color: var(--text-color);
+            width: 65%;
+            max-width: 750px;
+            margin: 5% auto;
+            padding: 30px 40px;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+            transition: background-color 0.3s ease;
+        }
+
+        body.modo-claro .modal-content {
+            background-color: #fff !important;
+            color: #333 !important;
+        }
+
+        .modal h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 1.4rem;
+        }
+
+        .modal label {
+            display: block;
+            margin-top: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .modal textarea, .modal input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background-color: var(--body-color);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        body.modo-claro .modal textarea,
+        body.modo-claro .modal input {
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        .modal .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            main { margin-left: 0; width: 100%; padding: 20px; }
+            .modal-content { width: 90%; padding: 25px; }
+        }
