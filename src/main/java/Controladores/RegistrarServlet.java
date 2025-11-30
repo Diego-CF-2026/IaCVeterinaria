@@ -68,7 +68,8 @@ public class RegistrarServlet extends HttpServlet {
         String dni        = request.getParameter("dni");
         String telefono   = request.getParameter("telefono");
         String correo     = request.getParameter("correo");
-        String contrasena = request.getParameter("contrasena");
+        // CAMBIO CLAVE: Leer el campo oculto con la contraseña en texto plano
+        String contrasena = request.getParameter("realContrasena");
 
         // --- 3) Mantener valores en caso de que haya error al insertar ---
         request.setAttribute("valNombres", nombres);

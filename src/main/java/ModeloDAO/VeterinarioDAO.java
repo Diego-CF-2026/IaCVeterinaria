@@ -5,9 +5,13 @@ import Modelo.Veterinario;
 import Modelo.Cita;
 import java.sql.*;
 import java.util.*;
-import org.mindrot.jbcrypt.BCrypt;
 import java.sql.Date; // Importante
 import java.sql.Time; // Importante
+// AGREGAR ESTAS LÍNEAS PARA SHA-256:
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 
 public class VeterinarioDAO {
 
@@ -81,7 +85,7 @@ public class VeterinarioDAO {
             con = Conexion.getConnection();
             con.setAutoCommit(false);
 
-            String hashed = BCrypt.hashpw(contraPlano, BCrypt.gensalt());
+            String hashed = hashearConSHA256(contraPlano);
 
             // usuario
             ps = con.prepareStatement(sqlUser);
@@ -156,7 +160,7 @@ public class VeterinarioDAO {
                 }
             }
             if (nuevaContraPlano != null && !nuevaContraPlano.trim().isEmpty()) {
-                String hashed = BCrypt.hashpw(nuevaContraPlano, BCrypt.gensalt());
+                String hashed = hashearConSHA256(nuevaContraPlano);
                 try (PreparedStatement pu2 = con.prepareStatement("UPDATE usuario SET contra=? WHERE idUsuario=?")) {
                     pu2.setString(1, hashed);
                     pu2.setInt(2, idUsuario);
@@ -525,5 +529,25 @@ public class VeterinarioDAO {
             e.printStackTrace(); 
         }
         return lista;
+    }
+        
+    // ============================================================
+    // FUNCIÓN AUXILIAR SHA-256
+    // ============================================================
+    private String hashearConSHA256(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] messageDigest = md.digest(input.getBytes());
+            BigInteger no = new BigInteger(1, messageDigest);
+            String hashtext = no.toString(16);
+
+            // Rellenar con ceros a la izquierda para asegurar 64 caracteres
+            while (hashtext.length() < 64) {
+                hashtext = "0" + hashtext;
+            }
+            return hashtext;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error al generar el hash SHA-256", e);
+        }
     }
 }

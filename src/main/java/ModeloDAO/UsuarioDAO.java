@@ -10,7 +10,10 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import org.mindrot.jbcrypt.BCrypt;
+// AGREGAR ESTAS LÍNEAS
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class UsuarioDAO {
 
@@ -54,9 +57,9 @@ public class UsuarioDAO {
             throw new IllegalArgumentException("Teléfono no válido, debe empezar con 9 y tener 9 dígitos");
         }
 
-        // Hashear contraseña con BCrypt
+        // Línea ~73: Hashear contraseña con SHA-256
         String password_sin_hashear = usuario.getContra();
-        String hashedPassword = BCrypt.hashpw(password_sin_hashear, BCrypt.gensalt());
+        String hashedPassword = hashearConSHA256(password_sin_hashear);
 
         // Sentencias SQL: primero Usuario, luego Cliente
         String sqlUsuario = "INSERT INTO Usuario(idRol, correo, contra, intentos, Estado, tiempo_bloqueo) VALUES (?, ?, ?, ?, ?, NULL)";
@@ -149,7 +152,7 @@ public class UsuarioDAO {
 
     // Realiza la autenticación del usuario verificando el hash con BCrypt.
     public Usuario login(String correo, String contra) {
-        if (correo == null || correo.isEmpty() || contra == null || contra.length() < 8) {
+        if (correo == null || correo.isEmpty() || contra == null || contra.length() != 64) {
             return null;
         }
 
@@ -164,9 +167,10 @@ public class UsuarioDAO {
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                // Comparar contraseña ingresada con hash almacenado
+                // Línea ~226: Comparar contraseña ingresada con hash almacenado (SHA-256)
                 String hash_almacenado = rs.getString("contra");
-                if (BCrypt.checkpw(contra, hash_almacenado)) {
+
+                if (contra.equals(hash_almacenado)) {
                     Usuario u = new Usuario();
                     u.setIdUsuario(rs.getInt("idUsuario"));
                     u.setIdRol(rs.getInt("idRol"));
@@ -348,5 +352,25 @@ public class UsuarioDAO {
             try { if (con != null) con.close(); } catch (Exception ex) {}
         }
         return false;
+    }
+    
+    // ============================================================
+    // FUNCIÓN AUXILIAR SHA-256
+    // ============================================================
+    private String hashearConSHA256(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] messageDigest = md.digest(input.getBytes());
+            BigInteger no = new BigInteger(1, messageDigest);
+            String hashtext = no.toString(16);
+
+            // Rellenar con ceros a la izquierda para asegurar 64 caracteres
+            while (hashtext.length() < 64) {
+                hashtext = "0" + hashtext;
+            }
+            return hashtext;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error al generar el hash SHA-256", e);
+        }
     }
 }

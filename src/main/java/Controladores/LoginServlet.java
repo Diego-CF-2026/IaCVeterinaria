@@ -35,7 +35,8 @@ public class LoginServlet extends HttpServlet {
 
         // Captura de credenciales desde el formulario
         String correo = request.getParameter("correo");
-        String contra = request.getParameter("contrasena");
+        // Este campo contiene la contraseña en TEXTO PLANO.
+        String contraTextoPlano = request.getParameter("contrasena");
         String contextPath = request.getContextPath();
 
         // Consultar intentos y estado de bloqueo previo del usuario
@@ -57,7 +58,7 @@ public class LoginServlet extends HttpServlet {
         }
 
         // Intento de login con las credenciales proporcionadas
-        Usuario usuario = usuarioDAO.login(correo, contra);
+        Usuario usuario = usuarioDAO.login(correo, contraTextoPlano);
 
         if (usuario != null && usuario.isEstado()) {
             // Si el login es exitoso, reiniciar contador de intentos

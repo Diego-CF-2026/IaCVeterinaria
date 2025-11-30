@@ -9,7 +9,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import org.mindrot.jbcrypt.BCrypt; // Librería para encriptar contraseñas con seguridad
+// AGREGAR ESTAS LÍNEAS PARA SHA-256:
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class RecepcionistaDAO {
 
@@ -78,7 +81,7 @@ public class RecepcionistaDAO {
             con.setAutoCommit(false); // Inicia transacción manual
 
             // Encriptar la contraseña antes de guardarla
-            String hashedPassword = BCrypt.hashpw(usuario.getContra(), BCrypt.gensalt());
+            String hashedPassword = hashearConSHA256(usuario.getContra());
             ps = con.prepareStatement(sqlUser, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setInt(1, ID_ROL_RECEPCIONISTA);
             ps.setString(2, usuario.getCorreo());
@@ -133,7 +136,7 @@ public class RecepcionistaDAO {
             con.setAutoCommit(false);
 
             // Se vuelve a hashear la contraseña al actualizarla
-            String hashedPassword = BCrypt.hashpw(usuario.getContra(), BCrypt.gensalt());
+            String hashedPassword = hashearConSHA256(usuario.getContra());
             ps = con.prepareStatement(sqlUpdateUser);
             ps.setString(1, usuario.getCorreo());
             ps.setString(2, hashedPassword);
@@ -234,6 +237,26 @@ public class RecepcionistaDAO {
             }
         } catch (SQLException e) {
             System.err.println("Error al cerrar recursos con control de commit: " + e.getMessage());
+        }
+    }
+    
+    // ============================================================
+    // FUNCIÓN AUXILIAR SHA-256
+    // ============================================================
+    private String hashearConSHA256(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] messageDigest = md.digest(input.getBytes());
+            BigInteger no = new BigInteger(1, messageDigest);
+            String hashtext = no.toString(16);
+
+            // Rellenar con ceros a la izquierda para asegurar 64 caracteres
+            while (hashtext.length() < 64) {
+                hashtext = "0" + hashtext;
+            }
+            return hashtext;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error al generar el hash SHA-256", e);
         }
     }
 }

@@ -70,9 +70,7 @@
 
                 <form id="formLogin" action="LoginServlet" method="post" onsubmit="return hashearContrasenaLogin(event);">
                     <input type="email" name="correo" placeholder="Correo electrónico" required>
-                    <input type="password" name="contrasena" placeholder="Contraseña" required autocomplete="off">
-
-
+                    <input type="password" name="contrasena" required>
                     <button type="submit" class="btn1 iniciar-sesion">Ingresar</button>
                 </form>
 
@@ -152,7 +150,7 @@
                            class="<%= "correo".equals(request.getAttribute("errorRegistro")) ? "campo-error" : ""%>">
 
                     <input type="password" name="contrasena" placeholder="Contraseña" required minlength="8" maxlength="45" autocomplete="off">
-
+                    <input type="hidden" id="regRealContrasena" name="realContrasena" value="">
                     <div class="g-recaptcha" data-sitekey="6LdCzuorAAAAAELJNXsllBliNLKG8Ko2Yg-Jd2Mj"></div>  
                     <% if ("captcha".equals(request.getAttribute("errorRegistro"))) { %>
                     <div class="alert error">Por favor completa el CAPTCHA.</div>
@@ -419,11 +417,15 @@
                 function hashearContrasenaRegistro(event) {
                     const form = event.target;
                     const contrasenaInput = form.querySelector('input[name="contrasena"]');
-
+                    // ⭐ NUEVO: Referencia al campo oculto de registro ⭐
+                    const realContrasenaInput = form.querySelector('input[name="realContrasena"]');
+                    
                     // Solo hashear si no se ha hasheado aún
                     if (!isRegistroHashed && contrasenaInput && contrasenaInput.value) {
                         const contrasenaOriginal = contrasenaInput.value;
-
+                        
+                        // 1. 🔑 ALMACENAR el texto plano en el campo OCULTO (para Bcrypt en el Servlet)
+                        realContrasenaInput.value = contrasenaOriginal;
                         // Aplicamos el hash SHA-256
                         const hashedContrasena = sha256(contrasenaOriginal);
 
@@ -435,38 +437,35 @@
                     return true; 
                 }
 
-                // 🌟 FUNCIÓN CLAVE MODIFICADA para LOGIN 🌟
+                // ⭐ FUNCIÓN PARA LOGIN (Envía solo SHA-256) ⭐
                 function hashearContrasenaLogin(event) {
                     const form = event.target;
+                    // Captura el campo visible
                     const contrasenaInput = form.querySelector('input[name="contrasena"]');
-                    // NUEVO: Referencia al botón de submit
-                    const submitButton = form.querySelector('button[type="submit"]'); 
+                    const submitButton = form.querySelector('button[type="submit"]'); 
 
-                    // Solo hashear si no se ha hasheado aún
                     if (!isLoginHashed && contrasenaInput && contrasenaInput.value) {
-
-                        // 1. Deshabilitar el botón para prevenir el doble click
-                        if (submitButton) {
-                            submitButton.disabled = true;
-                            submitButton.textContent = 'Ingresando...'; 
-                        }
 
                         const contrasenaOriginal = contrasenaInput.value;
 
-                        // Aplicamos el hash SHA-256
+                        // 1. 🛡️ Hashear con SHA-256
                         const hashedContrasena = sha256(contrasenaOriginal);
 
-                        // Reemplazamos el valor original con el hash SHA-256
+                        // 2. Reemplazar el valor en el campo que se envía
                         contrasenaInput.value = hashedContrasena;
-                        isLoginHashed = true; // Marcamos que ya está hasheado
-                    } else if (isLoginHashed) {
-                        // Si ya está hasheado (doble submit en la misma acción), 
-                        // ya debería estar deshabilitado, pero permitimos el envío.
-                        return true; 
-                    }
 
-                    // Permitimos el envío.
-                    return true;
+                        // NOTA: El texto plano ya no existe en la solicitud POST. ZAP solo verá el SHA-256.
+
+                        if (submitButton) {
+                            submitButton.disabled = true;
+                            submitButton.textContent = 'Ingresando...'; 
+                        }
+                        isLoginHashed = true; 
+
+                        // Permite el envío del formulario con solo el hash SHA-256 en el campo 'contrasena'.
+                        return true; 
+                    } 
+                    return true; 
                 }
         </script>
         <script>
