@@ -1,0 +1,96 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 1 dic 2025, 3:29:43
+    Author     : kristhor
+*/
+
+h2 {
+    margin-left: 470px;
+    margin-top: 30px;
+    font-size: 26px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Contenedor para que respete el sidebar */
+.table-container {
+    margin-left: 260px;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+/* Tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+/* Cabecera */
+table thead {
+    background: #009879;
+    color: #fff;
+}
+
+table thead th {
+    padding: 14px;
+    font-size: 15px;
+    text-align: left;
+}
+
+/* Filas */
+table tbody tr {
+    border-bottom: 1px solid #dddddd;
+    transition: 0.3s;
+}
+
+table tbody tr:hover {
+    background: #f3f3f3;
+}
+
+/* Celdas */
+table td {
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Mensaje vacío */
+table td[colspan] {
+    font-size: 16px;
+    color: #666;
+}
+
+/* Estado Entregado */
+.ok {
+    padding: 5px 10px;
+    background: #2ecc71;
+    color: white;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.title-container {
+    margin-left: 280px;       /* Respeta tu sidebar */
+    margin-top: 20px;
+    width: 75%;
+    background: #ffffff;
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Estilo del título */
+.title-container h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+}

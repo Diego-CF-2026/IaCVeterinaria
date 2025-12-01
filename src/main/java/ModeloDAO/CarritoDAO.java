@@ -272,13 +272,13 @@ public class CarritoDAO {
     }
     
     // Obtener lista de carritos CERRADOS (para el recepcionista)
-    public List<Carrito> obtenerCarritosCerrados() {
+    public List<Carrito> obtenerCarritosEnProceso() {
         List<Carrito> lista = new ArrayList<>();
         try {
             String sql = "SELECT c.*, cl.nombre, cl.apellido " +
                          "FROM carrito c " +
                          "INNER JOIN cliente cl ON c.idCliente = cl.idCliente " +
-                         "WHERE c.estado = 'CERRADO' " +
+                         "WHERE c.estado = 'CERRADO' AND c.estadoEntrega = 'EN PROCESO' " +
                          "ORDER BY c.fecha DESC";
 
             try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -290,13 +290,15 @@ public class CarritoDAO {
                     c.setTotal(rs.getBigDecimal("total"));
                     c.setEstado(rs.getString("estado"));
                     c.setFecha(rs.getTimestamp("fecha"));
-                    c.setIdPago(rs.getInt("idPago"));
                     c.setEstadoEntrega(rs.getString("estadoEntrega"));
+
+                    // Cliente
                     Cliente cliente = new Cliente();
                     cliente.setNombre(rs.getString("nombre"));
                     cliente.setApellido(rs.getString("apellido"));
                     c.setCliente(cliente);
 
+                    // Detalles
                     c.setDetalles(obtenerDetalles(c.getIdCarrito()));
 
                     lista.add(c);
@@ -319,5 +321,41 @@ public class CarritoDAO {
             e.printStackTrace();
             return false;
         }
+    }
+    
+    // 🔹 Obtener solo los carritos con estadoEntrega = 'ENTREGADO'
+    public List<Carrito> obtenerCarritosEntregados() {
+        List<Carrito> lista = new ArrayList<>();
+        try {
+            String sql = "SELECT c.*, cl.nombre, cl.apellido " +
+                         "FROM carrito c " +
+                         "INNER JOIN cliente cl ON c.idCliente = cl.idCliente " +
+                         "WHERE c.estado = 'CERRADO' AND c.estadoEntrega = 'ENTREGADO' " +
+                         "ORDER BY c.fecha DESC";
+
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    Carrito c = new Carrito();
+                    c.setIdCarrito(rs.getInt("idCarrito"));
+                    c.setIdCliente(rs.getInt("idCliente"));
+                    c.setTotal(rs.getBigDecimal("total"));
+                    c.setEstado(rs.getString("estado"));
+                    c.setEstadoEntrega(rs.getString("estadoEntrega"));
+                    c.setFecha(rs.getTimestamp("fecha"));
+
+                    // === Datos del cliente ===
+                    Cliente cliente = new Cliente();
+                    cliente.setNombre(rs.getString("nombre"));
+                    cliente.setApellido(rs.getString("apellido"));
+                    c.setCliente(cliente);
+
+                    lista.add(c);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return lista;
     }
 }

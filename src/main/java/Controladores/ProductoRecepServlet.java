@@ -41,12 +41,19 @@ public class ProductoRecepServlet extends HttpServlet {
             switch (accion) {
                 case "listar":
                     // Obtiene la lista de carritos con estado "CERRADO"
-                    List<Carrito> listaCarritos = carritoDAO.obtenerCarritosCerrados();
+                    List<Carrito> listaCarritos = carritoDAO.obtenerCarritosEnProceso();
                     request.setAttribute("listaCarritos", listaCarritos);
                     // Redirige a la vista del recepcionista
                     request.getRequestDispatcher("/VistasWeb/VistasRecep/GestionProductosR.jsp").forward(request, response);
                     break;
-
+                    
+                case "listarEntregados":
+                    List<Carrito> entregados = carritoDAO.obtenerCarritosEntregados();
+                    request.setAttribute("listaCarritos", entregados);
+                    request.getRequestDispatcher("/VistasWeb/VistasAdmin/CarritosEntregados.jsp")
+                           .forward(request, response);
+                    break;
+                    
                 default:
                     // Si la acción no coincide con ninguna, redirige a la página principal
                     response.sendRedirect("VistasRecep/GestionProductosR.jsp");

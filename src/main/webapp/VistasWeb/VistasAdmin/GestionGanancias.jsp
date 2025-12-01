@@ -318,6 +318,11 @@
                         </a>
                     </li>
                     <li class="nav-link">
+                        <a href="<%= request.getContextPath() %>/ProductoRecepServlet?accion=listarEntregados">
+                            <i class='bx bx-check-circle icon'></i><span class="text">Productos Entregados</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
                         <a href="#"><i class='bx bx-cog icon'></i><span class="text">Ajustes</span></a>
                     </li>
                     <li class="nav-link">

@@ -1,6 +1,8 @@
-<%@ include file="/proteger.jsp" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.*, Modelo.Carrito" %>
+<%@page import="java.text.SimpleDateFormat"%>
 
+<!DOCTYPE html>
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -8,7 +10,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>VeterinariaSantaCruz</title>
         <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="../../css/ModoNoche-Sidebar.css">  
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/css/ModoNoche-Sidebar.css"> 
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/css/CarritosEntregados.css"> 
     </head>
     <body>
         <nav class="sidebar">
@@ -55,21 +58,66 @@
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="#"><i class='bx bx-cog icon'></i><span class="text">Ajustes</span></a>
-                    </li>
-                    <li class="nav-link">
                         <a href="<%= request.getContextPath() %>/ProductoRecepServlet?accion=listarEntregados">
                             <i class='bx bx-check-circle icon'></i><span class="text">Productos Entregados</span>
                         </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="#"><i class='bx bx-cog icon'></i><span class="text">Ajustes</span></a>
                     </li>
                     <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/LogoutServlet">
                             <i class='bx bx-log-out icon'></i><span class="text">Salir</span>
                         </a>
                     </li>
+
                 </ul>
             </div>
         </nav>
+                            
+        <div class="title-container">
+            <h2>Carritos con Productos ENTREGADOS</h2>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th>Fecha</th>
+                    <th>Estado Entrega</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <%
+                    List<Carrito> lista = (List<Carrito>) request.getAttribute("listaCarritos");
+                    if (lista != null && !lista.isEmpty()) {
+                        for (Carrito c : lista) {
+                %>
+                    <tr>
+                        <td><%= c.getCliente().getNombre() %> <%= c.getCliente().getApellido() %></td>
+                        <td>S/ <%= c.getTotal() %></td>
+                                                <td>
+                            <%
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                String fechaFormateada = sdf.format(c.getFecha());
+                            %>
+                            <%= fechaFormateada %>
+                        </td>
+                        <td><span class="ok"><%= c.getEstadoEntrega() %></span></td>
+                    </tr>
+                <%      }
+                    } else {
+                %>
+                    <tr><td colspan="5" style="text-align:center;">No hay carritos entregados.</td></tr>
+                <% } %>
+                </tbody>
+            </table>
+        </div>                   
+                            
+                            
         <button id="modoNocheBtn" class="modo-noche-flotante" aria-label="Cambiar a modo noche">?</button>
         <script src="<%= request.getContextPath()%>/Js/JsAdmin/ModoNoche-Sidebar.js"></script>
     </body>

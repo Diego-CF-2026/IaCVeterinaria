@@ -4,7 +4,7 @@
 <%@page import="Modelo.Carrito"%>
 <%@page import="Modelo.DetalleCarrito"%>
 <%@page import="Modelo.Producto"%>
-
+<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.List"%>
 
 
@@ -90,7 +90,13 @@
                         <td><%= c.getCliente().getNombre() %> <%= c.getCliente().getApellido() %></td>
                         <td>S/ <%= c.getTotal() %></td>
                         <td class="<%= c.getEstado().equals("CERRADO") ? "estado-cerrado" : "estado-abierto" %>"><%= c.getEstado() %></td>
-                        <td><%= c.getFecha() %></td>
+                        <td>
+                            <%
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                String fechaFormateada = sdf.format(c.getFecha());
+                            %>
+                            <%= fechaFormateada %>
+                        </td>
                         
                         <td>
                             <%= c.getEstadoEntrega() != null ? c.getEstadoEntrega() : "EN PROCESO" %>
