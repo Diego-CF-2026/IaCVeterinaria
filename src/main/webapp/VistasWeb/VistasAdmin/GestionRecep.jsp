@@ -193,8 +193,6 @@
                     </div>
                 </div>
             </div>
-                            
-//este modal se encarga de editar el recepcionista
 
             <div class="modal" id="modalEditarRecepcionista"">
                 <!-- en ambos modales -->
