@@ -8,9 +8,394 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Productos Veterinaria PetCare</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/productos.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
         <style>
+            /* ===== MODALES CARRITO / CONFIRMACIÓN ===== */
+            /* ==== RESET Y FUENTE ==== */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            html, body {
+                height: 100%;
+                background-color: #ffffff;
+                font-family: 'Poppins', sans-serif;
+                color: #2c3e50;
+                line-height: 1.6;
+            }
+
+            /* ==== NAVBAR ==== */
+            .navbar {
+                max-width: 100%;
+                margin: 0 auto;
+                padding: 0 30px;
+                height: 80px;
+                background-color: #ffffff;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                position: relative;
+                z-index: 15;
+            }
+            .logo-container {
+                display: flex;
+                align-items: center;
+                flex: 1;
+            }
+            .logo {
+                height: 45px;
+            }
+            .hamburger {
+                display: none;
+                flex-direction: column;
+                gap: 5px;
+                cursor: pointer;
+                z-index: 20;
+                transition: transform 0.4s;
+            }
+            .hamburger span {
+                width: 25px;
+                height: 3px;
+                background: #2c3e50;
+                border-radius: 2px;
+                transition: 0.4s;
+            }
+            .nav-links {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex: 2;
+            }
+            .center-links {
+                display: flex;
+                gap: 40px;
+            }
+            .center-links a {
+                text-decoration: none;
+                color: #2c3e50;
+                font-family: 'Times New Roman', serif;
+                font-size: 16px;
+                transition: color 0.3s;
+                padding: 0px 30px;
+            }
+            .center-links a:hover,
+            .center-links a.active-link {
+                color: #000;
+                border-bottom: 2px solid #000 !important;
+                font-weight: 600;
+            }
+            .buttons {
+                display: flex;
+                gap: 10px;
+            }
+
+            .btn {
+                padding: 10px 25px;
+                border-radius: 15px;
+                font-family: 'Times New Roman', serif;
+                font-size: 16px;
+                text-align: center;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+            }
+            .perfil {
+                background-color: #000 !important;
+                color: #fff !important;
+            }
+            .perfil:hover {
+                background-color: #222 !important;
+                color: #fff !important;
+            }
+
+            /* ==== HERO SECTION ==== */
+            .hero {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 40px;
+                padding: 40px 20px;
+                max-width: 1200px;
+                margin: 50px auto;
+                background: none;
+            }
+            .hero-img img {
+                width: 350px;
+                border-radius: 15px;
+                box-shadow: 0 10px 25px rgba(58,175,169,0.4);
+            }
+            .hero-text {
+                max-width: 600px;
+            }
+            .hero-text h2 {
+                font-size: 2.8rem;
+                color: #2c3e50;
+                margin-bottom: 20px;
+            }
+            .hero-text p {
+                font-size: 1.2rem;
+                color: #556f7a;
+            }
+
+            /* ==== CATEGORÍAS ==== */
+            .categorias {
+                margin-bottom: 50px;
+                max-width: 1200px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .categorias h3 {
+                text-align: center;
+                margin-bottom: 25px;
+                color: #2c3e50;
+                font-size: 2rem;
+            }
+            .categorias-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 30px;
+                justify-items: center;
+            }
+            .categoria-card {
+                background-color: #E6EFF1;
+                border-radius: 15px;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+                padding: 20px;
+                width: 160px;
+                text-align: center;
+                cursor: pointer;
+                transition: transform 0.3s ease;
+            }
+            .categoria-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            }
+            .categoria-card img {
+                width: 80px;
+                margin-bottom: 15px;
+            }
+            .categoria-card h4 {
+                color: #3aafa9;
+                font-weight: 600;
+            }
+
+            /* ==== PRODUCTOS ==== */
+            .productos {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 30px;
+                max-width: 1200px;
+                margin: 0 auto 10px auto;
+            }
+            .producto-card {
+                background-color: #E6EFF1;
+                border-radius: 15px;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                transition: transform 0.3s ease;
+                text-align: center;
+            }
+            .producto-card:hover {
+                transform: translateY(-10px) scale(1.03);
+                box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            }
+            .producto-img img {
+                width: 100%;
+                max-height: 180px;
+                object-fit: contain;
+                border-radius: 10px;
+                margin-bottom: 15px;
+            }
+            .producto-card h3 {
+                font-size: 1.3rem;
+                margin-bottom: 10px;
+                color: #2c3e50;
+            }
+            .producto-card p {
+                color: #556f7a;
+                margin-bottom: 10px;
+            }
+            .precio {
+                font-weight: 700;
+                font-size: 1.2rem;
+                color: #3aafa9;
+                margin-bottom: 15px;
+            }
+            .producto-card button {
+                background-color: #3aafa9;
+                color: white;
+                border: none;
+                padding: 10px 25px;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: background-color 0.3s ease;
+            }
+            .producto-card button:hover {
+                background-color: #2c7a7b;
+            }
+            .btn-agregar { /* Mismo estilo que .producto-card button */
+                background-color: #3aafa9;
+                color: white;
+                border: none;
+                padding: 10px 25px;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: background-color 0.3s ease;
+            }
+            .btn-agregar:hover { /* Mismo estilo que .producto-card button:hover */
+                background-color: #2c7a7b;
+            }
+
+
+            /* ==== CONSEJOS ==== */
+            .consejos {
+                padding: 80px 20px;
+                background-color: #E6EFF1;
+                padding: 40px 20px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                max-width: 900px;
+                margin: 0 auto 10px auto;
+              
+            }
+            .consejos h3 {
+                text-align: center;
+                margin-bottom: 25px;
+                color: #2c3e50;
+                font-size: 2rem;
+            }
+            .consejos ul {
+                list-style: none;
+                color: #556f7a;
+                font-size: 1.1rem;
+                padding-left: 20px;
+            }
+            .consejos ul li {
+                margin-bottom: 20px;
+                position: relative;
+            }
+            .consejos ul li::before {
+                content: "✔";
+                position: relative;
+                left: 0;
+                color: #3aafa9;
+                font-weight: 700;
+            }
+
+            /* ==== TESTIMONIOS ==== */
+            .testimonios {
+                max-width: 900px;
+                margin: 0 auto 5px auto;
+            }
+            .testimonios h3 {
+                text-align: center;
+                margin-bottom: 30px;
+                color: #2c3e50;
+                font-size: 2rem;
+            }
+            .testimonio-card {
+                background-color: #E6EFF1;
+                padding: 25px 30px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                font-style: italic;
+                color: #444;
+                position: relative;
+                margin-bottom: 20px;
+            }
+            .testimonio-card span {
+                display: block;
+                margin-top: 15px;
+                font-weight: 700;
+                color: #3aafa9;
+                text-align: right;
+            }
+
+            /* ==== FOOTER ==== */
+            footer {
+                padding-top: 200px;
+                background-color: #2c3e50;
+                color: #def2f1;
+                padding: 30px 20px;
+                text-align: center;
+                font-size: 1rem;
+            }
+
+            .redes-sociales span {
+                color: #def2f1;
+                margin: 0 10px;
+                font-weight: 600;
+                background: #3a4a5d;
+                border-radius: 50%;
+                padding: 8px 15px;
+                display: inline-block;
+                font-size: 1rem;
+                letter-spacing: 1px;
+            }
+            .redes-sociales span:hover {
+                background: #3aafa9;
+                color: #fff;
+            }
+
+            /* ==== SIDEBAR PERFIL ==== */
+            .sidebar-perfil {
+                display: none;
+                position: fixed;
+                top: 0; right: 0;
+                width: 280px;
+                height: 100%;
+                background-color: #fff;
+                box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+                z-index: 2000;
+                padding-top: 50px;
+                overflow-y: auto;
+                transition: transform 0.3s ease;
+                transform: translateX(100%);
+            }
+            .sidebar-perfil.active {
+                display: block;
+                transform: translateX(0);
+            }
+            .sidebar-perfil h2 {
+                margin: 0 0 20px 20px;
+                font-weight: 600;
+                font-size: 22px;
+            }
+            .sidebar-perfil a {
+                display: block;
+                padding: 15px 25px;
+                color: #333;
+                text-decoration: none;
+                border-bottom: 1px solid #eee;
+                font-size: 16px;
+                transition: background-color 0.2s;
+            }
+            .sidebar-perfil a:hover {
+                background-color: #f0f0f0;
+            }
+
+            /* ==== OVERLAY PARA SIDEBAR PERFIL ==== */
+            #sidebarOverlay {
+                display: none;
+                position: fixed;
+                top: 0; left: 0;
+                width: 100vw; height: 100vh;
+                background-color: rgba(0,0,0,0.4);
+                z-index: 1500;
+            }
+            #sidebarOverlay.active {
+                display: block;
+                opacity: 1;
+            }
+
             /* ===== MODALES CARRITO / CONFIRMACIÓN ===== */
             .modal {
                 display: none;
@@ -138,7 +523,7 @@
                 border-radius: 6px;
                 margin-right: 8px;
             }
-            .btn-finalizar, .btn-regresar {
+            .btn-finalizar {
                 background: #2bb673;
                 color: #fff;
                 border: none;
@@ -155,6 +540,14 @@
             }
             .btn-regresar {
                 background: #777;
+                color: #fff;
+                border: none;
+                padding: .9rem 1.5rem;
+                border-radius: 7px;
+                cursor: pointer;
+                font-weight: bold;
+                font-size: 1.08rem;
+                transition: background 0.2s;
             }
             .btn-regresar:hover {
                 background: #444;
@@ -179,7 +572,7 @@
                 gap: 1rem;
             }
 
-            /* ===== BOTÓN MODO NOCHE ===== */
+            /* ===== BOTÓN MODO NOCHE FLOTANTE ===== */
             .modo-noche-flotante {
                 position: fixed;
                 bottom: 25px;
@@ -207,21 +600,12 @@
                 box-shadow: 0 6px 14px rgba(0,0,0,0.45);
             }
 
-            @media (max-width: 768px) {
-                .modo-noche-flotante {
-                    bottom: 18px;
-                    right: 18px;
-                    width: 40px;
-                    height: 40px;
-                    font-size: 18px;
-                }
-            }
 
             /* ========= MODO NOCHE PARA ESTA PÁGINA ========= */
 
             /* Fondo general */
             body.modo-noche {
-                background-color: #18191A;
+                background-color: #18191A !important; 
                 color: #f5f5f5;
             }
 
@@ -239,8 +623,8 @@
                 border-bottom-color: #ffffff;
             }
             body.modo-noche .btn.perfil {
-                background-color: #000 !important;
-                color: #fff !important;
+                background-color: #000 ;
+                color: #fff ;
             }
 
             /* Hero productos */
@@ -254,52 +638,125 @@
 
             /* Cards de productos */
             body.modo-noche .productos {
-                background-color: transparent;
+                /* 1. Aseguramos que el contenedor sea negro */
+                background-color: #18191A !important;
+                max-width: 100vw !important; /* O usar 100% si el padre tiene ancho completo */
+                gap: 30px;
+                padding: 150px; /* Añade un padding si es necesario para separar del borde de la pantalla */
             }
             body.modo-noche .producto-card {
-                background-color: #242526;
+                /* Fusionado de #242526 y #1f1f1f en la respuesta anterior */
+                background-color: #1f1f1f !important;
                 border: 1px solid #3a3b3c;
-                box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+                color: #f1f1f1; 
+                border-radius: 15px;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             }
             body.modo-noche .producto-card h4 {
-                color: #f9fafb;
+                color: #f9fafb; /* Fusionado */
             }
             body.modo-noche .producto-card p {
-                color: #e5e7eb;
+                color: #e5e7eb; /* Fusionado */
             }
             body.modo-noche .producto-card .precio {
-                color: #facc15;
+                color: #facc15; /* Fusionado de #facc15 y #f1f1f1 (se prioriza color de énfasis) */
             }
-            body.modo-noche .btn-agregar {
-                background-color: #2563eb;
-                color: #f9fafb;
+            body.modo-noche .producto-card img {
+                filter: brightness(0.85); /* Tomado de #1f1f1f */
             }
-            body.modo-noche .btn-agregar:hover {
-                background-color: #1d4ed8;
+            body.modo-noche .btn-agregar { /* Estilo unificado para botón */
+                background-color: #333; /* Tomado de #1f1f1f */
+                color: white; /* Tomado de #1f1f1f */
+                border: 1px solid #555; /* Tomado de #1f1f1f */
+            }
+            body.modo-noche .btn-agregar:hover { /* Estilo unificado para botón */
+                background-color: #444; /* Tomado de #1f1f1f */
             }
 
             /* Consejos y testimonios */
             body.modo-noche .consejos {
-                background-color: #020617;
-                border-radius: 18px;
+                background-color: #1e1e1e;
+                color: #ffffff;
+                border-radius: 10px;
+                padding: 40px 20px; 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+                /* Para que el contenedor ocupe todo el ancho de la página, como pediste antes */
+                max-width: none !important; 
+                margin-left: 0 !important;  
+                margin-right: 0 !important;
+            }
+            
+            body.modo-noche .consejos ul {
+                padding-left: 0 !important; /* Fuerza el contenido a la izquierda */
+                list-style: none;
+                padding-left: 150px;
             }
             body.modo-noche .consejos h3,
             body.modo-noche .consejos li {
                 color: #e5e7eb;
             }
+            
+            body.modo-noche .consejos ul li {
+                color: #e5e7eb;
+                margin-bottom: 20px;
+                position: relative; 
+                /* Agregamos padding IZQUIERDO al <li> para darle espacio al "tick" */
+                padding-left: 180px;
+            }
+            
+            body.modo-noche .consejos ul li::before {
+                padding-left: 150px;
+                content: "✔";
+                position: absolute;
+                /* Colocamos el ícono a 0px del padding-left del <li> */
+                left: 0px; 
+                color: #4c8bf5; /* Color azul de tu imagen */
+                font-weight: 700;
+                font-size: 1.1rem;
+            }
             body.modo-noche .testimonios {
-                background-color: transparent;
+                /* Eliminamos el max-width para esta prueba y centramos si es necesario */
+                max-width: none !important;
+                margin-left: 0 !important;
+                margin-right: 0px !important;
+                padding-top: 50px; /* Separación superior */
+                padding-bottom: 50px; /* Separación inferior */
+                background-color: #18191A !important; /* Aseguramos que el fondo sea negro */
+                
+            }
+            body.modo-noche .testimonios h3 {
+                color: #f5f5f5; /* Aseguramos que el título sea blanco/claro */
+                text-align: center;
             }
             body.modo-noche .testimonio-card {
-                background-color: #111827;
-                color: #e5e7eb;
-                border: 1px solid #1f2937;
+                background-color: #1e1e1e;
+                color: #f1f1f1;
+                border-color: #333;
+                /* Ajustes adicionales para la sombra de la imagen */
+                box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            }
+            body.modo-noche .testimonio-card span {
+                color: #aaa;
             }
 
             /* Footer */
             body.modo-noche footer {
                 background-color: #020617;
                 color: #9ca3af;
+                max-width: none !important; 
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                padding-left: 20px !important;
+                padding-right: 20px !important;
+            }
+            body.modo-noche .redes-sociales span { /* Asegurar estilo de redes en footer */
+                background: #1f2937;
+                color: #fff;
+            }
+            body.modo-noche .redes-sociales span:hover {
+                background: #3aafa9;
             }
 
             /* Sidebar perfil oscuro */
@@ -318,18 +775,131 @@
             /* Modales en modo noche */
             body.modo-noche .modal-content,
             body.modo-noche .modal-contenido {
-                background-color: #111827;
-                color: #f9fafb;
-                border: 1px solid #1f2937;
+                background-color: #242526;
+                color: #f5f5f5;
+                border: 1px solid #3a3b3c;
             }
             body.modo-noche .cerrar-modal {
-                color: #e5e7eb;
+                color: #ccc;
+            }
+            body.modo-noche .modal-btn { /* Botones modales */
+                background: #5cb85c;
+            }
+            body.modo-noche .modal-btn:hover {
+                background: #449d44;
+            }
+            body.modo-noche .btn-cancelar {
+                background: #d9534f;
+            }
+            body.modo-noche .btn-cancelar:hover {
+                background: #c9302c;
+            }
+            body.modo-noche .btn-finalizar {
+                background: #2bb673;
+            }
+            body.modo-noche .btn-finalizar:hover {
+                background: #228e59;
+            }
+            body.modo-noche .btn-regresar {
+                background: #777;
+            }
+            body.modo-noche .btn-regresar:hover {
+                background: #444;
+            }
+            body.modo-noche .btn-eliminar {
+                background: #ff5555;
+            }
+            body.modo-noche .btn-eliminar:hover {
+                background: #d22;
             }
 
             /* Botón flotante en modo noche */
             body.modo-noche .modo-noche-flotante {
                 background-color: #f9fafb;
                 color: #111827;
+                box-shadow: 0 4px 10px rgba(255,255,255,0.3);
+            }
+            body.modo-noche .modo-noche-flotante:hover {
+                background-color: #e0e0e0;
+                box-shadow: 0 6px 14px rgba(255,255,255,0.45);
+            }
+
+
+            /* ==== RESPONSIVE ==== */
+            @media (max-width: 900px) {
+                .hamburger {
+                    display: flex;
+                }
+                .nav-links {
+                    flex-direction: column;
+                    align-items: center;
+                    background-color: #fff;
+                    position: absolute;
+                    top: 80px;
+                    left: 0;
+                    right: 0;
+                    overflow: hidden;
+                    max-height: 0;
+                    transition: max-height 0.4s ease;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    z-index: 20;
+                }
+                .nav-links.active {
+                    max-height: 600px;
+                    padding: 20px 0;
+                }
+                .center-links {
+                    flex-direction: column;
+                    gap: 20px;
+                    margin-bottom: 20px;
+                }
+                .buttons {
+                    flex-direction: column;
+                    gap: 15px;
+                }
+                .btn {
+                    width: 220px;
+                }
+                .logo-container {
+                    justify-content: center;
+                    flex: none;
+                    position: absolute;
+                    left: 50%;
+                    transform: translateX(-50%);
+                }
+                .hero {
+                    flex-direction: column;
+                    gap: 20px;
+                    padding: 20px;
+                }
+                .hero-img img {
+                    width: 100%;
+                    max-width: 350px;
+                }
+                .hero-text {
+                    max-width: 100%;
+                    text-align: center;
+                }
+                .categorias-grid {
+                    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                    gap: 20px;
+                }
+
+                .consejos ul {
+                    padding-left: 10px;
+                }
+                .testimonio-card {
+                    padding: 20px;
+                    margin: 0 10px 20px 10px;
+                }
+
+                .modo-noche-flotante {
+                    bottom: 18px;
+                    right: 18px;
+                    width: 40px;
+                    height: 40px;
+                    font-size: 18px;
+                }
             }
             
         </style>
@@ -449,7 +1019,7 @@
                 <p>"Los medicamentos antipulgas funcionan perfecto y a buen precio. Recomendado."</p>
                 <span>- Laura R.</span>
             </div>
-        </section>
+        </section> 
 
         <footer>
             <div class="container footer-container">
