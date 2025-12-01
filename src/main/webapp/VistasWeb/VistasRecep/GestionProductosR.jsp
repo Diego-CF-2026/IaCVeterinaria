@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ include file="/proteger.jsp" %>
 <%@page import="java.util.List"%>
 <%@page import="Modelo.Carrito"%>
 <%@page import="Modelo.DetalleCarrito"%>
@@ -72,7 +73,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ID Cliente</th>
+                        <th>Nombre Cliente</th>
                         <th>Total</th>
                         <th>Estado</th>
                         <th>Fecha</th>
