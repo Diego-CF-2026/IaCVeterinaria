@@ -6,7 +6,6 @@ public class Administrador {
     private String nombreAdmin;
     private String apellidoAdmin;
 
-
     // Constructor vacío
     public Administrador() {
     }
@@ -17,9 +16,9 @@ public class Administrador {
         this.nombreAdmin = nombre;
         this.apellidoAdmin = apellido;
     }
-//geters and sethers
+
     public int getIdAdmin() {
-        return idAdmin;
+        return idAdmin;  //geters and sethers
     }
 
     public void setIdAdmin(int idAdmin) {

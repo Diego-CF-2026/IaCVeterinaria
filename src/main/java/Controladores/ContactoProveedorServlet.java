@@ -48,24 +48,19 @@ public class ContactoProveedorServlet extends HttpServlet {
                     break;
             }
 
-        } catch (Exception e) {
-            // 🔹 Manejo de excepción general por seguridad
-            e.printStackTrace();
+        } catch (Exception e) {   
+            e.printStackTrace();   // 🔹 Manejo de excepción general por seguridad
         }
 
-        // 🔹 Redireccionar siempre al detalle del proveedor
-        if (idProveedor != null && idProveedor.matches("\\d+")) {
-            // 🔹 Mantener modal abierto en la vista del proveedor
-            response.sendRedirect("ProveedorServlet?accion=ver&id=" + idProveedor);
+        if (idProveedor != null && idProveedor.matches("\\d+")) {                            // 🔹 Redireccionar siempre al detalle del proveedor
+            response.sendRedirect("ProveedorServlet?accion=ver&id=" + idProveedor);           // 🔹 Mantener modal abierto en la vista del proveedor
         } else {
-            // 🔹 Redirigir a lista general de proveedores si no hay id válido
-            response.sendRedirect("ProveedorServlet?accion=listar");
+            response.sendRedirect("ProveedorServlet?accion=listar");        // 🔹 Redirigir a lista general de proveedores si no hay id válido
         }
     }
 
-    private void agregarContacto(HttpServletRequest request, ContactoProveedorDAO dao) {
+    private void agregarContacto(HttpServletRequest request, ContactoProveedorDAO dao) {       // 🔹 Crear objeto contacto y asignar datos del formulario
         try {
-            // 🔹 Crear objeto contacto y asignar datos del formulario
             ContactoProveedor contacto = new ContactoProveedor();
             contacto.setIdProveedor(Integer.parseInt(request.getParameter("idProveedor")));
             contacto.setNombreContacto(request.getParameter("nombreContacto"));
@@ -73,36 +68,10 @@ public class ContactoProveedorServlet extends HttpServlet {
             contacto.setTelefono(request.getParameter("telefono"));
             contacto.setCorreoContacto(request.getParameter("correoContacto"));
 
-            // 🔹 Llamar al DAO para agregar el contacto en la base de datos
-            dao.agregarContacto(contacto);
-
-            // 🔹 Posibles mejoras:
-            // - Validar que el nombre y correo no estén vacíos
-            // - Verificar formato de correo y teléfono
-            // - Manejar duplicados por proveedor
-            // - Notificar al usuario sobre el éxito de la operación
-            // - Guardar logs de auditoría para cambios
-            // - Manejar excepciones específicas (SQL, validación)
-            // - Evitar inyecciones SQL o caracteres no permitidos
-            // - Garantizar que el proveedor exista antes de agregar
-            // - Confirmar ID autogenerado si se necesita
-            // - Posibilidad de enviar email al contacto agregado
-            // - Validar longitud máxima de cada campo
-            // - Usar transacción si se agregan múltiples contactos
-            // - Limitar caracteres especiales en nombre y cargo
-            // - Integración futura con API externa de contactos
-            // - Mostrar mensajes amigables en la JSP
-            // - Manejar sesión caducada del usuario
-            // - Control de concurrencia si se editan simultáneamente
-            // - Documentar cambios para equipo de mantenimiento
-            // - Preparar para futuras internacionalizaciones
-            // - Validar consistencia de datos con tabla proveedor
-            // - Considerar soft delete en lugar de eliminar directo
-            // - Registrar fecha de creación del contacto
-
+            dao.agregarContacto(contacto);   // 🔹 Llamar al DAO para agregar el contacto en la base de datos
+          
         } catch (Exception e) {
-            // 🔹 Manejo de excepciones por seguridad y logging
-            e.printStackTrace();
+            e.printStackTrace();  // 🔹 Manejo de excepciones por seguridad y logging
         }
     }
 
@@ -117,22 +86,7 @@ public class ContactoProveedorServlet extends HttpServlet {
             contacto.setTelefono(request.getParameter("telefono"));
             contacto.setCorreoContacto(request.getParameter("correoContacto"));
 
-            // 🔹 Llamar al DAO para actualizar contacto en base de datos
-            dao.actualizarContacto(contacto);
-
-            // 🔹 Posibles mejoras:
-            // - Validar campos antes de actualizar
-            // - Confirmar existencia del contacto antes de modificar
-            // - Manejar errores por conflictos de datos
-            // - Registrar cambios para auditoría
-            // - Notificar al usuario sobre la actualización exitosa
-            // - Controlar longitud de texto y formato de correo/teléfono
-            // - Implementar logs de sesión para operaciones críticas
-            // - Considerar bloqueo temporal si hay múltiples ediciones simultáneas
-            // - Evitar inyecciones de código en los campos
-            // - Preparar para internacionalización y soporte multilingüe
-            // - Control de transacciones si se actualizan varios contactos
-            // - Documentar cambios en manual de operaciones
+            dao.actualizarContacto(contacto);  // 🔹 Llamar al DAO para actualizar contacto en base de datos
 
         } catch (Exception e) {
             // 🔹 Manejo de excepciones para seguridad y logging
@@ -142,37 +96,13 @@ public class ContactoProveedorServlet extends HttpServlet {
 
     private void eliminarContacto(HttpServletRequest request, ContactoProveedorDAO dao) {
         try {
-            // 🔹 Obtener id del contacto a eliminar
-            int idContacto = Integer.parseInt(request.getParameter("idContacto"));
+            int idContacto = Integer.parseInt(request.getParameter("idContacto"));  // 🔹 Obtener id del contacto a eliminar
 
-            // 🔹 Llamar al DAO para eliminar el contacto de la base de datos
-            dao.eliminarContacto(idContacto);
-
-            // 🔹 Posibles mejoras:
-            // - Confirmar existencia antes de eliminar
-            // - Considerar soft delete en lugar de borrado físico
-            // - Guardar registro de auditoría
-            // - Notificar al usuario sobre la eliminación
-            // - Controlar permisos de usuario antes de eliminar
-            // - Validar sesión activa y rol autorizado
-            // - Evitar errores por id no numérico
-            // - Preparar mensajes de error claros en JSP
-            // - Controlar concurrencia y bloqueos
-            // - Mantener consistencia con proveedor relacionado
-            // - Validar integridad referencial en la base de datos
-            // - Posible desactivación temporal si hay compras asociadas
-            // - Documentar el proceso para mantenimiento
-            // - Implementar logs para debugging futuro
-            // - Preparar para futuras extensiones de API externa
-            // - Manejar excepciones SQL específicas
-            // - Confirmar eliminación exitosa
-            // - Validar que no se eliminen contactos por error
-            // - Notificar vía correo si es relevante
-            // - Control de tamaño de datos eliminados si es histórico
+            dao.eliminarContacto(idContacto);  // 🔹 Llamar al DAO para eliminar el contacto de la base de datos
 
         } catch (Exception e) {
-            // 🔹 Manejo de errores de forma segura
-            e.printStackTrace();
+            
+            e.printStackTrace();  // 🔹 Manejo de errores de forma segura
         }
     }
 }

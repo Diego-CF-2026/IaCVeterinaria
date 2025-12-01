@@ -204,18 +204,14 @@ public class VeterinarioCitasServlet extends HttpServlet {
             }
 
         } catch (NumberFormatException e) {
-            // Captura si idCita no es un número válido.
-             request.getSession().setAttribute("alertaError", "Error de formato de ID. Verifique los datos.");
+             request.getSession().setAttribute("alertaError", "Error de formato de ID. Verifique los datos.");  // Captura si idCita no es un número válido.
         } catch (IllegalArgumentException e) {
-            // Captura si Date.valueOf o Time.valueOf fallan (formato incorrecto).
-             request.getSession().setAttribute("alertaError", "Error de formato de fecha/hora. Use YYYY-MM-DD y HH:MM.");
+             request.getSession().setAttribute("alertaError", "Error de formato de fecha/hora. Use YYYY-MM-DD y HH:MM.");   // Captura si Date.valueOf o Time.valueOf fallan (formato incorrecto).
         } catch (Exception e) {
-            // Captura cualquier otra excepción (ej. error de base de datos)
             e.printStackTrace();
-            request.getSession().setAttribute("alertaError", "Excepción al reprogramar: " + e.getMessage());
+            request.getSession().setAttribute("alertaError", "Excepción al reprogramar: " + e.getMessage());   // Captura cualquier otra excepción (ej. error de base de datos)
         }
 
-        // Redirigir para evitar el reenvío del formulario.
         response.sendRedirect("VeterinarioCitasServlet");
     }
 }

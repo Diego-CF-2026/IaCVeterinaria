@@ -26,17 +26,11 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.format.DateTimeParseException; // Para manejo de errores de formato de tiempo (aunque SimpleDateFormat maneja ParseException)
 
-// =================================================================
-// 🧬 Importaciones de Modelos (Entidades)
-// =================================================================
 import Modelo.Cita;
 import Modelo.Usuario; // Entidad de sesión
 import Modelo.Cliente; // Entidad de datos de cliente
 import Modelo.Especialidad; // Entidad para el formulario
 
-// =================================================================
-// 🗄️ Importaciones de DAOs (Acceso a Datos)
-// =================================================================
 import ModeloDAO.CitaDAO;
 import ModeloDAO.VeterinarioDAO; // Aunque no se usa directamente en GET/POST, es bueno tenerlo
 import ModeloDAO.ClienteDAO;
@@ -63,9 +57,6 @@ public class UsuarioCitasServlet extends HttpServlet {
     private static final SimpleDateFormat SDF_FECHA = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat SDF_HORA = new SimpleDateFormat("HH:mm");
 
-    // =================================================================
-    // 🌍 MÉTODO GET: Cargar el Formulario de Citas
-    // =================================================================
     /**
      * Prepara y envía los datos necesarios para mostrar la vista del formulario de reserva de citas.
      */
@@ -123,9 +114,6 @@ public class UsuarioCitasServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-    // =================================================================
-    // 💾 MÉTODO POST: Procesar Registro de Nueva Cita
-    // =================================================================
     /**
      * Maneja el envío del formulario para crear una nueva cita en la base de datos.
      */
@@ -216,15 +204,13 @@ public class UsuarioCitasServlet extends HttpServlet {
                 LOGGER.log(Level.SEVERE, "❌ Error al registrar cita (ID Veterinario o Precio no válido).", e);
                 mensaje = "❌ Error de formato: El veterinario o el precio tienen un formato inválido.";
             } catch (Exception e) {
-                // Captura cualquier otro error (ej. error de DB, error de I/O)
-                LOGGER.log(Level.SEVERE, "❌ Error general al registrar cita.", e);
+                LOGGER.log(Level.SEVERE, "❌ Error general al registrar cita.", e);  // Captura cualquier otro error (ej. error de DB, error de I/O)
             }
             
             // Si el flujo de ejecución llega aquí (después de un catch), redirige con el mensaje de error capturado
             response.sendRedirect("UsuarioCitasServlet?mensaje=" + java.net.URLEncoder.encode(mensaje, "UTF-8"));
         } else {
-            // Si la acción no es "registrar" o es inválida, redirige al formulario principal.
-            response.sendRedirect("UsuarioCitasServlet");
+            response.sendRedirect("UsuarioCitasServlet");  // Si la acción no es "registrar" o es inválida, redirige al formulario principal.
         }
     }
 }

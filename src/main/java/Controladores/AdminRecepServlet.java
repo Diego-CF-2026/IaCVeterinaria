@@ -51,46 +51,33 @@ public class AdminRecepServlet extends HttpServlet {
             cargarLista(request);
             
         } else if (accion.equals("guardar")) {
-            // 1) Guardar nuevo registro
-            String resultado = agregarRecepcionista(request);
-            // 2) Recargar lista para mostrar cambios
-            cargarLista(request); 
-            // 3) Exponer mensaje en request (éxito/error)
-            mostrarResultado(request, resultado, "registro");
+            
+            String resultado = agregarRecepcionista(request); // 1) Guardar nuevo registro
+
+            cargarLista(request); // 2) Recargar lista para mostrar cambios
+
+            mostrarResultado(request, resultado, "registro");  // 3) Exponer mensaje en request (éxito/error)
             
         } else if (accion.equals("actualizar")) {
-            // 1) Actualizar registro existente
-            String resultado = actualizarRecepcionista(request);
-            // 2) Recargar lista
-            cargarLista(request);
-            // 3) Mensaje de feedback
-            mostrarResultado(request, resultado, "actualización");
+            String resultado = actualizarRecepcionista(request);  // 1) Actualizar registro existente
+            cargarLista(request); // 2) Recargar lista
+            mostrarResultado(request, resultado, "actualización"); // 3) Mensaje de feedback
             
         } else if (accion.equals("desactivar")) { 
-            // 🔴 Desactiva (Estado = FALSE) el usuario/recepcionista indicado
-            String resultado = desactivarRecepcionista(request);
-            // 2) Recargar lista
-            cargarLista(request);
-            // 3) Mensaje
-            mostrarResultado(request, resultado, "desactivación");
+            String resultado = desactivarRecepcionista(request); // 🔴 Desactiva (Estado = FALSE) el usuario/recepcionista indicado
+            cargarLista(request); // 2) Recargar lista
+            mostrarResultado(request, resultado, "desactivación");  // 3) Mensaje
             
         } else if (accion.equals("activar")) { 
-            // 🟢 Activa (Estado = TRUE) el usuario/recepcionista indicado
-            String resultado = activarRecepcionista(request);
-            // 2) Recargar lista
-            cargarLista(request);
-            // 3) Mensaje
-            mostrarResultado(request, resultado, "activación");
+            String resultado = activarRecepcionista(request); // 🟢 Activa (Estado = TRUE) el usuario/recepcionista indicado
+            cargarLista(request);             // 2) Recargar lista
+            mostrarResultado(request, resultado, "activación");              // 3) Mensaje
         }
 
         // Forward a la vista (sin redirect, conserva atributos del request)
         request.getRequestDispatcher(acceso).forward(request, response);
     }
     
-    
-    // --------------------------------------------------------------------------------
-    // --- LÓGICA DE CONTROL ---
-    // --------------------------------------------------------------------------------
     
     /**
      * Carga la lista de recepcionistas desde el DAO y la coloca en el request
@@ -133,19 +120,15 @@ public class AdminRecepServlet extends HttpServlet {
      * @return "ok" si todo va bien, o un indicador de error reconocido por mostrarResultado().
      */
     private String agregarRecepcionista(HttpServletRequest request) {
-        // Mapear datos para Usuario (credenciales)
-        Usuario usuario = new Usuario();
+        Usuario usuario = new Usuario(); // Mapear datos para Usuario (credenciales)
         usuario.setCorreo(request.getParameter("txtCorreo"));
         usuario.setContra(request.getParameter("txtContrasena")); 
         
-        // Mapear datos para Recepcionista (datos personales)
-        Recepcionista recepcionista = new Recepcionista();
+        Recepcionista recepcionista = new Recepcionista();  // Mapear datos para Recepcionista (datos personales)
         recepcionista.setNombreRecepcionista(request.getParameter("txtNombre"));
         recepcionista.setApellidoRecepcionista(request.getParameter("txtApellido"));
         recepcionista.setTelefonoRecepcionista(request.getParameter("txtTelefono"));
-        
-        // Delegar creación a la capa DAO
-        return dao.agregarRecepcionista(usuario, recepcionista);
+        return dao.agregarRecepcionista(usuario, recepcionista); // Delegar creación a la capa DAO
     }
     
     /**
@@ -156,13 +139,11 @@ public class AdminRecepServlet extends HttpServlet {
         try {
             int id = Integer.parseInt(request.getParameter("txtIdUsuario"));
             
-            // Mapear datos de Usuario
-            Usuario usuario = new Usuario();
+            Usuario usuario = new Usuario();             // Mapear datos de Usuario
             usuario.setCorreo(request.getParameter("txtCorreo"));
             usuario.setContra(request.getParameter("txtContrasena")); 
             
-            // Mapear datos de Recepcionista
-            Recepcionista recepcionista = new Recepcionista();
+            Recepcionista recepcionista = new Recepcionista();  // Mapear datos de Recepcionista
             recepcionista.setIdUsuario(id);
             recepcionista.setNombreRecepcionista(request.getParameter("txtNombre"));
             recepcionista.setApellidoRecepcionista(request.getParameter("txtApellido"));

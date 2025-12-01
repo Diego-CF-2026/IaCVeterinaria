@@ -28,13 +28,11 @@
 
         <link href='https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
         <style>
-            
-            
-            
         </style>
        
     </head>
      <body>
+         //sidebar 
        <nav class="sidebar">
             <header>
                 <div class="image-text">
@@ -290,7 +288,7 @@
                 </div>
             </div>
             <% }%>
-
+// modal para agregar proveedores
             <div id="modalAgregarProveedor" class="modal">
                 <div class="modal-content animado">
                     <span class="cerrar" onclick="cerrarModal('modalAgregarProveedor')">&times;</span>
@@ -308,7 +306,7 @@
             </div>
 
         </main>
-
+// modo ncche
         <button id="modoNocheBtn" class="modo-noche-flotante" aria-label="Cambiar a modo noche">🌙</button>
         <script src="<%= request.getContextPath()%>/Js/JsAdmin/ModoNoche-Sidebar.js"></script>
         <script src="<%= request.getContextPath()%>/Js/JsAdmin/GestorProveedores.js"></script>

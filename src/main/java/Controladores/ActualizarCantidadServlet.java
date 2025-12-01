@@ -47,8 +47,7 @@ public class ActualizarCantidadServlet extends HttpServlet {
     public void init() throws ServletException {
         // Obtiene una conexión compartida desde la clase de utilería Conexion
         Connection con = Conexion.getConnection();
-        // Inyecta la conexión en el DAO (responsable de las consultas/actualizaciones)
-        carritoDAO = new CarritoDAO(con);
+        carritoDAO = new CarritoDAO(con);  // Inyecta la conexión en el DAO (responsable de las consultas/actualizaciones)
     }
 
     /**
@@ -71,9 +70,8 @@ public class ActualizarCantidadServlet extends HttpServlet {
         String accion = request.getParameter("accion"); // valores esperados: "sumar" o "restar"
 
         // Delegación de la lógica de negocio/acceso a datos a la capa DAO
-        carritoDAO.actualizarCantidad(idDetalleCarrito, idCarrito, accion);
+        carritoDAO.actualizarCantidad(idDetalleCarrito, idCarrito, accion); // Delegación de la lógica de negocio/acceso a datos a la capa DAO
 
-        // PRG: evita reenvío del formulario al refrescar; vuelve a la vista del historial
-        response.sendRedirect(request.getContextPath() + "/HistorialComprasServlet");
+        response.sendRedirect(request.getContextPath() + "/HistorialComprasServlet"); // PRG: evita reenvío del formulario al refrescar; vuelve a la vista del historial
     }
 }

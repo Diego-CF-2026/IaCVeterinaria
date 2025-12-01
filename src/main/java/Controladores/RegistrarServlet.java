@@ -15,8 +15,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-// ====== SOLO clases estándar, nada de JSON ======
-import java.net.HttpURLConnection;
+import java.net.HttpURLConnection; // ====== SOLO clases estándar, nada de JSON ======
 import java.net.URL;
 import java.net.URLEncoder;
 import java.io.BufferedReader;
@@ -26,12 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-/**
- * Servlet encargado de registrar nuevos usuarios y clientes.
- * 
- * Este servlet captura los datos del formulario de registro,
- * verifica reCAPTCHA, y llama al DAO para insertar en la base de datos.
- */
+
 @WebServlet("/RegistrarServlet")
 public class RegistrarServlet extends HttpServlet {
 
@@ -67,7 +61,6 @@ public class RegistrarServlet extends HttpServlet {
         String valTelefono = StringEscapeUtils.escapeHtml4(telefonoOriginal);
         String valCorreo = StringEscapeUtils.escapeHtml4(correoOriginal);
 
-
         // =========================================================
         // 2. VERIFICACIÓN DE RECAPTCHA
         // =========================================================
@@ -87,24 +80,14 @@ public class RegistrarServlet extends HttpServlet {
             return; // Salimos del método
         }
 
-        // Ya no necesitas la sección "Captura de datos del formulario" (tu sección 2)
-        // porque ya capturamos y sanitizamos los datos arriba (nombresOriginal vs valNombres).
-        // Los campos de Cliente usarán las variables valXXX.
-
-        // =========================================================
-        // 3. MANTENER VALORES EN CASO DE ERROR DE BD
-        // =========================================================
-        // Establecemos los atributos sanitizados, que se usarán en caso de
-        // errores de duplicado (DNI, Correo, Teléfono, etc.)
-        request.setAttribute("valNombres", valNombres);
-        request.setAttribute("valApellidos", valApellidos);
+     
+        request.setAttribute("valNombres", valNombres);   // Ya no necesitas la sección "Captura de datos del formulario" (tu sección 2)
+        request.setAttribute("valApellidos", valApellidos);   // porque ya capturamos y sanitizamos los datos arriba (nombresOriginal vs valNombres).
         request.setAttribute("valDni", valDni);
         request.setAttribute("valTelefono", valTelefono);
         request.setAttribute("valCorreo", valCorreo);
 
-        // =========================================================
-        // 4. CREAR OBJETOS DE MODELO (Usando datos sanitizados o el original si es numérico)
-        // =========================================================
+        
         Usuario usuario = new Usuario();
         usuario.setCorreo(correoOriginal); // El correo no necesita escape para la BD, pero es buena práctica validarlo/sanitizarlo si es para la DB. Usaremos el original aquí.
         usuario.setContra(contrasena);
@@ -118,23 +101,13 @@ public class RegistrarServlet extends HttpServlet {
         cliente.setDni(dniOriginal); // DNI es numérico, no necesita escape para la DB
         cliente.setTelefono(telefonoOriginal); // Teléfono es numérico, no necesita escape para la DB
 
-        // =========================================================
-        // 5. LLAMADA AL DAO PARA INSERTAR EN LA BASE DE DATOS
-        // =========================================================
-        UsuarioDAO dao = new UsuarioDAO();
-        // Aquí debes asegurar que tu DAO esté preparado para manejar la 'contrasena' 
-        // y aplicar BCrypt/hashing seguro ANTES de guardarla en la base de datos.
-        String resultado = dao.insertarCliente(usuario, cliente); 
-
-        // =========================================================
-        // 6. PREPARAR LA RESPUESTA SEGÚN EL RESULTADO
-        // =========================================================
+        UsuarioDAO dao = new UsuarioDAO();   // 5. LLAMADA AL DAO PARA INSERTAR EN LA BASE DE DATOS
+        String resultado = dao.insertarCliente(usuario, cliente);     // y aplicar BCrypt/hashing seguro ANTES de guardarla en la base de datos.
+    
         if ("ok".equals(resultado)) {
             request.setAttribute("exitoRegistro", "ok"); 
         } else {
-            // Si hay un error de DB (duplicado, etc.), se envían los valores sanitizados 
-            // que se establecieron en el paso 3.
-            request.setAttribute("errorRegistro", resultado); 
+            request.setAttribute("errorRegistro", resultado);    // Si hay un error de DB (duplicado, etc.), se envían los valores sanitizados 
         }
 
         // Redirigimos de nuevo a index.jsp

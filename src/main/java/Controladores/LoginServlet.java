@@ -111,18 +111,15 @@ public class LoginServlet extends HttpServlet {
                     break;
 
                 default:
-                    // Rol desconocido
-                    request.setAttribute("errorLogin", "Rol no válido.");
+                    request.setAttribute("errorLogin", "Rol no válido.");    // Rol desconocido
                     request.getRequestDispatcher("index.jsp").forward(request, response);
                     break;
             }
 
         } else {
-            // Manejo de login fallido
-            String mensajeError = "Correo o contraseña incorrectos, o usuario inactivo.";
+            String mensajeError = "Correo o contraseña incorrectos, o usuario inactivo.";   // Manejo de login fallido
 
-            // Incrementar contador de intentos si existe registro previo
-            if (usuarioInfo != null) {
+            if (usuarioInfo != null) {                              // Incrementar contador de intentos si existe registro previo
                 int nuevosIntentos = usuarioDAO.incrementarIntentos(correo);
 
                 // Bloquear usuario si se supera el máximo de intentos
@@ -135,26 +132,10 @@ public class LoginServlet extends HttpServlet {
                 }
             }
 
-            // Enviar mensaje de error al JSP de login
-            request.setAttribute("errorLogin", mensajeError);
+            request.setAttribute("errorLogin", mensajeError);          // Enviar mensaje de error al JSP de login
             request.getRequestDispatcher("index.jsp").forward(request, response);
         }
 
-        // Explicación general:
-        // Se valida bloqueo temporal antes de autenticar
-        // Se reinicia contador si login es exitoso
-        // Se maneja sesión con HttpSession
-        // Se redirige según rol (Administrador, Recepcionista, Cliente, Veterinario)
-        // Se incrementan intentos fallidos y se bloquea temporalmente si es necesario
-        // Se maneja error de rol desconocido y de usuario Veterinario sin registro
-        // Seguridad: contraseña no se almacena en sesión
-        // Todos los flujos terminan con forward o redirect apropiado
-        // Recomendable usar HTTPS para proteger credenciales
-        // Los mensajes de error son amigables y claros para el usuario
-        // Este servlet es el punto central de login y control de sesión inicial
-        // Permite fácilmente agregar más roles en el futuro
-        // Evita crear sesión innecesaria hasta después de login exitoso
-        // Garantiza que los datos de Cliente o Veterinario estén disponibles en sesión
-        // Manejo de tiempo de bloqueo usando Timestamp para control preciso
+        
     }
 }

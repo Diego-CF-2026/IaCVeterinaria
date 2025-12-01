@@ -15,63 +15,43 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Servlet encargado de gestionar la parte de Recepción para la creación
- * y búsqueda de citas de clientes en la veterinaria.
- * 
- * Este servlet funciona como un "intermediario" entre la vista JSP y los DAOs
- * de Cliente, Veterinario y Cita. Las operaciones de guardar o actualizar
- * citas se realizan en CitaServlet, este solo prepara datos y vistas.
- */
+
 @WebServlet("/RecepcionCitaServlet")
 public class RecepcionCitaServlet extends HttpServlet {
 
-    // Logger para registrar información y errores
-    private static final Logger LOGGER = Logger.getLogger(RecepcionCitaServlet.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RecepcionCitaServlet.class.getName());    // Logger para registrar información y errores
 
-    // Instancias de DAOs para acceder a la base de datos
-    ClienteDAO clienteDAO = new ClienteDAO();
+    ClienteDAO clienteDAO = new ClienteDAO();   // Instancias de DAOs para acceder a la base de datos
     VeterinarioDAO veterinarioDAO = new VeterinarioDAO();
     CitaDAO citaDAO = new CitaDAO();
 
-    /**
-     * Método GET principal que determina qué acción ejecutar
-     * según el parámetro "accion" enviado desde la vista.
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Obtenemos el parámetro de acción
-        String accion = request.getParameter("accion");
+        String accion = request.getParameter("accion");  // Obtenemos el parámetro de acción
         if (accion == null || accion.isEmpty()) {
             accion = "buscarCliente"; // Acción por defecto si no se envía ninguna
         }
-
-        // Determinamos la acción a ejecutar
+    
         switch (accion) {
             case "buscarCliente":
             case "verCitas": 
-                // Mostrar la vista principal con el buscador de clientes
-                mostrarBuscador(request, response);
+                mostrarBuscador(request, response);  // Mostrar la vista principal con el buscador de clientes
                 break;
             case "buscar":
-                // Ejecutar la búsqueda de clientes según término ingresado
-                realizarBusqueda(request, response);
+                realizarBusqueda(request, response);   // Ejecutar la búsqueda de clientes según término ingresado
                 break;
             case "seleccionarCliente":
-                // Preparar la vista de creación de cita con el cliente seleccionado
-                prepararCreacionCita(request, response);
-                break;
+                prepararCreacionCita(request, response);  // Preparar la vista de creación de cita con el cliente seleccionado
+                break; 
             case "gestionarCitas":
-                // Redirige al CitaServlet para ver, editar o cancelar citas de un cliente
                 response.sendRedirect(request.getContextPath() 
                         + "/CitaServlet?accion=verCitasCliente&idCliente=" 
-                        + request.getParameter("idCliente"));
+                        + request.getParameter("idCliente"));  // Redirige al CitaServlet para ver, editar o cancelar citas de un cliente
                 break;
             default:
-                // Si la acción no coincide con ninguna, se muestra el buscador
-                mostrarBuscador(request, response);
+                mostrarBuscador(request, response);  // Si la acción no coincide con ninguna, se muestra el buscador
                 break;
         }
     }

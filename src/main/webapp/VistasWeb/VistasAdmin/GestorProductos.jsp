@@ -233,10 +233,10 @@
                 </div>
             </div>
         </main>
-
+//boton modo noche
         <button id="modoNocheBtn" class="modo-noche-flotante">🌙</button>
         <script src="<%= request.getContextPath()%>/Js/JsAdmin/ModoNoche-Sidebar.js"></script>
         <script src="<%= request.getContextPath()%>/Js/JsAdmin/GestorProductos.js"></script>
-        
+//javascript de gestor productos        
     </body>
 </html>

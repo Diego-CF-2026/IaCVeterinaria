@@ -18,6 +18,7 @@
 
     </head>
     <body>
+        //sidebar
         <nav class="sidebar">
             <header>
                 <div class="image-text">
@@ -30,7 +31,7 @@
                     </div>
                 </div>
             </header>
-
+//header
             <div class="menu-bar">
                 <ul class="menu-links">
                     <li class="nav-link ">
@@ -172,7 +173,7 @@
             </c:if>
 
             <div class="modal" id="modalNuevoRecepcionista">
-                <!-- en ambos modales -->
+               //ambos modales
                 <div class="modal-dialog modal-dialog-centered modal-lg">
 
                     <div class="modal-content"> <div class="modal-header bg-success text-white">
@@ -194,6 +195,8 @@
                     </div>
                 </div>
             </div>
+                            
+//este modal se encarga de editar el recepcionista
 
             <div class="modal" id="modalEditarRecepcionista"">
                 <!-- en ambos modales -->
@@ -222,10 +225,9 @@
                 </div>
             </div>
         </main>
+                            //es el boton modo noche
         <button id="modoNocheBtn" class="modo-noche-flotante">🌙</button>
-
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
         <script src="<%= request.getContextPath()%>/Js/JsAdmin/ModoNoche-Sidebar.js"></script>
 
         <script>

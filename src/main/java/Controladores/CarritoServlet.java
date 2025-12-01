@@ -54,8 +54,7 @@ public class CarritoServlet extends HttpServlet {
 
         String accion = request.getParameter("accion");
 
-        // Obtiene la sesión existente sin crear una nueva
-        HttpSession sesion = request.getSession(false);
+        HttpSession sesion = request.getSession(false);   // Obtiene la sesión existente sin crear una nueva
 
         // Validación de autenticación: debe existir "idClienteSesion"
         if (sesion == null || sesion.getAttribute("idClienteSesion") == null) {

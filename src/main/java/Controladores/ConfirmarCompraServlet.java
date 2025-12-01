@@ -48,46 +48,14 @@ public class ConfirmarCompraServlet extends HttpServlet {
             // 🔹 Redirigir al historial de compras mostrando mensaje de éxito
             request.getRequestDispatcher("VistasWeb/VistasCliente/historialdecompras.jsp")
                    .forward(request, response);
-            // 🔹 Posibles mejoras:
-            // - Guardar fecha y hora de confirmación
-            // - Registrar transacción para auditoría
-            // - Enviar correo de confirmación al cliente
-            // - Manejar concurrencia si varios clientes confirman simultáneamente
-            // - Validar que el carrito aún tenga productos antes de confirmar
-            // - Controlar inventario para evitar sobreventa
-            // - Validar que el método de pago exista
-            // - Manejar posibles errores de base de datos
-            // - Integración con sistema de pagos externo
-            // - Control de sesión para verificar cliente logueado
-            // - Registrar usuario que realizó la acción para logs
-            // - Notificar al administrador si hay problemas
-            // - Posibilidad de revertir la compra si falla la transacción
-            // - Limpiar carrito temporal después de confirmar
-            // - Registrar monto total de la compra
-            // - Manejo de impuestos y descuentos si aplica
-            // - Validar que idCarrito y idPago sean positivos
-            // - Preparar para soporte multimoneda en el futuro
-            // - Documentar pasos en manual de operaciones
-            // - Manejar seguridad en los parámetros recibidos
+            
         } else {
             // 🔹 Compra no pudo ser confirmada
             request.setAttribute("compraError", "No se pudo confirmar la compra. Intenta nuevamente.");
             // 🔹 Redirigir al historial de compras con mensaje de error
             request.getRequestDispatcher("VistasWeb/VistasCliente/historialdecompras.jsp")
                    .forward(request, response);
-            // 🔹 Posibles mejoras:
-            // - Diferenciar tipos de error (inventario, pago, conexión)
-            // - Registrar intento fallido en logs
-            // - Notificar al cliente del error vía correo
-            // - Sugerir pasos para corregir problema
-            // - Preparar reintento automático si es temporal
-            // - Validar integridad de datos del carrito antes de intentar
-            // - Mantener consistencia de estado del carrito
-            // - Implementar rollback si se actualizó parcialmente
-            // - Controlar sesión caducada o expirada
-            // - Evitar duplicación de confirmación
-            // - Notificar al administrador si falla repetidamente
-            // - Preparar mensajes amigables para UI
+            
         }
     }
 }

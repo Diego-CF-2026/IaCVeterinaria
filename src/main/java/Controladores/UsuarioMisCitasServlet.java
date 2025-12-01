@@ -13,14 +13,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Servlet encargado de listar todas las citas de un cliente específico.
- * * Funciones principales:
- * 1. Validar la autenticación del cliente a través de la sesión.
- * 2. Cargar las citas pendientes y completadas usando el CitaDAO.
- * 3. Enviar los datos a la vista MisCitas.jsp.
- * * Mapeo: /UsuarioMisCitasServlet
- */
 @WebServlet("/UsuarioMisCitasServlet")
 public class UsuarioMisCitasServlet extends HttpServlet {
 
@@ -30,9 +22,6 @@ public class UsuarioMisCitasServlet extends HttpServlet {
     // Instancia del Data Access Object (DAO) para la gestión de las operaciones de Cita en la base de datos.
     private final CitaDAO citaDAO = new CitaDAO();
 
-    // =========================================================================
-    //                            MÉTODO GET
-    // =========================================================================
     /**
      * Procesa las peticiones GET para mostrar la lista de citas del cliente logueado.
      * * @param request  Objeto HttpServletRequest que contiene la petición del cliente.
@@ -107,9 +96,4 @@ public class UsuarioMisCitasServlet extends HttpServlet {
             request.getRequestDispatcher("/VistasWeb/VistasCliente/MisCitas.jsp").forward(request, response);
         }
     }
-    
-    // Nota: Los métodos POST, PUT, DELETE no están implementados en este Servlet.
-    // Si se necesitara cancelar o modificar una cita, se implementarían aquí o en otro Servlet específico.
-    // @Override
-    // protected void doPost(HttpServletRequest request, HttpServletResponse response) ...
 }

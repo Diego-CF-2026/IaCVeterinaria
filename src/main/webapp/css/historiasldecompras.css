@@ -1,203 +1,203 @@
 /* Estilos generales */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    margin: 0;                                   /* Elimina el margen por defecto en todos los elementos (Reset) */
+    padding: 0;                                  /* Elimina el padding por defecto en todos los elementos (Reset) */
+    box-sizing: border-box;                      /* Establece el modelo de caja (padding y borde incluidos en el tamaño) */
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    background: #f9fbfc;
-    color: #2c3342;
-    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;            /* Define la fuente principal del cuerpo */
+    background: #f9fbfc;                         /* Fondo muy ligero (casi blanco) */
+    color: #2c3342;                              /* Color de texto principal oscuro */
+    min-height: 100vh;                           /* Asegura que el cuerpo ocupe al menos la altura del viewport */
 }
 
 /* ==== BARRA DE NAVEGACIÓN ==== */
 .navbar {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 30px;
-    height: 80px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    z-index: 15;
+    max-width: 100%;                             /* Ocupa el ancho completo del viewport */
+    margin: 0 auto;                              /* Centrado (aunque no es visible en 100% width) */
+    padding: 0 30px;                             /* Espaciado horizontal a los lados */
+    height: 80px;                                /* Altura fija de la barra de navegación */
+    background-color: #ffffff;                   /* Fondo blanco */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);    /* Sombra suave inferior */
+    display: flex;                               /* Habilita Flexbox para alinear elementos */
+    align-items: center;                         /* Centra verticalmente */
+    justify-content: space-between;              /* Espacio entre logo, enlaces y botones */
+    position: relative;                          /* Contexto de posición para el menú móvil */
+    z-index: 15;                                 /* Asegura que esté por encima del contenido */
 }
 
 .logo-container {
-    display: flex;
-    align-items: center;
-    flex: 1;
+    display: flex;                               /* Habilita Flexbox para el contenedor del logo */
+    align-items: center;                         /* Centra el logo verticalmente */
+    flex: 1;                                     /* Permite ocupar espacio a la izquierda */
 }
 
 .logo {
-    height: 45px;
+    height: 45px;                                /* Altura fija para la imagen del logo */
 }
 
 .hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    z-index: 20;
-    transition: transform 0.4s;
+    display: none;                               /* Oculto por defecto (solo visible en móvil) */
+    flex-direction: column;                      /* Las barras se apilan verticalmente */
+    gap: 5px;                                    /* Espacio entre las barras */
+    cursor: pointer;                             /* Indicador de clic */
+    z-index: 20;                                 /* Asegura que esté sobre el menú desplegable */
+    transition: transform 0.4s;                  /* Transición para la animación (rotación) */
 }
 
 .hamburger span {
-    width: 25px;
-    height: 3px;
-    background: #333;
-    border-radius: 2px;
-    transition: 0.4s;
+    width: 25px;                                 /* Ancho de cada barra */
+    height: 3px;                                 /* Altura de cada barra */
+    background: #333;                            /* Color oscuro de las barras */
+    border-radius: 2px;                          /* Bordes redondeados */
+    transition: 0.4s;                            /* Transición para la animación a "X" */
 }
 
 .hamburger.open span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+    transform: rotate(45deg) translate(5px, 5px); /* Gira la barra superior y la mueve para formar la "X" */
 }
 
 .hamburger.open span:nth-child(2) {
-    opacity: 0;
+    opacity: 0;                                  /* Oculta la barra central (se desvanece) */
 }
 
 .hamburger.open span:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
+    transform: rotate(-45deg) translate(5px, -5px); /* Gira la barra inferior y la mueve para formar la "X" */
 }
 
 .nav-links {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex: 2;
+    display: flex;                               /* Habilita Flexbox para los enlaces y botones */
+    align-items: center;                         /* Centra verticalmente */
+    justify-content: space-between;              /* Distribuye enlaces centrales y botones */
+    flex: 2;                                     /* Ocupa más espacio que el logo */
 }
 
 .center-links {
-    display: flex;
-    gap: 40px;
+    display: flex;                               /* Habilita Flexbox para el grupo de enlaces */
+    gap: 40px;                                   /* Espacio entre los enlaces de navegación */
 }
 
 .center-links a {
-    text-decoration: none;
-    color: #333;
-    font-family: 'Times New Roman', serif;
-    font-size: 16px;
-    transition: color 0.3s;
-    padding: 0px 30px;
+    text-decoration: none;                       /* Quita el subrayado */
+    color: #333;                                 /* Color de texto oscuro */
+    font-family: 'Times New Roman', serif;       /* Fuente clásica para los enlaces */
+    font-size: 16px;                             /* Tamaño de fuente estándar */
+    transition: color 0.3s;                      /* Transición suave del color */
+    padding: 0px 30px;                           /* Padding horizontal para el área de clic */
 }
 
 .center-links a:hover {
-    color: #696969;
+    color: #696969;                              /* Color gris ligeramente más claro al hacer hover */
 }
 
 .center-links a.active-link {
-    border-bottom: 2px solid #000;
-    font-weight: 600;
+    border-bottom: 2px solid #000;               /* Añade una línea debajo para indicar el enlace activo */
+    font-weight: 600;                            /* Texto semi-negrita para el enlace activo */
 }
 
 .buttons {
-    display: flex;
-    gap: 10px;
+    display: flex;                               /* Habilita Flexbox para los botones de acción */
+    gap: 10px;                                   /* Espacio entre los botones */
 }
 
 .btn {
-    padding: 10px 25px;
-    border-radius: 15px;
-    font-family: 'Times New Roman', serif;
-    font-size: 16px;
-    text-align: center;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+    padding: 10px 25px;                          /* Padding interno del botón */
+    border-radius: 15px;                         /* Bordes redondeados */
+    font-family: 'Times New Roman', serif;       /* Fuente específica para los botones */
+    font-size: 16px;                             /* Tamaño de fuente del botón */
+    text-align: center;                          /* Centra el texto */
+    text-decoration: none;                       /* Quita el subrayado */
+    transition: all 0.3s ease;                   /* Transición suave para todos los efectos hover */
+    box-shadow: 0 3px 5px rgba(0,0,0,0.2);        /* Sombra ligera */
 }
 
 .perfil {
-    background-color: #2c3342;
-    color: #ffffff;
+    background-color: #2c3342;                   /* Color de fondo oscuro (botón principal) */
+    color: #ffffff;                              /* Color de texto blanco */
 }
 
 .perfil:hover {
-    background-color: #8A93A3;
+    background-color: #8A93A3;                   /* Color de fondo más claro al hacer hover */
 }
 
 
 /* Contenedor tabla historial */
 .historial-container {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 0 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    max-width: 900px;                            /* Ancho máximo limitado para centrar la tabla */
+    margin: 40px auto;                           /* Centrado horizontal y margen superior */
+    padding: 0 20px;                             /* Padding lateral */
+    background: white;                           /* Fondo blanco para la tabla */
+    border-radius: 8px;                          /* Bordes redondeados */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);      /* Sombra suave */
 }
 
 /* Tabla */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: Arial, sans-serif;
+    width: 100%;                                 /* La tabla ocupa todo el ancho del contenedor */
+    border-collapse: collapse;                   /* Colapsa los bordes de la tabla en uno solo */
+    font-family: Arial, sans-serif;              /* Fuente para la tabla */
 }
 
 caption {
-    caption-side: top;
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    color: #228B22;
-    user-select: none;
+    caption-side: top;                           /* Coloca el caption en la parte superior */
+    font-size: 28px;                             /* Tamaño de fuente grande para el título */
+    font-weight: 700;                            /* Texto negrita */
+    margin-bottom: 20px;                         /* Espacio debajo del título */
+    color: #228B22;                              /* Color verde oscuro para el título */
+    user-select: none;                           /* Evita que el usuario seleccione el texto del caption */
 }
 
 th, td {
-    border: 1px solid #ddd;
-    padding: 12px 15px;
-    text-align: left;
+    border: 1px solid #ddd;                      /* Borde delgado gris claro */
+    padding: 12px 15px;                          /* Padding interno para las celdas */
+    text-align: left;                            /* Alinea el texto a la izquierda */
 }
 
 th {
-    background-color: #228B22;
-    color: white;
-    user-select: none;
+    background-color: #228B22;                   /* Color de fondo verde oscuro para los encabezados */
+    color: white;                                /* Color de texto blanco para los encabezados */
+    user-select: none;                           /* Evita que el usuario seleccione el texto del encabezado */
 }
 
 tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #f9f9f9;                   /* Color de fondo muy claro para filas pares (cebreado) */
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 768px) {                      /* Media Query: Estilos para tabletas y móviles */
     .hamburger {
-        display: flex;
+        display: flex;                           /* Muestra el ícono del menú hamburguesa */
     }
     .nav-links {
-        display: none;
-        flex-direction: column;
-        background: white;
-        position: absolute;
-        top: 60px;
-        right: 20px;
-        width: 200px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        border-radius: 5px;
-        z-index: 1100;
+        display: none;                           /* Oculto por defecto (debe ser activado por JS) */
+        flex-direction: column;                  /* Apila los enlaces y botones verticalmente */
+        background: white;                       /* Fondo blanco para el menú desplegable */
+        position: absolute;                      /* Posicionamiento absoluto para el menú desplegable */
+        top: 60px;                               /* Posiciona justo debajo del navbar (ajustar si navbar height cambia) */
+        right: 20px;                             /* Posiciona a la derecha */
+        width: 200px;                            /* Ancho fijo para el menú desplegable */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);   /* Sombra para el menú flotante */
+        border-radius: 5px;                      /* Bordes redondeados */
+        z-index: 1100;                           /* Z-index muy alto para asegurar visibilidad */
     }
     .center-links {
-        flex-direction: column;
-        gap: 0;
+        flex-direction: column;                  /* Apila los enlaces de navegación */
+        gap: 0;                                  /* Elimina el espacio entre enlaces */
     }
     .center-links a {
-        padding: 10px 20px;
-        border-bottom: 1px solid #eee;
+        padding: 10px 20px;                      /* Padding interno para los enlaces */
+        border-bottom: 1px solid #eee;           /* Separador entre enlaces */
     }
     .buttons {
-        margin-top: 10px;
-        padding: 0 20px;
+        margin-top: 10px;                        /* Espacio encima de los botones */
+        padding: 0 20px;                         /* Padding lateral para los botones */
     }
     .historial-container {
-        margin: 20px 10px;
-        padding: 10px;
+        margin: 20px 10px;                       /* Margen más ajustado para móvil */
+        padding: 10px;                           /* Padding interno reducido */
     }
     table, th, td {
-        font-size: 14px;
+        font-size: 14px;                         /* Tamaño de fuente más pequeño para la tabla en móvil */
     }
 }

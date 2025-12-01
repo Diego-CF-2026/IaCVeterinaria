@@ -79,27 +79,6 @@ public class EditarPerfilServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/VistasWeb/VistasCliente/MiPerfil.jsp?error=1");
             }
 
-            // 🔹 Buenas prácticas y consideraciones:
-            // - Validar que los campos recibidos del formulario no estén vacíos
-            // - Verificar que el correo no esté duplicado en la base de datos
-            // - Posible registro de auditoría al editar perfil
-            // - Manejo de excepciones más específico para capturar errores de DAO
-            // - Validar formato de correo y teléfono
-            // - Considerar reglas de negocio para cambios de DNI o datos críticos
-            // - Confirmar cambios mediante un mensaje visual en la JSP
-            // - Posibilidad de notificar por correo al usuario que se actualizó su perfil
-            // - Controlar intentos de edición no autorizados desde fuera del perfil
-            // - Garantizar consistencia de datos entre tablas relacionadas
-            // - Mantener sesión activa segura después de actualizar datos
-            // - Evitar problemas de concurrencia si el usuario tiene varias sesiones abiertas
-            // - Posible extensión: permitir actualizar contraseña aquí
-            // - Manejo de caracteres especiales para evitar inyección SQL
-            // - Validar que el cliente pertenece al usuario logueado
-            // - Posible soft-rollback si falla una de las dos operaciones (cliente/usuario)
-            // - Evitar mostrar información sensible en la URL
-            // - Considerar internacionalización si se desea soportar varios idiomas
-            // - Documentar la funcionalidad en manual del sistema
-            // - Facilitar futuras extensiones para roles distintos a cliente
 
         } catch (Exception e) {
             // 🔹 Captura cualquier excepción y redirige mostrando error

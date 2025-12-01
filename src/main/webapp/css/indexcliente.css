@@ -2,1176 +2,1177 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
 */
-/* 
+/*
     Created on : 30 abr 2025, 10:12:31
     Author     : PROPIETARIO
 */
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    margin: 0;                                   /* Elimina el margen por defecto en todos los elementos (Reset) */
+    padding: 0;                                  /* Elimina el padding por defecto en todos los elementos (Reset) */
+    box-sizing: border-box;                      /* Establece el modelo de caja (padding y borde incluidos en el tamaño) */
 }
 
 
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #fff;
+    font-family: 'Arial', sans-serif;            /* Define la fuente base del documento */
+    background-color: #fff;                      /* Fondo blanco puro para el cuerpo */
 }
 
 
 .navbar {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 30px;
-    height: 80px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    z-index: 15;
+    max-width: 100%;                             /* Ocupa el ancho completo del viewport */
+    margin: 0 auto;                              /* Centrado (aunque no es visible en 100% width) */
+    padding: 0 30px;                             /* Espaciado horizontal a los lados */
+    height: 80px;                                /* Altura fija de la barra de navegación */
+    background-color: #ffffff;                   /* Fondo blanco */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);    /* Sombra suave inferior */
+    display: flex;                               /* Habilita Flexbox para alinear elementos */
+    align-items: center;                         /* Centra verticalmente */
+    justify-content: space-between;              /* Espacio entre logo, enlaces y botones */
+    position: relative;                          /* Contexto de posición para el menú móvil */
+    z-index: 15;                                 /* Asegura que esté por encima del contenido principal */
 }
 
 .logo-container {
-    display: flex;
-    align-items: center;
-    flex: 1;
+    display: flex;                               /* Habilita Flexbox para el contenedor del logo */
+    align-items: center;                         /* Centra el logo verticalmente */
+    flex: 1;                                     /* Permite ocupar espacio a la izquierda */
 }
 
 .logo {
-    height: 45px;
+    height: 45px;                                /* Altura fija para la imagen del logo */
 }
 
 .hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    z-index: 20;
-    transition: transform 0.4s;
+    display: none;                               /* Oculto por defecto (solo visible en móvil) */
+    flex-direction: column;                      /* Las barras se apilan verticalmente */
+    gap: 5px;                                    /* Espacio entre las barras */
+    cursor: pointer;                             /* Indicador de clic */
+    z-index: 20;                                 /* Asegura que esté sobre el menú desplegable */
+    transition: transform 0.4s;                  /* Transición para la animación (rotación) */
 }
 
 .hamburger span {
-    width: 25px;
-    height: 3px;
-    background: #333;
-    border-radius: 2px;
-    transition: 0.4s;
+    width: 25px;                                 /* Ancho de cada barra */
+    height: 3px;                                 /* Altura de cada barra */
+    background: #333;                            /* Color oscuro de las barras */
+    border-radius: 2px;                          /* Bordes redondeados */
+    transition: 0.4s;                            /* Transición para la animación a "X" */
 }
 
 
 .hamburger.open span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+    transform: rotate(45deg) translate(5px, 5px); /* Gira la barra superior y la mueve para formar la "X" */
 }
 .hamburger.open span:nth-child(2) {
-    opacity: 0;
+    opacity: 0;                                  /* Oculta la barra central (se desvanece) */
 }
 .hamburger.open span:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
+    transform: rotate(-45deg) translate(5px, -5px); /* Gira la barra inferior y la mueve para formar la "X" */
 }
 
 
 .nav-links {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex: 2;
+    display: flex;                               /* Habilita Flexbox para los enlaces y botones */
+    align-items: center;                         /* Centra verticalmente */
+    justify-content: space-between;              /* Distribuye enlaces centrales y botones */
+    flex: 2;                                     /* Ocupa más espacio que el logo */
 }
 
 .center-links {
-    display: flex;
-    gap: 40px;
+    display: flex;                               /* Habilita Flexbox para el grupo de enlaces */
+    gap: 40px;                                   /* Espacio entre los enlaces de navegación */
 
     
 }
 
 .center-links a {
-    text-decoration: none;
-    color: #333;
-    font-family: 'Times New Roman', serif;
-    font-size: 16px;
-    transition: color 0.3s;
-    padding: 0px 30px
+    text-decoration: none;                       /* Quita el subrayado */
+    color: #333;                                 /* Color de texto oscuro */
+    font-family: 'Times New Roman', serif;       /* Fuente clásica para los enlaces */
+    font-size: 16px;                             /* Tamaño de fuente estándar */
+    transition: color 0.3s;                      /* Transición suave del color */
+    padding: 0px 30px;                           /* Padding horizontal para el área de clic */
 }
 
 .center-links a:hover {
-    color: #696969;
+    color: #696969;                              /* Color gris ligeramente más claro al hacer hover */
 }
 
 .buttons {
-    display: flex;
-    gap: 10px;
+    display: flex;                               /* Habilita Flexbox para los botones de acción */
+    gap: 10px;                                   /* Espacio entre los botones */
 }
 
 .btn {
-    padding: 10px 25px;
-    border-radius: 15px;
-    font-family: 'Times New Roman', serif;
-    font-size: 16px;
-    text-align: center;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+    padding: 10px 25px;                          /* Padding interno del botón */
+    border-radius: 15px;                         /* Bordes redondeados */
+    font-family: 'Times New Roman', serif;       /* Fuente específica para los botones */
+    font-size: 16px;                             /* Tamaño de fuente del botón */
+    text-align: center;                          /* Centra el texto */
+    text-decoration: none;                       /* Quita el subrayado */
+    transition: all 0.3s ease;                   /* Transición suave para todos los efectos hover */
+    box-shadow: 0 3px 5px rgba(0,0,0,0.2);        /* Sombra ligera */
 }
 
 .login {
-    background-color: #dcdcdc;
-    color: #333;
+    background-color: #dcdcdc;                   /* Color de fondo gris claro */
+    color: #333;                                 /* Color de texto oscuro */
 }
 
 .login:hover {
-    background-color: #c0c0c0;
+    background-color: #c0c0c0;                   /* Color de fondo gris más oscuro al hacer hover */
 }
 
 .register {
-    background-color: #2c3342;
-    color: #ffffff;
+    background-color: #2c3342;                   /* Color de fondo oscuro (botón principal) */
+    color: #ffffff;                              /* Color de texto blanco */
 }
 
 .register:hover {
-    background-color: #8A93A3;
+    background-color: #8A93A3;                   /* Color de fondo más claro al hacer hover */
 }
 
 
 .overlay {
-    position: fixed;
-    top: 80px; 
-    left: 0;
-    width: 100%;
-    height: calc(100% - 80px); 
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 5; 
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease;
+    position: fixed;                             /* Fijo en el viewport */
+    top: 80px;                                   /* Inicia justo debajo del navbar */
+    left: 0;                                     /* Ocupa todo el ancho */
+    width: 100%;                                 /* Ancho completo */
+    height: calc(100% - 80px);                   /* Altura restante debajo del navbar */
+    background-color: rgba(0, 0, 0, 0.5);        /* Fondo oscuro semi-transparente */
+    z-index: 5;                                  /* Debe estar debajo del menú móvil */
+    opacity: 0;                                  /* Invisible por defecto */
+    visibility: hidden;                          /* No interactuable por defecto */
+    transition: opacity 0.3s ease;               /* Transición suave de la opacidad */
 }
 
 
 .overlay.active {
-    opacity: 1;
-    visibility: visible;
+    opacity: 1;                                  /* Muestra el overlay */
+    visibility: visible;                         /* Habilita la interacción */
 }
 
 
-@media (max-width: 900px) {
+@media (max-width: 900px) {                      /* Media Query: Estilos para móvil */
     .hamburger {
-        display: flex;
+        display: flex;                           /* Muestra el ícono del menú hamburguesa */
     }
 
     .nav-links {
-        flex-direction: column;
-        align-items: center;
-        background-color: #fff;
-        position: absolute;
-        top: 80px;
-        left: 0;
-        right: 0;
-        overflow: hidden;
-        max-height: 0;
-        transition: max-height 0.4s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        z-index: 20;
+        flex-direction: column;                  /* Apila los enlaces y botones verticalmente */
+        align-items: center;                     /* Centra los ítems */
+        background-color: #fff;                  /* Fondo blanco para el menú desplegable */
+        position: absolute;                      /* Posicionamiento debajo del navbar */
+        top: 80px;                               /* Coloca el menú justo debajo del navbar */
+        left: 0;                                 /* Ocupa todo el ancho */
+        right: 0;                                /* Ocupa todo el ancho */
+        overflow: hidden;                        /* Oculta contenido si no está abierto */
+        max-height: 0;                           /* Altura inicial cero (cerrado) */
+        transition: max-height 0.4s ease;        /* Transición suave de apertura/cierre */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra debajo del menú */
+        z-index: 20;                             /* Prioridad de visualización */
     }
 
     .nav-links.open {
-        max-height: 600px;
-        padding: 20px 0;
+        max-height: 600px;                       /* Altura máxima para mostrar todo el contenido (abierto) */
+        padding: 20px 0;                         /* Padding vertical al estar abierto */
     }
 
     .center-links {
-        flex-direction: column;
-        gap: 20px;
-        margin-bottom: 20px;
+        flex-direction: column;                  /* Apila los enlaces de navegación */
+        gap: 20px;                               /* Espacio vertical entre enlaces */
+        margin-bottom: 20px;                     /* Espacio para separar de los botones */
     }
 
     .buttons {
-        flex-direction: column;
-        gap: 15px;
+        flex-direction: column;                  /* Apila los botones de acción */
+        gap: 15px;                               /* Espacio vertical entre botones */
     }
 
     .btn {
-        width: 220px;
+        width: 220px;                            /* Ancho fijo para los botones en móvil */
     }
 
     .logo-container {
-        justify-content: center;
-        flex: none;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
+        justify-content: center;                 /* Centra el logo */
+        flex: none;                              /* Deshabilita el crecimiento/encogimiento del logo */
+        position: absolute;                      /* Posicionamiento absoluto para centrar */
+        left: 50%;                               /* Mueve el punto de inicio al 50% */
+        transform: translateX(-50%);             /* Ajuste para centrar el logo */
     }
 }
 
+/* ==== SECCIÓN PRINCIPAL (HERO) ==== */
 .main-section {
-    max-width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #fff;
-    padding: 20px 0;
+    max-width: 100%;                             /* Ancho completo del contenedor de la sección */
+    display: flex;                               /* Habilita Flexbox para centrar contenido */
+    justify-content: center;                     /* Centra horizontalmente */
+    align-items: center;                         /* Centra verticalmente */
+    background-color: #fff;                      /* Fondo blanco */
+    padding: 20px 0;                             /* Padding vertical */
 }
 
 .main-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    max-width: 1290px; 
-    position: relative;
+    display: flex;                               /* Habilita Flexbox */
+    justify-content: space-between;              /* Espacio entre elementos (texto/imagen) */
+    align-items: center;                         /* Centra verticalmente */
+    width: 100%;                                 /* Ancho completo */
+    max-width: 1290px;                           /* Ancho máximo limitado */
+    position: relative;                          /* Contexto de posición para el texto superpuesto */
 }
 
 
 .text-container {
-    width: 739px;
-    height: 635px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding-left: 20px;
-    z-index: 2;
-    position: absolute; 
-    color: #fff;
-    border-radius: 15px; 
-    padding: 20px;
+    width: 739px;                                /* Ancho predefinido (desktop) */
+    height: 635px;                               /* Altura predefinida (desktop) */
+    display: flex;                               /* Habilita Flexbox para el contenido */
+    flex-direction: column;                      /* Apila el texto verticalmente */
+    justify-content: center;                     /* Centra verticalmente el texto */
+    align-items: flex-start;                     /* Alinea el texto a la izquierda */
+    padding-left: 20px;                          /* Padding interno */
+    z-index: 2;                                  /* Debe estar sobre la imagen */
+    position: absolute;                          /* Posición absoluta sobre la imagen */
+    color: #fff;                                 /* Color de texto blanco (aunque después se sobrescribe) */
+    border-radius: 15px;                         /* Bordes redondeados */
+    padding: 20px;                               /* Padding interno */
     
 }
 
 .text-container h1 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    font-size: 64px;
-    line-height: 80px;
-    color: #ffffff;
-    margin-bottom: 20px;
-    padding-left: 30px;
+    font-family: 'Poppins', sans-serif;          /* Fuente específica para el título */
+    font-weight: 800;                            /* Texto ultra-negrita */
+    font-size: 64px;                             /* Tamaño de fuente grande */
+    line-height: 80px;                           /* Altura de línea espaciada */
+    color: #ffffff;                              /* Color de texto blanco */
+    margin-bottom: 20px;                         /* Espacio debajo del título */
+    padding-left: 30px;                          /* Padding a la izquierda */
 }
 
 
 .text-container .subtext {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400; 
-    font-size: 26px;
-    line-height: auto;
-    color: #A2A2A2;
-    padding-left: 30px;
+    font-family: 'Poppins', sans-serif;          /* Fuente específica para el subtítulo */
+    font-weight: 400;                            /* Peso de fuente normal */
+    font-size: 26px;                             /* Tamaño de fuente mediano */
+    line-height: auto;                           /* Altura de línea automática */
+    color: #A2A2A2;                              /* Color de texto gris claro */
+    padding-left: 30px;                          /* Padding a la izquierda */
 }
 
 
 .image-container {
-    width: 1290px;
-    height: 635px;
-    overflow: hidden;
-    border-radius: 15px; 
+    width: 1290px;                               /* Ancho de la imagen (desktop) */
+    height: 635px;                               /* Altura de la imagen (desktop) */
+    overflow: hidden;                            /* Oculta si la imagen sobresale */
+    border-radius: 15px;                         /* Bordes redondeados */
 }
 
 .image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 100%;                                 /* La imagen ocupa todo el ancho */
+    height: 100%;                                /* La imagen ocupa toda la altura */
+    object-fit: cover;                           /* Asegura que la imagen cubra el contenedor */
 }
 
 
 @media (max-width: 900px) {
     .main-content {
-        position: relative;
-        width: 90%;
-        height: 600px; 
-        flex-direction: column;
+        position: relative;                      /* Mantiene el contexto de posición */
+        width: 90%;                              /* Ancho reducido */
+        height: 600px;                           /* Altura fija */
+        flex-direction: column;                  /* Apila elementos verticalmente (no aplica mucho aquí) */
     }
 
     .image-container {
-        width: 100%;
-        height: 100%;
+        width: 100%;                             /* Ocupa todo el ancho */
+        height: 100%;                            /* Ocupa toda la altura */
     }
 
     .image-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 15px;
+        width: 100%;                             /* Ocupa todo el ancho */
+        height: 100%;                            /* Ocupa toda la altura */
+        object-fit: cover;                       /* Cubre el contenedor */
+        border-radius: 15px;                     /* Bordes redondeados */
     }
 
     .text-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center; 
-        align-items: flex-start; 
-        text-align: left;
-        overflow-wrap: break-word;
-        word-break: break-word;
+        position: absolute;                      /* Posición absoluta sobre la imagen */
+        top: 0;                                  /* Pegado al borde superior */
+        left: 0;                                 /* Pegado al borde izquierdo */
+        width: 100%;                             /* Ocupa todo el ancho de la imagen */
+        height: 100%;                            /* Ocupa toda la altura de la imagen */
+        padding: 20px;                           /* Padding interno */
+        display: flex;                           /* Habilita Flexbox */
+        flex-direction: column;                  /* Apila verticalmente */
+        justify-content: center;                 /* Centra verticalmente */
+        align-items: flex-start;                 /* Alinea a la izquierda (cambia abajo) */
+        text-align: left;                        /* Alinea el texto a la izquierda */
+        overflow-wrap: break-word;               /* Permite saltos de línea largos */
+        word-break: break-word;                  /* Fuerza saltos de línea si es necesario */
     }
 
     .text-container h1 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: 50px; 
-        text-align: center;
-        line-height: 40px;
-        color: #ffffff;
-        margin-bottom: 10px;
+        font-family: 'Poppins', sans-serif;      /* Fuente del título */
+        font-weight: 800;                        /* Peso de fuente */
+        font-size: 50px;                         /* Tamaño de fuente reducido */
+        text-align: center;                      /* Centra el título */
+        line-height: 40px;                       /* Altura de línea ajustada */
+        color: #ffffff;                          /* Color blanco */
+        margin-bottom: 10px;                     /* Espacio debajo del título */
     }
 
     .text-container .subtext {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 400;
-        font-size: 18px;
-        color: #A2A2A2;
-        margin-top: 5px;
-        text-align: center;
+        font-family: 'Poppins', sans-serif;      /* Fuente del subtítulo */
+        font-weight: 400;                        /* Peso de fuente */
+        font-size: 18px;                         /* Tamaño de fuente reducido */
+        color: #A2A2A2;                          /* Color gris claro */
+        margin-top: 5px;                         /* Espacio superior */
+        text-align: center;                      /* Centra el subtítulo */
     }
 }
 
-
+/* ==== BLOQUE PRINCIPAL (Sección de Contenido) ==== */
 .bloque-principal {
-    max-width: 1290px;
-    height: 802px;
-    margin: 40px auto;
-    display: flex;
-    background-color: #E6EFF1;
-    border-radius: 15px;
-    overflow: hidden;
+    max-width: 1290px;                           /* Ancho máximo limitado */
+    height: 802px;                               /* Altura fija (desktop) */
+    margin: 40px auto;                           /* Centrado horizontal y margen superior */
+    display: flex;                               /* Habilita Flexbox (texto + imagen) */
+    background-color: #E6EFF1;                   /* Fondo de color claro para la sección */
+    border-radius: 15px;                         /* Bordes redondeados */
+    overflow: hidden;                            /* Oculta contenido si sobresale */
 }
 
 
 .div-texto {
-    width: 702px;
-    height: 802px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    width: 702px;                                /* Ancho fijo para la columna de texto (desktop) */
+    height: 802px;                               /* Altura fija */
+    display: flex;                               /* Habilita Flexbox para centrar contenido */
+    justify-content: center;                     /* Centra horizontalmente */
+    align-items: center;                         /* Centra verticalmente */
+    padding: 20px;                               /* Padding interno */
 }
 
 
 .div-texto-centro {
-    width: 640px;
-    height: 694px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    width: 640px;                                /* Ancho fijo del contenido interno de texto */
+    height: 694px;                               /* Altura fija */
+    display: flex;                               /* Habilita Flexbox */
+    flex-direction: column;                      /* Apila el título y el contenido */
+    justify-content: space-between;              /* Espacio entre título y contenido */
 }
 
 .div-titulo1 {
-    width: 640px;
-    height: 148px;
-    padding-top: 50px;
+    width: 640px;                                /* Ancho fijo */
+    height: 148px;                               /* Altura fija */
+    padding-top: 50px;                           /* Padding superior */
 }
 
 .div-titulo1 h2 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600; 
-    font-size: 48px;
-    line-height: 50px;
-    color: #3D3D3D;
-    padding-left: 20px;
+    font-family: 'Poppins', sans-serif;          /* Fuente para el título */
+    font-weight: 600;                            /* Peso de fuente semi-negrita */
+    font-size: 48px;                             /* Tamaño de fuente grande */
+    line-height: 50px;                           /* Altura de línea ajustada */
+    color: #3D3D3D;                              /* Color de texto oscuro */
+    padding-left: 20px;                          /* Padding a la izquierda */
 }
 
 
 .div-contenido1 {
-    width: 640px;
-    height: 544px;
+    width: 640px;                                /* Ancho fijo */
+    height: 544px;                               /* Altura fija */
 }
 
 .div-contenido1 p {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500; 
-    font-size: 23px;
-    line-height: 40px;
-    color: #555555;
-    padding-top: 50px;
-    padding-left: 20px;
+    font-family: 'Poppins', sans-serif;          /* Fuente para el párrafo */
+    font-weight: 500;                            /* Peso de fuente mediano */
+    font-size: 23px;                             /* Tamaño de fuente grande */
+    line-height: 40px;                           /* Altura de línea espaciada */
+    color: #555555;                              /* Color de texto secundario */
+    padding-top: 50px;                           /* Espacio superior */
+    padding-left: 20px;                          /* Padding a la izquierda */
 }
 
 .div-contenido1 span {
-    color: #0077cc;
-    font-weight: 600;
+    color: #0077cc;                              /* Color de acento azul */
+    font-weight: 600;                            /* Texto semi-negrita para el span */
 }
 
 .div-imagen1 {
-    width: 588px;
-    height: 802px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+    width: 588px;                                /* Ancho fijo para la columna de imagen (desktop) */
+    height: 802px;                               /* Altura fija */
+    display: flex;                               /* Habilita Flexbox para centrar la imagen */
+    justify-content: center;                     /* Centra horizontalmente */
+    align-items: center;                         /* Centra verticalmente */
+    overflow: hidden;                            /* Oculta si la imagen sobresale */
 }
 
 .imagen {
-    width: 526px;
-    height: 694px;
-    object-fit: cover;
-    border-radius: 15px;
+    width: 526px;                                /* Ancho fijo de la imagen interna */
+    height: 694px;                               /* Altura fija de la imagen interna */
+    object-fit: cover;                           /* Cubre el contenedor */
+    border-radius: 15px;                         /* Bordes redondeados */
 }
 
 @media (max-width: 900px) {
     .bloque-principal {
-        flex-direction: column;
-        width: 90%;
-        height: auto;
-        margin: 20px auto;
-        border-radius: 15px;
-        overflow: hidden;
+        flex-direction: column;                  /* Apila el texto y la imagen verticalmente */
+        width: 90%;                              /* Ancho del 90% */
+        height: auto;                            /* Altura automática */
+        margin: 20px auto;                       /* Margen superior/inferior reducido */
+        border-radius: 15px;                     /* Bordes redondeados */
+        overflow: hidden;                        /* Oculta contenido si sobresale */
     }
 
     .div-texto {
-        width: 100%;
-        height: auto;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center; 
+        width: 100%;                             /* Ocupa todo el ancho */
+        height: auto;                            /* Altura automática */
+        padding: 20px;                           /* Padding interno */
+        display: flex;                           /* Habilita Flexbox */
+        flex-direction: column;                  /* Apila verticalmente */
+        align-items: center;                     /* Centra horizontalmente */
+        justify-content: center;                 /* Centra verticalmente */
+        text-align: center;                      /* Centra el texto */
     }
 
     .div-texto-centro {
-        width: 100%;
-        height: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
+        width: 100%;                             /* Ocupa todo el ancho */
+        height: auto;                            /* Altura automática */
+        display: flex;                           /* Habilita Flexbox */
+        flex-direction: column;                  /* Apila verticalmente */
+        align-items: center;                     /* Centra horizontalmente */
+        justify-content: center;                 /* Centra verticalmente */
+        text-align: center;                      /* Centra el texto */
     }
 
     .div-titulo1 {
-        width: 100%;
-        height: auto;
+        width: 100%;                             /* Ocupa todo el ancho */
+        height: auto;                            /* Altura automática */
     }
 
     .div-titulo1 h2 {
-        font-size: 45px;
-        line-height: 40px;
-        text-align: center; 
+        font-size: 45px;                         /* Tamaño de fuente reducido */
+        line-height: 40px;                       /* Altura de línea ajustada */
+        text-align: center;                      /* Centra el título */
     }
 
     .div-contenido1 {
-        width: 100%;
-        height: auto;
-        margin-top: px;
+        width: 100%;                             /* Ocupa todo el ancho */
+        height: auto;                            /* Altura automática */
+        margin-top: px;                          /* (Regla duplicada o mal escrita, revisar) */
     }
 
     .div-contenido1 p {
-        font-size: 18px;
-        line-height: 28px;
-        text-align: center; 
+        font-size: 18px;                         /* Tamaño de fuente reducido */
+        line-height: 28px;                       /* Altura de línea ajustada */
+        text-align: center;                      /* Centra el párrafo */
     }
 
     .div-imagen1 {
-        width: 100%;
-        height: auto;
-        margin-top: 20px;
+        width: 100%;                             /* Ocupa todo el ancho */
+        height: auto;                            /* Altura automática */
+        margin-top: 20px;                        /* Espacio encima de la imagen */
     }
 
     .imagen {
-        width: 80%;
-        height: auto;
-        object-fit: cover;
-        border-radius: 15px;
-        padding-bottom: 30px;
+        width: 80%;                              /* La imagen ocupa el 80% del ancho */
+        height: auto;                            /* Altura automática */
+        object-fit: cover;                       /* Cubre el contenedor */
+        border-radius: 15px;                     /* Bordes redondeados */
+        padding-bottom: 30px;                    /* Espacio inferior */
     }
 }
 
-
+/* ==== BLOQUE SERVICIOS ==== */
 .bloque-servicios {
-    max-width: 1290px;
-    height: 765px;
-    margin: 40px auto;
-    padding: 0 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    max-width: 1290px;                           /* Ancho máximo limitado */
+    height: 765px;                               /* Altura fija (desktop) */
+    margin: 40px auto;                           /* Centrado horizontal y margen superior */
+    padding: 0 20px;                             /* Padding lateral */
+    display: flex;                               /* Habilita Flexbox */
+    flex-direction: column;                      /* Apila contenido verticalmente */
+    align-items: center;                         /* Centra horizontalmente el contenido */
 }
 
 
 .div-contenido {
-    width: 100%;
-    height: 238px;
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    justify-content: left;
-    text-align: left;
+    width: 100%;                                 /* Ocupa todo el ancho */
+    height: 238px;                               /* Altura fija */
+    display: flex;                               /* Habilita Flexbox */
+    flex-direction: column;                      /* Apila título y subtítulo */
+    align-items: left;                           /* Alinea a la izquierda (cambiar por flex-start) */
+    justify-content: left;                       /* Alinea a la izquierda (cambiar por flex-start) */
+    text-align: left;                            /* Alinea el texto a la izquierda */
 }
 
 .titulo-servicios {
-    width: 100%;
-    height: 74px;
+    width: 100%;                                 /* Ocupa todo el ancho */
+    height: 74px;                                /* Altura fija */
 }
 
 .titulo-servicios h2 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 48px;
-    color: #3D3D3D;
+    font-family: 'Poppins', sans-serif;          /* Fuente del título */
+    font-weight: 700;                            /* Texto negrita */
+    font-size: 48px;                             /* Tamaño de fuente grande */
+    color: #3D3D3D;                              /* Color de texto oscuro */
 }
 
 .subtitulo-servicios {
-    width: 100%;
-    height: 164px;
-    margin-top: 10px;
+    width: 100%;                                 /* Ocupa todo el ancho */
+    height: 164px;                               /* Altura fija */
+    margin-top: 10px;                            /* Espacio superior */
 }
 
 .subtitulo-servicios p {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    font-size: 23px;
-    color: #555555;
-    line-height: 28px;
-    max-width: 100%;
+    font-family: 'Poppins', sans-serif;          /* Fuente del párrafo */
+    font-weight: 400;                            /* Peso de fuente normal */
+    font-size: 23px;                             /* Tamaño de fuente grande */
+    color: #555555;                              /* Color de texto secundario */
+    line-height: 28px;                           /* Altura de línea ajustada */
+    max-width: 100%;                             /* Ocupa todo el ancho */
 }
 
 
 .div-slider {
-    width: 100%;
-    max-width: 1290px;
-    height: 527px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    margin-top: 20px;
+    width: 100%;                                 /* Ocupa todo el ancho */
+    max-width: 1290px;                           /* Ancho máximo limitado */
+    height: 527px;                               /* Altura fija */
+    position: relative;                          /* Contexto de posición para las flechas */
+    display: flex;                               /* Habilita Flexbox */
+    align-items: center;                         /* Centra verticalmente */
+    justify-content: center;                     /* Centra horizontalmente */
+    overflow: hidden;                            /* Oculta tarjetas fuera de vista */
+    margin-top: 20px;                            /* Espacio superior */
 }
 
 
 .slider-contenedor {
-    display: flex;
-    gap: 20px;
-    transition: transform 0.5s ease;
-    width: calc((331px * 3) + (20px * 2)); 
+    display: flex;                               /* Habilita Flexbox para las tarjetas */
+    gap: 20px;                                   /* Espacio entre las tarjetas */
+    transition: transform 0.5s ease;             /* Transición suave para el deslizamiento */
+    width: calc((331px * 3) + (20px * 2));       /* Ancho calculado para 3 tarjetas visibles + 2 gaps (desktop) */
 }
 
 
 .tarjeta {
-    width: 331px;
-    height: 412px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
+    width: 331px;                                /* Ancho fijo de la tarjeta */
+    height: 412px;                               /* Altura fija de la tarjeta */
+    background-color: #ffffff;                   /* Fondo blanco */
+    border-radius: 10px;                         /* Bordes redondeados */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);  /* Sombra suave */
+    overflow: hidden;                            /* Oculta contenido si sobresale */
+    flex-shrink: 0;                              /* Evita que la tarjeta se encoja */
+    display: flex;                               /* Habilita Flexbox */
+    flex-direction: column;                      /* Apila imagen y contenido */
 }
 
 
 .tarjeta-imagen {
-    width: 100%;
-    height: 206px;
-    overflow: hidden;
+    width: 100%;                                 /* Ocupa todo el ancho de la tarjeta */
+    height: 206px;                               /* Mitad de la altura total */
+    overflow: hidden;                            /* Oculta si la imagen sobresale */
 }
 
 .tarjeta-imagen img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 100%;                                 /* La imagen ocupa todo el ancho */
+    height: 100%;                                /* La imagen ocupa toda la altura */
+    object-fit: cover;                           /* Cubre el contenedor */
 }
 
 
 .tarjeta-contenido {
-    width: 100%;
-    height: 206px;
-    padding: 15px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+    width: 100%;                                 /* Ocupa todo el ancho */
+    height: 206px;                               /* Mitad de la altura total */
+    padding: 15px;                               /* Padding interno */
+    text-align: center;                          /* Centra el texto */
+    display: flex;                               /* Habilita Flexbox */
+    flex-direction: column;                      /* Apila título y párrafo */
+    justify-content: flex-start;                 /* Alinea el contenido hacia arriba */
 }
 
 .tarjeta-contenido h3 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 20px;
-    margin-bottom: 10px;
-    color: #2C2C2C;
+    font-family: 'Poppins', sans-serif;          /* Fuente del título */
+    font-weight: 600;                            /* Peso de fuente semi-negrita */
+    font-size: 20px;                             /* Tamaño de fuente del título */
+    margin-bottom: 10px;                         /* Espacio debajo del título */
+    color: #2C2C2C;                              /* Color de texto oscuro */
 }
 
 .tarjeta-contenido p {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    color: #777777;
-    line-height: 20px;
+    font-family: 'Poppins', sans-serif;          /* Fuente del párrafo */
+    font-weight: 400;                            /* Peso de fuente normal */
+    font-size: 14px;                             /* Tamaño de fuente pequeño */
+    color: #777777;                              /* Color de texto gris */
+    line-height: 20px;                           /* Altura de línea ajustada */
 }
 
 .tarjeta {
-    width: 331px;
-    height: 412px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 331px;                                /* Ancho fijo de la tarjeta */
+    height: 412px;                               /* Altura fija de la tarjeta */
+    background-color: #ffffff;                   /* Fondo blanco */
+    border-radius: 10px;                         /* Bordes redondeados */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);  /* Sombra suave */
+    overflow: hidden;                            /* Oculta contenido si sobresale */
+    flex-shrink: 0;                              /* Evita que la tarjeta se encoja */
+    display: flex;                               /* Habilita Flexbox */
+    flex-direction: column;                      /* Apila imagen y contenido */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición para el hover */
 }
 
 .tarjeta:hover {
-    transform: scale(1.05); 
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); 
+    transform: scale(1.05);                      /* Agranda ligeramente la tarjeta al hacer hover */
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);  /* Sombra más marcada al hacer hover */
 }
 
 .flecha {
-    width: 90px;
-    height: 180px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
+    width: 90px;                                 /* Ancho de la flecha */
+    height: 180px;                               /* Altura de la flecha */
+    background: transparent;                     /* Fondo transparente */
+    border: none;                                /* Sin borde */
+    cursor: pointer;                             /* Indicador de clic */
+    display: flex;                               /* Habilita Flexbox para centrar la imagen de la flecha */
+    align-items: center;                         /* Centra verticalmente */
+    justify-content: center;                     /* Centra horizontalmente */
+    position: absolute;                          /* Posición absoluta dentro del div-slider */
+    top: 50%;                                    /* Coloca en la mitad vertical */
+    transform: translateY(-50%);                 /* Ajusta a la mitad de su propia altura */
+    z-index: 10;                                 /* Debe estar sobre el slider */
 }
 
 .flecha img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
+    width: 100%;                                 /* Ocupa todo el ancho del contenedor de la flecha */
+    height: auto;                                /* Altura automática */
+    object-fit: contain;                         /* La imagen se ajusta manteniendo la proporción */
 }
 
 
 .flecha.izquierda {
-    left: -5px; 
+    left: -5px;                                  /* Posiciona ligeramente fuera del borde izquierdo */
 }
 
 .flecha.derecha {
-    right: -5px; 
+    right: -5px;                                 /* Posiciona ligeramente fuera del borde derecho */
 }
 
 @media (max-width: 900px) {
     .bloque-servicios {
-        padding: 0 15px;
-        height: auto;
+        padding: 0 15px;                         /* Padding lateral reducido */
+        height: auto;                            /* Altura automática */
     }
 
     .div-contenido {
-        align-items: center; 
-        justify-content: center;
-        text-align: center;
-        height: auto;
-        margin-bottom: 20px;
+        align-items: center;                     /* Centra el contenido */
+        justify-content: center;                 /* Centra el contenido */
+        text-align: center;                      /* Centra el texto */
+        height: auto;                            /* Altura automática */
+        margin-bottom: 20px;                     /* Espacio inferior */
     }
 
     .titulo-servicios {
-        height: auto;
+        height: auto;                            /* Altura automática */
     }
 
     .titulo-servicios h2 {
-        font-size: 32px;
-        line-height: 40px;
+        font-size: 32px;                         /* Tamaño de fuente reducido */
+        line-height: 40px;                       /* Altura de línea ajustada */
     }
 
     .subtitulo-servicios {
-        height: auto;
-        margin-top: 10px;
+        height: auto;                            /* Altura automática */
+        margin-top: 10px;                        /* Espacio superior */
     }
 
     .subtitulo-servicios p {
-        font-size: 18px;
-        line-height: 26px;
+        font-size: 18px;                         /* Tamaño de fuente reducido */
+        line-height: 26px;                       /* Altura de línea ajustada */
     }
 
     .div-slider {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: auto;
+        flex-direction: column;                  /* Apila el slider verticalmente (no aplica a contenedor) */
+        align-items: center;                     /* Centra horizontalmente */
+        justify-content: center;                 /* Centra verticalmente */
+        height: auto;                            /* Altura automática */
     }
 
     .slider-contenedor {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        gap: 20px;
-        transform: translateX(0);
+        flex-direction: column;                  /* Apila las tarjetas verticalmente */
+        align-items: center;                     /* Centra las tarjetas */
+        justify-content: center;                 /* Centra las tarjetas */
+        width: 100%;                             /* Ocupa todo el ancho */
+        gap: 20px;                               /* Espacio entre las tarjetas */
+        transform: translateX(0);                /* Resetea la posición del deslizamiento */
     }
 
     .tarjeta {
-        width: 90%;
-        max-width: 350px;
-        height: auto;
-        margin: 0 auto;
+        width: 90%;                              /* Ancho del 90% */
+        max-width: 350px;                        /* Ancho máximo limitado */
+        height: auto;                            /* Altura automática */
+        margin: 0 auto;                          /* Centrado */
     }
 
     .tarjeta-imagen {
-        width: 100%;
-        height: 200px;
+        width: 100%;                             /* Ocupa todo el ancho */
+        height: 200px;                           /* Altura fija */
     }
 
     .tarjeta-imagen img {
-        object-fit: cover;
+        object-fit: cover;                       /* Cubre el contenedor */
     }
 
     .tarjeta-contenido {
-        width: 100%;
-        padding: 15px;
-        text-align: center;
+        width: 100%;                             /* Ocupa todo el ancho */
+        padding: 15px;                           /* Padding interno */
+        text-align: center;                      /* Centra el texto */
     }
 
     .tarjeta-contenido h3 {
-        font-size: 20px;
+        font-size: 20px;                         /* Tamaño de fuente */
     }
 
     .tarjeta-contenido p {
-        font-size: 14px;
+        font-size: 14px;                         /* Tamaño de fuente */
     }
 
     .flecha {
-        display: none; 
+        display: none;                           /* Oculta las flechas de navegación en móvil */
     }
 }
 
+/* ==== BLOQUE TIENDA (Slider Horizontal) ==== */
 .bloque-tienda {
-    max-width: 1290px;
-    height: 859px;
-    margin: 40px auto;
-    padding: 0 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    max-width: 1290px;                           /* Ancho máximo limitado */
+    height: 859px;                               /* Altura fija (desktop) */
+    margin: 40px auto;                           /* Centrado horizontal y margen superior */
+    padding: 0 20px;                             /* Padding lateral */
+    display: flex;                               /* Habilita Flexbox */
+    flex-direction: column;                      /* Apila título y slider */
+    align-items: center;                         /* Centra horizontalmente el contenido */
 }
 
 
 .div-contenido-tienda {
-    width: 100%;
-    height: 124px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+    width: 100%;                                 /* Ocupa todo el ancho */
+    height: 124px;                               /* Altura fija */
+    display: flex;                               /* Habilita Flexbox */
+    align-items: center;                         /* Centra verticalmente */
+    justify-content: flex-start;                 /* Alinea a la izquierda */
 }
 
 .div-contenido-tienda h2 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 48px;
-    color: #3D3D3D;
+    font-family: 'Poppins', sans-serif;          /* Fuente del título */
+    font-weight: 700;                            /* Texto negrita */
+    font-size: 48px;                             /* Tamaño de fuente grande */
+    color: #3D3D3D;                              /* Color de texto oscuro */
 }
 
 .div-slider-tienda {
-    width: 100%;
-    height: 735px;
-    overflow-x: auto; 
-    overflow-y: hidden;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    margin-top: 20px;
-    scroll-behavior: smooth; 
+    width: 100%;                                 /* Ocupa todo el ancho */
+    height: 735px;                               /* Altura fija */
+    overflow-x: auto;                            /* Permite desplazamiento horizontal */
+    overflow-y: hidden;                          /* Oculta desplazamiento vertical */
+    position: relative;                          /* Contexto de posición */
+    display: flex;                               /* Habilita Flexbox */
+    align-items: center;                         /* Centra verticalmente */
+    justify-content: flex-start;                 /* Alinea a la izquierda (inicio del slider) */
+    margin-top: 20px;                            /* Espacio superior */
+    scroll-behavior: smooth;                     /* Desplazamiento suave al navegar */
 }
 
 
 .slider-tienda-contenedor {
-    display: flex;
-    flex-wrap: nowrap; 
-    gap: 30px;
-    width: max-content; 
+    display: flex;                               /* Habilita Flexbox para las tarjetas */
+    flex-wrap: nowrap;                           /* Evita que las tarjetas salten de línea */
+    gap: 30px;                                   /* Espacio entre las tarjetas */
+    width: max-content;                          /* El ancho es la suma del contenido (permite el scroll) */
 }
 
 
 .tarjeta-tienda {
-    width: 364px;
-    height: 480px;
-    background-color: #ffffff;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s ease; 
+    width: 364px;                                /* Ancho fijo de la tarjeta */
+    height: 480px;                               /* Altura fija de la tarjeta */
+    background-color: #ffffff;                   /* Fondo blanco */
+    border-radius: 15px;                         /* Bordes redondeados */
+    overflow: hidden;                            /* Oculta contenido si sobresale */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);  /* Sombra suave */
+    flex-shrink: 0;                              /* Evita que la tarjeta se encoja */
+    display: flex;                               /* Habilita Flexbox */
+    flex-direction: column;                      /* Apila imagen y contenido */
+    transition: transform 0.3s ease;             /* Transición suave para el hover */
 }
 
 
 .tarjeta-imagen-tienda {
-    width: 100%;
-    height: 320px;
-    overflow: hidden;
+    width: 100%;                                 /* Ocupa todo el ancho de la tarjeta */
+    height: 320px;                               /* Altura fija para la imagen */
+    overflow: hidden;                            /* Oculta si la imagen sobresale */
 }
 
 .tarjeta-imagen-tienda img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 100%;                                 /* La imagen ocupa todo el ancho */
+    height: 100%;                                /* La imagen ocupa toda la altura */
+    object-fit: cover;                           /* Cubre el contenedor */
 }
 
 
 .tarjeta-texto-tienda {
-    width: 100%;
-    height: 160px;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+    width: 100%;                                 /* Ocupa todo el ancho */
+    height: 160px;                               /* Altura fija para el texto */
+    padding: 15px;                               /* Padding interno */
+    display: flex;                               /* Habilita Flexbox */
+    flex-direction: column;                      /* Apila título y párrafo */
+    justify-content: flex-start;                 /* Alinea el contenido hacia arriba */
 }
 
 
 .titulo-tarjeta {
-    width: 100%;
-    height: 58px;
+    width: 100%;                                 /* Ocupa todo el ancho */
+    height: 58px;                                /* Altura fija */
 }
 
 .titulo-tarjeta h3 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 20px;
-    color: #2C2C2C;
-    margin-bottom: 5px;
+    font-family: 'Poppins', sans-serif;          /* Fuente del título */
+    font-weight: 600;                            /* Peso de fuente semi-negrita */
+    font-size: 20px;                             /* Tamaño de fuente del título */
+    color: #2C2C2C;                              /* Color de texto oscuro */
+    margin-bottom: 5px;                          /* Espacio debajo del título */
 }
 
 
 .subtitulo-tarjeta {
-    width: 100%;
-    height: 101px;
+    width: 100%;                                 /* Ocupa todo el ancho */
+    height: 101px;                               /* Altura fija */
 }
 
 .subtitulo-tarjeta p {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    color: #777777;
-    line-height: 20px;
+    font-family: 'Poppins', sans-serif;          /* Fuente del párrafo */
+    font-weight: 400;                            /* Peso de fuente normal */
+    font-size: 14px;                             /* Tamaño de fuente pequeño */
+    color: #777777;                              /* Color de texto gris */
+    line-height: 20px;                           /* Altura de línea ajustada */
 }
 
 
 .tarjeta-tienda:hover {
-    transform: scale(1.05); 
+    transform: scale(1.05);                      /* Agranda ligeramente la tarjeta al hacer hover */
 }
 
 @media (max-width: 900px) {
     .bloque-tienda {
-        padding: 0 15px;
-        height: auto;
+        padding: 0 15px;                         /* Padding lateral reducido */
+        height: auto;                            /* Altura automática */
     }
 
     .div-contenido-tienda {
-        width: 100%;
-        height: auto;
-        justify-content: center;
-        text-align: center;
-        margin-bottom: 20px;
+        width: 100%;                             /* Ocupa todo el ancho */
+        height: auto;                            /* Altura automática */
+        justify-content: center;                 /* Centra el título */
+        text-align: center;                      /* Centra el texto */
+        margin-bottom: 20px;                     /* Espacio inferior */
     }
 
     .div-contenido-tienda h2 {
-        font-size: 32px;
-        line-height: 40px;
+        font-size: 32px;                         /* Tamaño de fuente reducido */
+        line-height: 40px;                       /* Altura de línea ajustada */
     }
 
     .div-slider-tienda {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        overflow-x: hidden;
-        height: auto;
+        flex-direction: column;                  /* Apila el contenido verticalmente */
+        align-items: center;                     /* Centra las tarjetas */
+        justify-content: center;                 /* Centra las tarjetas */
+        overflow-x: hidden;                      /* Deshabilita el scroll horizontal */
+        height: auto;                            /* Altura automática */
     }
 
     .slider-tienda-contenedor {
-        flex-direction: column;
-        align-items: center; 
-        justify-content: center; 
-        width: 100%;
-        gap: 20px;
-        transform: none;
+        flex-direction: column;                  /* Apila las tarjetas verticalmente */
+        align-items: center;                     /* Centra las tarjetas */
+        justify-content: center;                 /* Centra las tarjetas */
+        width: 100%;                             /* Ocupa todo el ancho */
+        gap: 20px;                               /* Espacio entre las tarjetas */
+        transform: none;                         /* Resetea la posición */
     }
 
     .tarjeta-tienda {
-        width: 90%;
-        max-width: 350px;
-        height: auto;
-        margin: 0 auto; 
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        width: 90%;                              /* Ancho del 90% */
+        max-width: 350px;                        /* Ancho máximo limitado */
+        height: auto;                            /* Altura automática */
+        margin: 0 auto;                          /* Centrado */
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición para el hover */
     }
 
     .tarjeta-imagen-tienda {
-        width: 100%;
-        height: 220px;
+        width: 100%;                             /* Ocupa todo el ancho */
+        height: 220px;                           /* Altura fija */
     }
 
     .tarjeta-imagen-tienda img {
-        object-fit: cover;
+        object-fit: cover;                       /* Cubre el contenedor */
     }
 
     .tarjeta-texto-tienda {
-        padding: 15px;
-        text-align: center;
+        padding: 15px;                           /* Padding interno */
+        text-align: center;                      /* Centra el texto */
     }
 
     .titulo-tarjeta h3 {
-        font-size: 20px;
+        font-size: 20px;                         /* Tamaño de fuente */
     }
 
     .subtitulo-tarjeta p {
-        font-size: 14px;
-        line-height: 22px;
+        font-size: 14px;                         /* Tamaño de fuente */
+        line-height: 22px;                       /* Altura de línea ajustada */
     }
 }
 
+/* ==== FOOTER ==== */
 .footer {
-    width: 100%;
-    max-width: 100%;
-    height: 432px;
-    background-color: #F7F7F7;
-    margin: 0 auto;
-    padding: 40px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%;                                 /* Ocupa todo el ancho */
+    max-width: 100%;                             /* Ancho máximo completo */
+    height: 432px;                               /* Altura fija */
+    background-color: #F7F7F7;                   /* Fondo gris claro */
+    margin: 0 auto;                              /* Centrado */
+    padding: 40px 20px;                          /* Padding vertical y lateral */
+    display: flex;                               /* Habilita Flexbox */
+    align-items: center;                         /* Centra verticalmente el contenido */
+    justify-content: center;                     /* Centra horizontalmente el contenido */
 }
 
 .footer-contenido {
-    text-align: center;
-    max-width: 900px;
+    text-align: center;                          /* Centra el texto */
+    max-width: 900px;                            /* Ancho máximo del contenido interno */
 }
 
 .footer-contenido h2 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 36px;
-    color: #666666;
-    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;          /* Fuente del título */
+    font-weight: 700;                            /* Texto negrita */
+    font-size: 36px;                             /* Tamaño de fuente */
+    color: #666666;                              /* Color de texto gris */
+    margin-bottom: 20px;                         /* Espacio inferior */
 }
 
 .footer-contenido p {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    color: #777777;
-    line-height: 24px;
-    margin-bottom: 10px;
+    font-family: 'Poppins', sans-serif;          /* Fuente del párrafo */
+    font-weight: 400;                            /* Peso de fuente normal */
+    font-size: 16px;                             /* Tamaño de fuente */
+    color: #777777;                              /* Color de texto gris */
+    line-height: 24px;                           /* Altura de línea ajustada */
+    margin-bottom: 10px;                         /* Espacio inferior */
 }
 
 .footer-social {
-    margin: 30px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 30px;
+    margin: 30px 0;                              /* Margen vertical */
+    display: flex;                               /* Habilita Flexbox */
+    justify-content: center;                     /* Centra los íconos */
+    align-items: center;                         /* Centra verticalmente los íconos */
+    gap: 30px;                                   /* Espacio entre los íconos */
 }
 
 .footer-social a img {
-    width: 30px;
-    height: 30px;
-    transition: transform 0.3s ease;
+    width: 30px;                                 /* Ancho del ícono */
+    height: 30px;                                /* Altura del ícono */
+    transition: transform 0.3s ease;             /* Transición suave para el hover */
 }
 
 .footer-social a:hover img {
-    transform: scale(1.2);
+    transform: scale(1.2);                       /* Agranda el ícono al hacer hover */
 }
 
 .footer-copy p {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    color: #999999;
-    margin-top: 20px;
+    font-family: 'Poppins', sans-serif;          /* Fuente del copyright */
+    font-weight: 400;                            /* Peso de fuente normal */
+    font-size: 14px;                             /* Tamaño de fuente pequeño */
+    color: #999999;                              /* Color de texto muy gris */
+    margin-top: 20px;                            /* Espacio superior */
 }
 
 
-
-
+/* ==== MODAL Y FORMULARIOS ==== */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    font-family: 'Segoe UI', sans-serif;
+    display: none;                               /* Oculto por defecto */
+    position: fixed;                             /* Fijo en la ventana */
+    z-index: 1000;                               /* Z-index muy alto */
+    left: 0;                                     /* Pegado a la izquierda */
+    top: 0;                                      /* Pegado arriba */
+    width: 100vw;                                /* Ancho completo del viewport */
+    height: 100vh;                               /* Altura completa del viewport */
+    background-color: rgba(0, 0, 0, 0.5);        /* Fondo oscuro semi-transparente */
+    justify-content: center;                     /* Centra horizontalmente el contenido */
+    align-items: center;                         /* Centra verticalmente el contenido */
+    font-family: 'Segoe UI', sans-serif;         /* Fuente específica para el modal */
 }
 
 
 .modal-content {
-    background: #fff;
-    padding: 35px 25px;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 420px;
-    text-align: center;
-    animation: fadeInModal 0.4s ease-in-out;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    position: relative;
+    background: #fff;                            /* Fondo blanco del contenido del modal */
+    padding: 35px 25px;                          /* Padding interno */
+    border-radius: 16px;                         /* Bordes redondeados */
+    width: 90%;                                  /* Ancho del 90% en móvil */
+    max-width: 420px;                            /* Ancho máximo limitado */
+    text-align: center;                          /* Centra el texto */
+    animation: fadeInModal 0.4s ease-in-out;     /* Animación de entrada */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);   /* Sombra fuerte */
+    position: relative;                          /* Contexto de posición */
 }
 
 @keyframes fadeInModal {
     from {
-        opacity: 0;
-        transform: translateY(-30px);
+        opacity: 0;                              /* Inicia transparente */
+        transform: translateY(-30px);            /* Inicia 30px arriba */
     }
     to {
-        opacity: 1;
-        transform: translateY(0);
+        opacity: 1;                              /* Termina opaco */
+        transform: translateY(0);                /* Termina en posición normal */
     }
 }
 
 .modal-content h2 {
-    font-size: 26px;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 15px;
+    font-size: 26px;                             /* Tamaño de fuente del título */
+    font-weight: 700;                            /* Texto negrita */
+    color: #333;                                 /* Color de texto oscuro */
+    margin-bottom: 15px;                         /* Espacio inferior */
 }
 
 .modal-content h2 small {
-    font-size: 16px;
-    color: #555;
-    display: block;
-    margin-top: 5px;
+    font-size: 16px;                             /* Tamaño de fuente del subtítulo */
+    color: #555;                                 /* Color de texto gris */
+    display: block;                              /* Ocupa su propia línea */
+    margin-top: 5px;                             /* Espacio superior */
 }
 
 
 .icono-usuario,
 .icono-patita {
-    width: 90px;
-    margin-bottom: 20px;
+    width: 90px;                                 /* Ancho de los íconos */
+    margin-bottom: 20px;                         /* Espacio inferior */
 }
 
 
 .modal-content input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 12px;
-    border: 1px solid #ccc;
-    font-size: 14px;
+    width: 100%;                                 /* Ocupa todo el ancho */
+    padding: 12px;                               /* Padding interno */
+    margin: 10px 0;                              /* Margen vertical */
+    border-radius: 12px;                         /* Bordes redondeados */
+    border: 1px solid #ccc;                      /* Borde gris claro */
+    font-size: 14px;                             /* Tamaño de fuente */
 }
 
 
 .btn1 {
-    padding: 14px;
-    margin-top: 15px;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    padding: 14px;                               /* Padding interno del botón */
+    margin-top: 15px;                            /* Espacio superior */
+    font-size: 16px;                             /* Tamaño de fuente */
+    font-weight: bold;                           /* Texto negrita */
+    color: white;                                /* Color de texto blanco */
+    border: none;                                /* Sin borde */
+    border-radius: 10px;                         /* Bordes redondeados */
+    cursor: pointer;                             /* Indicador de clic */
+    transition: background-color 0.3s ease;      /* Transición suave del color de fondo */
 }
 
 
 .rol-btn1 {
-    width: 70%;
-    background-color: #384152;
+    width: 70%;                                  /* Ancho del botón de rol */
+    background-color: #384152;                   /* Color de fondo oscuro */
 }
 
 .rol-btn1:hover {
-    background-color: #232934;
+    background-color: #232934;                   /* Color de fondo más oscuro al hacer hover */
 }
 
 .rol-btn2 {
-    width: 60%;
-    background-color: #7D8184;
+    width: 60%;                                  /* Ancho del botón de rol secundario */
+    background-color: #7D8184;                   /* Color de fondo gris */
 }
 
 .rol-btn2:hover {
-    background-color: #3c3d41;
+    background-color: #3c3d41;                   /* Color de fondo más oscuro al hacer hover */
 }
 
 .iniciar-sesion {
-    width: 60%;
-    background-color: #384152;
+    width: 60%;                                  /* Ancho del botón de inicio de sesión */
+    background-color: #384152;                   /* Color de fondo oscuro */
 }
 
 .iniciar-sesion:hover {
-    background-color: #232934;
+    background-color: #232934;                   /* Color de fondo más oscuro al hacer hover */
 }
 
 
 .extra-links {
-    font-size: 13px;
-    margin-top: 12px;
+    font-size: 13px;                             /* Tamaño de fuente pequeño */
+    margin-top: 12px;                            /* Espacio superior */
 }
 
 .extra-links a {
-    color: #2f3647;
-    font-weight: bold;
-    text-decoration: none;
+    color: #2f3647;                              /* Color de enlace oscuro */
+    font-weight: bold;                           /* Texto negrita */
+    text-decoration: none;                       /* Sin subrayado */
 }
 
 .extra-links a:hover {
-    text-decoration: underline;
+    text-decoration: underline;                  /* Subrayado al hacer hover */
 }
 
 
 .cerrar {
-    position: absolute;
-    top: 10px;
-    right: 18px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #444;
-    cursor: pointer;
-    z-index: 1001;
+    position: absolute;                          /* Posición absoluta para el botón de cierre */
+    top: 10px;                                   /* Pegado arriba */
+    right: 18px;                                 /* Pegado a la derecha */
+    font-size: 24px;                             /* Tamaño de fuente del ícono "X" */
+    font-weight: bold;                           /* Texto negrita */
+    color: #444;                                 /* Color gris */
+    cursor: pointer;                             /* Indicador de clic */
+    z-index: 1001;                               /* Debe estar encima del modal-content */
 }
 
 .cerrar:hover {
-    color: #8b5151;
+    color: #8b5151;                              /* Color rojo/marrón al hacer hover */
 }
 
 .form-registro {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
+    display: flex;                               /* Habilita Flexbox */
+    flex-direction: column;                      /* Apila los campos verticalmente */
+    gap: 10px;                                   /* Espacio entre campos */
+    margin-top: 20px;                            /* Espacio superior */
 }
 
 .input-group {
-    display: flex;
-    gap: 10px;
+    display: flex;                               /* Habilita Flexbox para agrupar inputs */
+    gap: 10px;                                   /* Espacio entre inputs agrupados */
 }
 
 .input-group input {
-    width: 100%;
+    width: 100%;                                 /* Ocupa todo el ancho dentro del grupo */
 }
 
 .switch-login {
-    font-size: 13px;
-    margin-top: 12px;
+    font-size: 13px;                             /* Tamaño de fuente pequeño */
+    margin-top: 12px;                            /* Espacio superior */
 }
 
 .switch-login a {
-    color: #2f3647;
-    font-weight: bold;
-    text-decoration: none;
+    color: #2f3647;                              /* Color de enlace oscuro */
+    font-weight: bold;                           /* Texto negrita */
+    text-decoration: none;                       /* Sin subrayado */
 }
 
 .switch-login a:hover {
-    text-decoration: underline;
+    text-decoration: underline;                  /* Subrayado al hacer hover */
 }
 
 .btnRegister{
-    width: 70%; 
-    background-color: #384152;
-    color: #fff;
-    font-weight: bold;
-    margin: 20px auto 0 auto; 
-    display: block; 
-    padding: 14px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    width: 70%;                                  /* Ancho del botón de registro */
+    background-color: #384152;                   /* Color de fondo oscuro */
+    color: #fff;                                 /* Color de texto blanco */
+    font-weight: bold;                           /* Texto negrita */
+    margin: 20px auto 0 auto;                    /* Margen superior y centrado */
+    display: block;                              /* Ocupa su propia línea */
+    padding: 14px;                               /* Padding interno */
+    border-radius: 12px;                         /* Bordes redondeados */
+    border: none;                                /* Sin borde */
+    cursor: pointer;                             /* Indicador de clic */
+    transition: background-color 0.3s ease;      /* Transición suave del color de fondo */
 }
 
 .btnRegister:hover {
-    background-color: #232934;
+    background-color: #232934;                   /* Color de fondo más oscuro al hacer hover */
 }
-

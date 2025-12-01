@@ -1,334 +1,334 @@
-/* Estilos generales */
+/* Estilos generales - Reset y configuración básica del documento */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    margin: 0;                                   /* Elimina el margen por defecto en todos los elementos */
+    padding: 0;                                  /* Elimina el padding por defecto en todos los elementos */
+    box-sizing: border-box;                      /* Establece el modelo de caja (padding y borde incluidos en el tamaño) */
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #f7f7f7;
+    margin: 0;                                   /* Elimina el margen por defecto del body */
+    padding: 0;                                  /* Elimina el padding por defecto del body */
+    font-family: 'Arial', sans-serif;            /* Fuente de respaldo para el contenido */
+    background-color: #f7f7f7;                   /* Color de fondo suave y claro */
 }
 
-/* Barra de navegación */
+/* Barra de navegación - Estilos para el componente de navegación principal */
 .navbar {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 30px;
-    height: 80px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    z-index: 15;
+    max-width: 100%;                             /* Ocupa el ancho completo */
+    margin: 0 auto;                              /* Centrado (aunque ocupa 100% width) */
+    padding: 0 30px;                             /* Espaciado horizontal a los lados */
+    height: 80px;                                /* Altura fija del navbar */
+    background-color: #ffffff;                   /* Fondo blanco */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);    /* Sombra suave inferior */
+    display: flex;                               /* Habilita Flexbox para alinear elementos */
+    align-items: center;                         /* Centra verticalmente */
+    justify-content: space-between;              /* Espacio entre logo, enlaces y botones */
+    position: relative;                          /* Contexto de posición para el menú móvil */
+    z-index: 15;                                 /* Asegura que esté por encima de la mayoría del contenido */
 }
 
 .logo-container {
-    display: flex;
-    align-items: center;
-    flex: 1;
+    display: flex;                               /* Habilita Flexbox para el contenedor del logo */
+    align-items: center;                         /* Centra el logo verticalmente */
+    flex: 1;                                     /* Permite ocupar espacio a la izquierda */
 }
 
 .logo {
-    height: 45px;
+    height: 45px;                                /* Altura fija para la imagen del logo */
 }
 
 .hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    z-index: 20;
-    transition: transform 0.4s;
+    display: none;                               /* Oculto por defecto (solo visible en móvil) */
+    flex-direction: column;                      /* Las barras se apilan verticalmente */
+    gap: 5px;                                    /* Espacio entre las barras */
+    cursor: pointer;                             /* Indicador de clic */
+    z-index: 20;                                 /* Asegura que esté sobre el menú desplegable */
+    transition: transform 0.4s;                  /* Transición para la animación (rotación) */
 }
 
 .hamburger span {
-    width: 25px;
-    height: 3px;
-    background: #333;
-    border-radius: 2px;
-    transition: 0.4s;
+    width: 25px;                                 /* Ancho de cada barra */
+    height: 3px;                                 /* Altura de cada barra */
+    background: #333;                            /* Color oscuro de las barras */
+    border-radius: 2px;                          /* Bordes redondeados */
+    transition: 0.4s;                            /* Transición para la animación a "X" */
 }
 
 .hamburger.open span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+    transform: rotate(45deg) translate(5px, 5px); /* Gira la barra superior y la mueve para formar la "X" */
 }
 
 .hamburger.open span:nth-child(2) {
-    opacity: 0;
+    opacity: 0;                                  /* Oculta la barra central (se desvanece) */
 }
 
 .hamburger.open span:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
+    transform: rotate(-45deg) translate(5px, -5px); /* Gira la barra inferior y la mueve para formar la "X" */
 }
 
 .nav-links {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex: 2;
+    display: flex;                               /* Habilita Flexbox para los enlaces y botones */
+    align-items: center;                         /* Centra verticalmente */
+    justify-content: space-between;              /* Distribuye enlaces centrales y botones */
+    flex: 2;                                     /* Ocupa más espacio que el logo */
 }
 
 .center-links {
-    display: flex;
-    gap: 40px;
+    display: flex;                               /* Habilita Flexbox para el grupo de enlaces */
+    gap: 40px;                                   /* Espacio entre los enlaces de navegación */
 }
 
 .center-links a {
-    text-decoration: none;
-    color: #333;
-    font-family: 'Times New Roman', serif;
-    font-size: 16px;
-    transition: color 0.3s;
-    padding: 0px 30px;
+    text-decoration: none;                       /* Quita el subrayado */
+    color: #333;                                 /* Color de texto oscuro */
+    font-family: 'Times New Roman', serif;       /* Fuente contrastante para los enlaces */
+    font-size: 16px;                             /* Tamaño de fuente estándar */
+    transition: color 0.3s;                      /* Transición suave del color */
+    padding: 0px 30px;                           /* Padding horizontal para el área de clic */
 }
 
 .center-links a:hover {
-    color: #696969;
+    color: #696969;                              /* Color gris ligeramente más claro al hacer hover */
 }
 
 .buttons {
-    display: flex;
-    gap: 10px;
+    display: flex;                               /* Habilita Flexbox para los botones de acción */
+    gap: 10px;                                   /* Espacio entre los botones */
 }
 
 .btn {
-    padding: 10px 25px;
-    border-radius: 15px;
-    font-family: 'Times New Roman', serif;
-    font-size: 16px;
-    text-align: center;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+    padding: 10px 25px;                          /* Padding interno del botón */
+    border-radius: 15px;                         /* Bordes redondeados */
+    font-family: 'Times New Roman', serif;       /* Fuente específica para los botones */
+    font-size: 16px;                             /* Tamaño de fuente del botón */
+    text-align: center;                          /* Centra el texto */
+    text-decoration: none;                       /* Quita el subrayado */
+    transition: all 0.3s ease;                   /* Transición suave para todos los efectos hover */
+    box-shadow: 0 3px 5px rgba(0,0,0,0.2);        /* Sombra ligera */
 }
 
 .perfil {
-    background-color: #2c3342;
-    color: #ffffff;
+    background-color: #2c3342;                   /* Color de fondo oscuro (botón principal) */
+    color: #ffffff;                              /* Color de texto blanco */
 }
 
 .perfil:hover {
-    background-color: #8A93A3;
+    background-color: #8A93A3;                   /* Color de fondo más claro al hacer hover */
 }
 
-/* Estilos para la sección Nosotros */
+/* Estilos para la sección Nosotros - Contenedor principal del contenido de la sección */
 .cuadro-nosotros {
-    background-color: #E6EFF1;
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    padding: 30px;
-    width: 90%;
-    max-width: 1290px;
-    margin: 40px auto;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 30px;
-    overflow: hidden;
+    background-color: #E6EFF1;                   /* Fondo de color claro (destaca la sección) */
+    border: none;                                /* Sin borde */
+    border-radius: 15px;                         /* Bordes redondeados */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);      /* Sombra suave */
+    padding: 30px;                               /* Padding interno */
+    width: 90%;                                  /* Ancho del 90% */
+    max-width: 1290px;                           /* Ancho máximo limitado */
+    margin: 40px auto;                           /* Centrado y margen superior/inferior */
+    display: flex;                               /* Habilita Flexbox para diseño de dos columnas */
+    flex-direction: row;                         /* Elementos uno al lado del otro (texto / imagen) */
+    align-items: center;                         /* Centra verticalmente los elementos */
+    justify-content: space-between;              /* Distribuye el espacio entre los elementos */
+    gap: 30px;                                   /* Espacio entre el texto y la imagen */
+    overflow: hidden;                            /* Oculta contenido si sobresale */
 }
 
 .cuadro-nosotros.grande {
-    padding: 40px;
-    max-width: 1290px;
-    height: auto;
+    padding: 40px;                               /* Aumenta el padding en la versión 'grande' */
+    max-width: 1290px;                           /* Mantiene el ancho máximo */
+    height: auto;                                /* Altura automática */
 }
 
 .descripcion {
-    flex: 1;
-    padding-right: 20px;
+    flex: 1;                                     /* Ocupa una fracción del espacio disponible */
+    padding-right: 20px;                         /* Padding a la derecha para separar de la imagen */
 }
 
 .descripcion h2 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 48px;
-    line-height: 50px;
-    color: #3D3D3D;
-    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;          /* Fuente específica para el título */
+    font-weight: 600;                            /* Texto semi-negrita */
+    font-size: 48px;                             /* Tamaño de fuente grande */
+    line-height: 50px;                           /* Altura de línea ajustada */
+    color: #3D3D3D;                              /* Color de texto oscuro */
+    margin-bottom: 20px;                         /* Espacio debajo del título */
 }
 
 .descripcion p {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 28px;
-    color: #555555;
+    font-family: 'Poppins', sans-serif;          /* Fuente específica para el párrafo */
+    font-weight: 500;                            /* Peso de fuente mediano */
+    font-size: 18px;                             /* Tamaño de fuente del párrafo */
+    line-height: 28px;                           /* Altura de línea cómoda para lectura */
+    color: #555555;                              /* Color de texto secundario/gris */
 }
 
 .imagen {
-    flex: 1;
-    text-align: right;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    max-height: 500px;
+    flex: 1;                                     /* Ocupa una fracción del espacio disponible */
+    text-align: right;                           /* Alinea la imagen a la derecha */
+    display: flex;                               /* Habilita Flexbox para centrado interno */
+    justify-content: center;                     /* Centra horizontalmente (si es necesario) */
+    align-items: center;                         /* Centra verticalmente */
+    overflow: hidden;                            /* Oculta si la imagen sobresale */
+    max-height: 500px;                           /* Altura máxima del contenedor */
 }
 
 .imagen img {
-    max-width: 100%;
-    height: 400px;
-    width: auto;
-    max-height: 500px;
-    border-radius: 15px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
+    max-width: 100%;                             /* Ancho máximo de la imagen */
+    height: 400px;                               /* Altura fija de la imagen (escritorio) */
+    width: auto;                                 /* Ancho automático (manteniendo la proporción) */
+    max-height: 500px;                           /* Límite de altura */
+    border-radius: 15px;                         /* Bordes redondeados */
+    object-fit: cover;                           /* La imagen cubre el área (puede recortarse) */
+    transition: transform 0.3s ease;             /* Transición suave para el efecto hover */
 }
 
 .imagen img:hover {
-    transform: scale(1.05);
+    transform: scale(1.05);                      /* Agranda ligeramente la imagen al hacer hover */
 }
 
-/* Media queries para responsividad */
-@media (max-width: 900px) {
+/* Media queries para responsividad - Adaptación para dispositivos móviles */
+@media (max-width: 900px) {                      /* Aplicar estilos si el ancho es 900px o menos */
     .hamburger {
-        display: flex;
+        display: flex;                           /* Muestra el ícono del menú hamburguesa */
     }
 
     .nav-links {
-        flex-direction: column;
-        align-items: center;
-        background-color: #fff;
-        position: absolute;
-        top: 80px;
-        left: 0;
-        right: 0;
-        overflow: hidden;
-        max-height: 0;
-        transition: max-height 0.4s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        z-index: 20;
+        flex-direction: column;                  /* Apila los enlaces y botones verticalmente */
+        align-items: center;                     /* Centra los ítems */
+        background-color: #fff;                  /* Fondo blanco para el menú desplegable */
+        position: absolute;                      /* Posicionamiento debajo del navbar */
+        top: 80px;                               /* Coloca el menú justo debajo del navbar */
+        left: 0;                                 /* Ocupa todo el ancho */
+        right: 0;                                /* Ocupa todo el ancho */
+        overflow: hidden;                        /* Oculta contenido si no está abierto */
+        max-height: 0;                           /* Altura inicial cero (cerrado) */
+        transition: max-height 0.4s ease;        /* Transición suave de apertura/cierre */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra debajo del menú */
+        z-index: 20;                             /* Prioridad de visualización */
     }
 
     .nav-links.open {
-        max-height: 600px;
-        padding: 20px 0;
+        max-height: 600px;                       /* Altura máxima para mostrar todo el contenido (abierto) */
+        padding: 20px 0;                         /* Padding vertical al estar abierto */
     }
 
     .center-links {
-        flex-direction: column;
-        gap: 20px;
-        margin-bottom: 20px;
+        flex-direction: column;                  /* Apila los enlaces de navegación */
+        gap: 20px;                               /* Espacio vertical entre enlaces */
+        margin-bottom: 20px;                     /* Espacio para separar de los botones */
     }
 
     .buttons {
-        flex-direction: column;
-        gap: 15px;
+        flex-direction: column;                  /* Apila los botones de acción */
+        gap: 15px;                               /* Espacio vertical entre botones */
     }
 
     .btn {
-        width: 220px;
+        width: 220px;                            /* Ancho fijo para los botones en móvil */
     }
 
     .logo-container {
-        justify-content: center;
-        flex: none;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
+        justify-content: center;                 /* Centra el logo */
+        flex: none;                              /* Deshabilita el crecimiento/encogimiento del logo */
+        position: absolute;                      /* Posicionamiento absoluto para centrar */
+        left: 50%;                               /* Mueve el punto de inicio al 50% */
+        transform: translateX(-50%);             /* Ajuste para centrar el logo */
     }
     
     .cuadro-nosotros {
-        flex-direction: column;
-        width: 90%;
-        height: auto;
-        margin: 20px auto;
-        padding: 20px;
+        flex-direction: column;                  /* Apila el texto y la imagen verticalmente */
+        width: 90%;                              /* Ancho del 90% */
+        height: auto;                            /* Altura automática */
+        margin: 20px auto;                       /* Margen superior/inferior reducido */
+        padding: 20px;                           /* Padding interno reducido */
     }
     
     .descripcion {
-        width: 100%;
-        padding-right: 0;
-        text-align: center;
+        width: 100%;                             /* Ocupa todo el ancho */
+        padding-right: 0;                        /* Elimina el padding derecho */
+        text-align: center;                      /* Centra el texto */
     }
     
     .descripcion h2 {
-        font-size: 32px;
-        line-height: 40px;
-        text-align: center;
+        font-size: 32px;                         /* Tamaño de fuente del título reducido */
+        line-height: 40px;                       /* Altura de línea ajustada */
+        text-align: center;                      /* Centra el título */
     }
     
     .descripcion p {
-        font-size: 16px;
-        line-height: 26px;
-        text-align: center;
+        font-size: 16px;                         /* Tamaño de fuente del párrafo reducido */
+        line-height: 26px;                       /* Altura de línea ajustada */
+        text-align: center;                      /* Centra el párrafo */
     }
     
     .imagen {
-        width: 100%;
-        margin-top: 20px;
+        width: 100%;                             /* Ocupa todo el ancho */
+        margin-top: 20px;                        /* Espacio encima de la imagen */
     }
     
     .imagen img {
-        height: 300px;
-        width: 100%;
-        object-fit: contain;
+        height: 300px;                           /* Altura fija reducida de la imagen */
+        width: 100%;                             /* La imagen ocupa todo el ancho */
+        object-fit: contain;                     /* Asegura que la imagen sea visible sin recorte */
     }
     
     .cuadro-nosotros.grande .imagen img {
-        height: 250px;
+        height: 250px;                           /* Altura de imagen más pequeña para el modificador 'grande' en móvil */
     }
 }
 
-/* Estilos para sidebar perfil (opcional si quieres mantenerlo en el CSS) */
+/* Estilos para sidebar perfil (opcional si quieres mantenerlo en el CSS) - Menú lateral derecho */
 .sidebar-perfil {
-    display: none;
-    position: fixed;
-    top: 0; right: 0;
-    width: 280px;
-    height: 100%;
-    background-color: #fff;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.3);
-    z-index: 2000;
-    padding-top: 50px;
-    overflow-y: auto;
+    display: none;                               /* Oculto por defecto */
+    position: fixed;                             /* Fijo en la ventana */
+    top: 0; right: 0;                            /* Pegado a la esquina superior derecha */
+    width: 280px;                                /* Ancho fijo */
+    height: 100%;                                /* Altura completa */
+    background-color: #fff;                      /* Fondo blanco */
+    box-shadow: -2px 0 5px rgba(0,0,0,0.3);      /* Sombra que indica elevación */
+    z-index: 2000;                               /* Z-index muy alto */
+    padding-top: 50px;                           /* Padding superior */
+    overflow-y: auto;                            /* Permite desplazamiento vertical */
 }
 
 .sidebar-perfil.active {
-    display: block;
+    display: block;                              /* Muestra el sidebar */
 }
 
 .sidebar-perfil h2 {
-    margin: 0 0 20px 20px;
-    font-weight: 600;
-    font-size: 22px;
+    margin: 0 0 20px 20px;                       /* Margen interior para el título */
+    font-weight: 600;                            /* Texto semi-negrita */
+    font-size: 22px;                             /* Tamaño de fuente del título */
 }
 
 .sidebar-perfil a {
-    display: block;
-    padding: 15px 25px;
-    color: #333;
-    text-decoration: none;
-    border-bottom: 1px solid #eee;
-    font-size: 16px;
-    transition: background-color 0.2s;
+    display: block;                              /* Ocupa todo el ancho */
+    padding: 15px 25px;                          /* Padding de los ítems */
+    color: #333;                                 /* Color de texto oscuro */
+    text-decoration: none;                       /* Quita el subrayado */
+    border-bottom: 1px solid #eee;               /* Línea separadora */
+    font-size: 16px;                             /* Tamaño de fuente estándar */
+    transition: background-color 0.2s;           /* Transición suave del color de fondo */
 }
 
 .sidebar-perfil a:hover {
-    background-color: #f0f0f0;
+    background-color: #f0f0f0;                   /* Fondo gris claro al hacer hover */
 }
 
 #sidebarOverlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background-color: rgba(0,0,0,0.4);
-    z-index: 1500;
+    display: none;                               /* Oculto por defecto */
+    position: fixed;                             /* Fijo en la ventana */
+    top: 0; left: 0;                             /* Ocupa toda la pantalla */
+    width: 100vw; height: 100vh;                 /* Ocupa el 100% de la vista */
+    background-color: rgba(0,0,0,0.4);           /* Fondo oscuro semi-transparente */
+    z-index: 1500;                               /* Debe estar debajo del sidebar */
 }
 
 #sidebarOverlay.active {
-    display: block;
+    display: block;                              /* Muestra el overlay */
 }
 
 .center-links a.active-link {
-    border-bottom: 2px solid #000;
-    font-weight: 600;
+    border-bottom: 2px solid #000;               /* Borde inferior para indicar el enlace activo */
+    font-weight: 600;                            /* Texto semi-negrita para el enlace activo */
 }

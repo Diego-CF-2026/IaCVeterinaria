@@ -1,192 +1,192 @@
-/* ==== BODY Y FUENTES ==== */
+/* ==== BODY Y FUENTES - Estilos base para el documento ==== */
 body {
-  background: #fff;
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  padding: 0;
+    background: #fff;                                /* Fondo blanco puro para el cuerpo del documento */
+    font-family: 'Poppins', sans-serif;              /* Establece la fuente principal para todo el cuerpo */
+    margin: 0;                                       /* Elimina el margen externo por defecto del body */
+    padding: 0;                                      /* Elimina el padding interno por defecto del body */
 }
 
-/* ==== NAVBAR ==== */
+/* ==== NAVBAR - Estilos para la barra de navegación superior ==== */
 .navbar {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 30px;
-  height: 80px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  z-index: 15;
+    max-width: 100%;                                 /* Asegura que ocupe todo el ancho de la pantalla */
+    margin: 0 auto;                                  /* Centrado horizontal (aunque ocupa 100% width) */
+    padding: 0 30px;                                 /* Padding lateral para el contenido de la barra */
+    height: 80px;                                    /* Altura fija de la barra de navegación */
+    background-color: #ffffff;                       /* Fondo de color blanco */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);        /* Sombra suave para dar elevación visual */
+    display: flex;                                   /* Habilita Flexbox para la alineación horizontal */
+    align-items: center;                             /* Centra verticalmente los elementos */
+    justify-content: space-between;                  /* Distribuye el espacio entre los elementos */
+    position: relative;                              /* Establece un contexto de posición (necesario para el menú móvil) */
+    z-index: 15;                                     /* Asegura que la barra esté por encima del contenido */
 }
 .logo-container {
-  display: flex;
-  align-items: center;
-  flex: 1;
+    display: flex;                                   /* Habilita Flexbox para alinear el logo */
+    align-items: center;                             /* Centra el logo verticalmente */
+    flex: 1;                                         /* Permite que el contenedor del logo ocupe su espacio */
 }
 .logo {
-  height: 45px;
+    height: 45px;                                    /* Altura fija de la imagen del logo */
 }
 .hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  cursor: pointer;
-  z-index: 20;
-  transition: transform 0.4s;
+    display: none;                                   /* Oculto por defecto (solo visible en móvil) */
+    flex-direction: column;                          /* Apila las barras verticalmente */
+    gap: 5px;                                        /* Espacio entre las barras del ícono */
+    cursor: pointer;                                 /* Indicador de clic */
+    z-index: 20;                                     /* Asegura que el ícono esté sobre el menú desplegable */
+    transition: transform 0.4s;                      /* Transición suave para la animación de rotación */
 }
 .hamburger span {
-  width: 25px;
-  height: 3px;
-  background: #2c3e50;
-  border-radius: 2px;
-  transition: 0.4s;
+    width: 25px;                                     /* Ancho fijo de cada barra */
+    height: 3px;                                     /* Altura fija de cada barra */
+    background: #2c3e50;                             /* Color oscuro de las barras */
+    border-radius: 2px;                              /* Bordes redondeados para suavizar */
+    transition: 0.4s;                                /* Transición suave para la transformación a "X" */
 }
 .nav-links {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex: 2;
+    display: flex;                                   /* Habilita Flexbox para el contenedor de enlaces y botones */
+    align-items: center;                             /* Centra los elementos verticalmente */
+    justify-content: space-between;                  /* Distribuye el espacio entre enlaces y botones */
+    flex: 2;                                         /* Ocupa el doble de espacio que el logo-container */
 }
 .center-links {
-  display: flex;
-  gap: 40px;
+    display: flex;                                   /* Habilita Flexbox para los enlaces de navegación */
+    gap: 40px;                                       /* Espacio horizontal entre los enlaces */
 }
 .center-links a {
-  text-decoration: none;
-  color: #2c3e50;
-  font-family: 'Times New Roman', serif;
-  font-size: 16px;
-  transition: color 0.3s;
-  padding: 0px 30px;
+    text-decoration: none;                           /* Elimina el subrayado de los enlaces */
+    color: #2c3e50;                                  /* Color de texto principal */
+    font-family: 'Times New Roman', serif;           /* Fuente clásica para los enlaces */
+    font-size: 16px;                                 /* Tamaño de fuente estándar */
+    transition: color 0.3s;                          /* Transición suave del color al hacer hover */
+    padding: 0px 30px;                               /* Padding horizontal para el área de hover */
 }
 .center-links a:hover,
 .center-links a.active-link {
-  color: #000000;
-  border-bottom: 2px solid #000000;
-  font-weight: 600;
+    color: #000000;                                  /* Color negro al hacer hover o si está activo */
+    border-bottom: 2px solid #000000;                /* Línea inferior como indicador activo/hover */
+    font-weight: 600;                                /* Texto semi-negrita para el estado activo/hover */
 }
 .buttons {
-  display: flex;
-  gap: 10px;
+    display: flex;                                   /* Habilita Flexbox para el grupo de botones */
+    gap: 10px;                                       /* Espacio entre los botones */
 }
 .btn {
-  padding: 10px 25px;
-  border-radius: 15px;
-  font-family: 'Times New Roman', serif;
-  font-size: 16px;
-  text-align: center;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+    padding: 10px 25px;                              /* Padding interno del botón */
+    border-radius: 15px;                             /* Bordes redondeados */
+    font-family: 'Times New Roman', serif;           /* Fuente específica para los botones */
+    font-size: 16px;                                 /* Tamaño de fuente del botón */
+    text-align: center;                              /* Centra el texto */
+    text-decoration: none;                           /* Elimina el subrayado */
+    transition: all 0.3s ease;                       /* Transición suave para todos los efectos hover */
+    box-shadow: 0 3px 5px rgba(0,0,0,0.2);            /* Sombra ligera para el botón */
 }
 .perfil {
-  background-color: #000000;
-  color: #ffffff;
+    background-color: #000000;                       /* Fondo negro (botón principal) */
+    color: #ffffff;                                  /* Color de texto blanco */
 }
 .perfil:hover {
-  background-color: #333333;
+    background-color: #333333;                       /* Fondo gris oscuro al hacer hover */
 }
 
-/* ==== CONTENEDOR GENERAL ==== */
+/* ==== CONTENEDOR GENERAL - Estructura principal del listado de alimentos ==== */
 .alimentos-container {
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 0 20px 60px 20px;
+    max-width: 1100px;                               /* Ancho máximo del contenedor de contenido */
+    margin: 40px auto;                               /* Centrado horizontal y margen superior */
+    padding: 0 20px 60px 20px;                       /* Padding lateral y un margen inferior generoso */
 }
 .alimentos-container h2 {
-  font-family: 'Poppins', sans-serif;
-  font-size: 2.8rem;
-  color: #222;
-  margin-bottom: 40px;
-  text-align: center;
+    font-family: 'Poppins', sans-serif;              /* Fuente específica para el título principal */
+    font-size: 2.8rem;                               /* Tamaño de fuente grande */
+    color: #222;                                     /* Color de texto oscuro */
+    margin-bottom: 40px;                             /* Espacio debajo del título */
+    text-align: center;                              /* Centra el título principal */
 }
 .animal-category {
-  font-size: 2rem;
-  color: #3aafa9;
-  margin: 50px 0 20px;
+    font-size: 2rem;                                 /* Tamaño de fuente del título de categoría (Animal, Vegetal, etc.) */
+    color: #3aafa9;                                  /* Color de acento (verde azulado) para la categoría */
+    margin: 50px 0 20px;                             /* Margen superior/inferior para separar las secciones */
 }
 
-/* ==== TARJETAS DE PRODUCTOS ==== */
+/* ==== TARJETAS DE PRODUCTOS - Estilos para la cuadrícula de alimentos ==== */
 .alimentos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 30px;
+    display: grid;                                   /* Habilita Grid Layout */
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* Columnas responsivas: mínimo 240px */
+    gap: 30px;                                       /* Espacio entre las tarjetas */
 }
 .alimento-card {
-  background: #E6EFF1;
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(44,62,80,0.1);
-  padding: 20px;
-  text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
+    background: #E6EFF1;                             /* Fondo de color claro para la tarjeta */
+    border-radius: 20px;                             /* Bordes redondeados */
+    box-shadow: 0 8px 24px rgba(44,62,80,0.1);        /* Sombra suave con color de acento */
+    padding: 20px;                                   /* Padding interno */
+    text-align: center;                              /* Centra el contenido (texto/imagen) */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave para el hover */
+    cursor: pointer;                                 /* Indicador de clic */
 }
 .alimento-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(44,62,80,0.15);
+    transform: translateY(-8px);                     /* Levanta la tarjeta 8px al hacer hover */
+    box-shadow: 0 12px 30px rgba(44,62,80,0.15);      /* Sombra más marcada al hacer hover */
 }
 .alimento-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 15px;
-  margin-bottom: 20px;
+    width: 100%;                                     /* La imagen ocupa todo el ancho */
+    height: 180px;                                   /* Altura fija de la imagen */
+    object-fit: cover;                               /* La imagen cubre el área (puede recortarse) */
+    border-radius: 15px;                             /* Bordes redondeados para la imagen */
+    margin-bottom: 20px;                             /* Espacio debajo de la imagen */
 }
 .alimento-card h4 {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.5rem;
-  color: #3aafa9;
-  margin-bottom: 12px;
+    font-family: 'Poppins', sans-serif;              /* Fuente del título de la tarjeta */
+    font-size: 1.5rem;                               /* Tamaño de fuente del título del alimento */
+    color: #3aafa9;                                  /* Color de acento para el título */
+    margin-bottom: 12px;                             /* Espacio debajo del título */
 }
 .alimento-card p {
-  font-family: 'Times New Roman', serif;
-  font-size: 1rem;
-  color: #556f7a;
-  line-height: 1.4;
+    font-family: 'Times New Roman', serif;           /* Fuente secundaria para el texto */
+    font-size: 1rem;                                 /* Tamaño de fuente estándar */
+    color: #556f7a;                                  /* Color de texto secundario/gris */
+    line-height: 1.4;                                /* Altura de línea para mejor lectura */
 }
 
-/* ==== RESPONSIVE ==== */
-@media (max-width: 900px) {
-  .hamburger {
-    display: flex;
-  }
-  .nav-links {
-    flex-direction: column;
-    align-items: center;
-    background-color: #fff;
-    position: absolute;
-    top: 80px;
-    left: 0;
-    right: 0;
-    overflow: hidden;
-    max-height: 0;
-    transition: max-height 0.4s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 20;
-  }
-  .nav-links.active {
-    max-height: 600px;
-    padding: 20px 0;
-  }
-  .center-links {
-    flex-direction: column;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
-  .buttons {
-    flex-direction: column;
-    gap: 15px;
-  }
-  .btn {
-    width: 220px;
-  }
-  .logo-container {
-    justify-content: center;
-    flex: none;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+/* ==== RESPONSIVE - Ajustes para pantallas pequeñas (móvil) ==== */
+@media (max-width: 900px) {                          /* Aplicar estilos si el ancho es 900px o menos */
+    .hamburger {
+        display: flex;                               /* Muestra el ícono de menú hamburguesa */
+    }
+    .nav-links {
+        flex-direction: column;                      /* Apila los enlaces y botones verticalmente */
+        align-items: center;                         /* Centra los ítems en el menú desplegable */
+        background-color: #fff;                      /* Fondo blanco para el menú */
+        position: absolute;                          /* Posicionamiento debajo del navbar */
+        top: 80px;                                   /* Coloca el menú justo debajo del navbar */
+        left: 0;                                     /* Ocupa todo el ancho */
+        right: 0;                                    /* Ocupa todo el ancho */
+        overflow: hidden;                            /* Oculta contenido cuando está cerrado */
+        max-height: 0;                               /* Altura inicial cero (cerrado) */
+        transition: max-height 0.4s ease;            /* Transición suave de apertura/cierre */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);     /* Sombra suave */
+        z-index: 20;                                 /* Prioridad de visualización */
+    }
+    .nav-links.active {
+        max-height: 600px;                           /* Altura máxima para mostrar todo el contenido (abierto) */
+        padding: 20px 0;                             /* Padding vertical al estar activo */
+    }
+    .center-links {
+        flex-direction: column;                      /* Apila los enlaces de navegación */
+        gap: 20px;                                   /* Espacio vertical reducido */
+        margin-bottom: 20px;                         /* Espacio para separar de los botones */
+    }
+    .buttons {
+        flex-direction: column;                      /* Apila los botones de acción */
+        gap: 15px;                                   /* Espacio vertical reducido */
+    }
+    .btn {
+        width: 220px;                                /* Ancho fijo para los botones en móvil */
+    }
+    .logo-container {
+        justify-content: center;                     /* Centra el logo */
+        flex: none;                                  /* Deshabilita el crecimiento/encogimiento del logo */
+        position: absolute;                          /* Posicionamiento absoluto para centrar */
+        left: 50%;                                   /* Mueve el punto de inicio al 50% */
+        transform: translateX(-50%);                 /* Ajuste final para centrar el logo */
+    }
 }

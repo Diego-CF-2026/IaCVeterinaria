@@ -76,22 +76,5 @@ public class HistorialComprasServlet extends HttpServlet {
         request.getRequestDispatcher("/VistasWeb/VistasCliente/historialdecompras.jsp")
                .forward(request, response);
 
-        // 🔹 Observaciones importantes:
-        // - Este servlet solo gestiona la vista, no realiza cambios en la base de datos.
-        // - El historial obtenido incluye todas las compras activas e inactivas según la lógica de CarritoDAO.
-        // - Es posible agregar filtros por fecha, estado de pago o estado de la compra en el futuro.
-        // - La sesión se verifica para evitar accesos no autorizados.
-        // - El servlet puede ser extendido para manejar AJAX o paginación de historial.
-        // - Se pueden agregar validaciones adicionales si el historial es muy grande.
-        // - Es recomendable manejar excepciones en los DAO para evitar errores de conexión.
-        // - La JSP debe iterar sobre 'historialCompras' y mostrar los datos correctamente.
-        // - Los tipos de pago pueden incluir: tarjeta, efectivo, transferencia, etc.
-        // - Se puede agregar funcionalidad para descargar facturas en PDF por compra.
-        // - El servlet respeta el patrón MVC separando la lógica de negocio de la vista.
-        // - No se permite modificar compras desde este servlet, solo visualización.
-        // - Se puede registrar la actividad del usuario para auditoría.
-        // - La conexión a la base de datos se reutiliza para eficiencia.
-        // - Es compatible con futuras mejoras de autenticación o roles de usuario.
-        // - El servlet puede integrarse con notificaciones o historial de puntos de fidelidad.
     }
 }
