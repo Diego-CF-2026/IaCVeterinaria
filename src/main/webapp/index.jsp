@@ -123,30 +123,30 @@
                     <div class="input-group">
                         <input type="text" name="nombres" placeholder="Nombres" required 
                                pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" title="Solo letras"
-                               value="<%= request.getAttribute("valNombres") != null ? request.getAttribute("valNombres") : ""%>">
+                               value="<%= valNombres %>">
 
                         <input type="text" name="apellidos" placeholder="Apellidos" required 
                                pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" title="Solo letras"
-                               value="<%= request.getAttribute("valApellidos") != null ? request.getAttribute("valApellidos") : ""%>">
+                               value="<%= valApellidos %>">
                     </div>
 
                     <div class="input-group">
                         <div style="width: 100%;">
                             <input type="text" name="dni" placeholder="DNI" required minlength="8" maxlength="8"
-                                   value="<%= request.getAttribute("valDni") != null ? request.getAttribute("valDni") : ""%>"
+                                   value="<%= valDni %>"
                                    class="<%= "dni".equals(request.getAttribute("errorRegistro")) ? "campo-error" : ""%>">
                         </div>
 
                         <div style="width: 100%;">
                             <input type="tel" name="telefono" placeholder="Número telefónico" required 
                                    pattern="9[0-9]{8}" title="Debe empezar con 9 y tener 9 dígitos"
-                                   value="<%= request.getAttribute("valTelefono") != null ? request.getAttribute("valTelefono") : ""%>"
+                                   value="<%= valTelefono %>"
                                    class="<%= "telefono".equals(request.getAttribute("errorRegistro")) ? "campo-error" : ""%>">
                         </div>
                     </div>
 
                     <input type="email" name="correo" placeholder="Correo Electrónico" required maxlength="100"
-                           value="<%= request.getAttribute("valCorreo") != null ? request.getAttribute("valCorreo") : ""%>"
+                           value="<%= valCorreo %>"
                            class="<%= "correo".equals(request.getAttribute("errorRegistro")) ? "campo-error" : ""%>">
 
                     <input type="password" name="contrasena" placeholder="Contraseña" required minlength="8" maxlength="45" autocomplete="off">

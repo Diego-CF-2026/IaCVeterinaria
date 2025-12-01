@@ -4,6 +4,10 @@ import ModeloDAO.UsuarioDAO;
 import Modelo.Cliente;
 import Modelo.Usuario;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+// Importa las clases que ya usas
+import jakarta.servlet.http.*;
+import jakarta.servlet.*;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -42,67 +46,98 @@ public class RegistrarServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // --- 1) Verificación de reCAPTCHA ---
-        String recaptchaResponse = request.getParameter("g-recaptcha-response"); // Token enviado por el formulario
+        // =========================================================
+        // 1. CAPTURAR Y SANITIZAR TODA LA ENTRADA DE USUARIO
+        // Esto previene el XSS reflejado.
+        // =========================================================
+        
+        // --- 1.1) Captura los valores originales ---
+        String nombresOriginal  = request.getParameter("nombres");
+        String apellidosOriginal = request.getParameter("apellidos");
+        String dniOriginal      = request.getParameter("dni");
+        String telefonoOriginal = request.getParameter("telefono");
+        String correoOriginal   = request.getParameter("correo");
+        String contrasena = request.getParameter("realContrasena"); // Contraseña en texto plano para hash seguro
+        
+        // --- 1.2) Codificación de Salida (Output Encoding) ---
+        // Sanitizamos los campos que serán reflejados en el JSP en caso de error.
+        String valNombres = StringEscapeUtils.escapeHtml4(nombresOriginal);
+        String valApellidos = StringEscapeUtils.escapeHtml4(apellidosOriginal);
+        String valDni = StringEscapeUtils.escapeHtml4(dniOriginal);
+        String valTelefono = StringEscapeUtils.escapeHtml4(telefonoOriginal);
+        String valCorreo = StringEscapeUtils.escapeHtml4(correoOriginal);
+
+
+        // =========================================================
+        // 2. VERIFICACIÓN DE RECAPTCHA
+        // =========================================================
+        String recaptchaResponse = request.getParameter("g-recaptcha-response");
         boolean captchaOk = verifyRecaptchaNoJson(recaptchaResponse, request.getRemoteAddr());
 
         if (!captchaOk) {
-            // Si el captcha falla, repoblamos los campos para que el usuario no pierda la información
-            request.setAttribute("valNombres",   request.getParameter("nombres"));
-            request.setAttribute("valApellidos", request.getParameter("apellidos"));
-            request.setAttribute("valDni",       request.getParameter("dni"));
-            request.setAttribute("valTelefono",  request.getParameter("telefono"));
-            request.setAttribute("valCorreo",    request.getParameter("correo"));
+            // Si el captcha falla, repoblamos con los valores SANITIZADOS (valNombres, etc.)
+            request.setAttribute("valNombres", valNombres); 
+            request.setAttribute("valApellidos", valApellidos);
+            request.setAttribute("valDni", valDni);
+            request.setAttribute("valTelefono", valTelefono);
+            request.setAttribute("valCorreo", valCorreo);
 
-            // Indicamos que hubo un error de captcha
             request.setAttribute("errorRegistro", "captcha");
-
-            // Redirigimos de nuevo al index.jsp con el mensaje de error
             request.getRequestDispatcher("index.jsp").forward(request, response);
             return; // Salimos del método
         }
 
-        // --- 2) Captura de datos del formulario ---
-        String nombres    = request.getParameter("nombres");
-        String apellidos  = request.getParameter("apellidos");
-        String dni        = request.getParameter("dni");
-        String telefono   = request.getParameter("telefono");
-        String correo     = request.getParameter("correo");
-        // CAMBIO CLAVE: Leer el campo oculto con la contraseña en texto plano
-        String contrasena = request.getParameter("realContrasena");
+        // Ya no necesitas la sección "Captura de datos del formulario" (tu sección 2)
+        // porque ya capturamos y sanitizamos los datos arriba (nombresOriginal vs valNombres).
+        // Los campos de Cliente usarán las variables valXXX.
 
-        // --- 3) Mantener valores en caso de que haya error al insertar ---
-        request.setAttribute("valNombres", nombres);
-        request.setAttribute("valApellidos", apellidos);
-        request.setAttribute("valDni", dni);
-        request.setAttribute("valTelefono", telefono);
-        request.setAttribute("valCorreo", correo);
+        // =========================================================
+        // 3. MANTENER VALORES EN CASO DE ERROR DE BD
+        // =========================================================
+        // Establecemos los atributos sanitizados, que se usarán en caso de
+        // errores de duplicado (DNI, Correo, Teléfono, etc.)
+        request.setAttribute("valNombres", valNombres);
+        request.setAttribute("valApellidos", valApellidos);
+        request.setAttribute("valDni", valDni);
+        request.setAttribute("valTelefono", valTelefono);
+        request.setAttribute("valCorreo", valCorreo);
 
-        // --- 4) Crear objetos de modelo ---
+        // =========================================================
+        // 4. CREAR OBJETOS DE MODELO (Usando datos sanitizados o el original si es numérico)
+        // =========================================================
         Usuario usuario = new Usuario();
-        usuario.setCorreo(correo);
+        usuario.setCorreo(correoOriginal); // El correo no necesita escape para la BD, pero es buena práctica validarlo/sanitizarlo si es para la DB. Usaremos el original aquí.
         usuario.setContra(contrasena);
-        usuario.setIntentos(0); // Número de intentos inicial
-        usuario.setEstado(true); // Usuario activo
+        usuario.setIntentos(0); 
+        usuario.setEstado(true); 
 
         Cliente cliente = new Cliente();
-        cliente.setNombre(nombres);
-        cliente.setApellido(apellidos);
-        cliente.setDni(dni);
-        cliente.setTelefono(telefono);
+        // Usamos las variables sanitizadas (valNombres, valApellidos) para el objeto Cliente
+        cliente.setNombre(valNombres);
+        cliente.setApellido(valApellidos); 
+        cliente.setDni(dniOriginal); // DNI es numérico, no necesita escape para la DB
+        cliente.setTelefono(telefonoOriginal); // Teléfono es numérico, no necesita escape para la DB
 
-        // --- 5) Llamada al DAO para insertar en la base de datos ---
+        // =========================================================
+        // 5. LLAMADA AL DAO PARA INSERTAR EN LA BASE DE DATOS
+        // =========================================================
         UsuarioDAO dao = new UsuarioDAO();
-        String resultado = dao.insertarCliente(usuario, cliente); // Retorna "ok" si todo sale bien
+        // Aquí debes asegurar que tu DAO esté preparado para manejar la 'contrasena' 
+        // y aplicar BCrypt/hashing seguro ANTES de guardarla en la base de datos.
+        String resultado = dao.insertarCliente(usuario, cliente); 
 
-        // --- 6) Preparar la respuesta según el resultado ---
+        // =========================================================
+        // 6. PREPARAR LA RESPUESTA SEGÚN EL RESULTADO
+        // =========================================================
         if ("ok".equals(resultado)) {
-            request.setAttribute("exitoRegistro", "ok"); // Éxito
+            request.setAttribute("exitoRegistro", "ok"); 
         } else {
-            request.setAttribute("errorRegistro", resultado); // Error específico (p. ej., correo duplicado)
+            // Si hay un error de DB (duplicado, etc.), se envían los valores sanitizados 
+            // que se establecieron en el paso 3.
+            request.setAttribute("errorRegistro", resultado); 
         }
 
-        // Redirigimos de nuevo a index.jsp con los mensajes correspondientes
+        // Redirigimos de nuevo a index.jsp
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
