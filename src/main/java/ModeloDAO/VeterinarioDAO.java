@@ -400,28 +400,59 @@ public boolean eliminarVeterinario(int idVeterinario) {
     return resultado;
 }
     // =========================================================================
-    // 3️⃣ REPROGRAMAR CITA (CORREGIDO ID ESTADO)
-    // =========================================================================
-    public boolean reprogramarCita(int idCita, Date nuevaFecha, Time nuevaHora) {
-        boolean exito = false;
-        // CORRECCIÓN: Se usa idEstado = 1 ('Pendiente') para reprogramar, no 3 ('Cancelado')
-        String sql = "UPDATE citas SET fecha = ?, hora = ?, idEstado = 1 WHERE idCita = ?"; 
+// 3️⃣ REPROGRAMAR CITA (CON VALIDACIÓN DE TIEMPO ACTUAL O FUTURO)
+// =========================================================================
+public boolean reprogramarCita(int idCita, Date nuevaFecha, Time nuevaHora) {
+    
+    // Convertir java.sql.Date y java.sql.Time a un solo java.util.Date/java.time.LocalDateTime 
+    // para compararlo con el tiempo actual.
+    // Usamos java.util.Calendar para combinar Date y Time.
+    Calendar calNuevaCita = Calendar.getInstance();
+    calNuevaCita.setTime(nuevaFecha);
+    
+    Calendar calNuevaHora = Calendar.getInstance();
+    calNuevaHora.setTime(nuevaHora);
+    
+    // Establecer la hora, minuto, segundo y milisegundo en la fecha de la cita
+    calNuevaCita.set(Calendar.HOUR_OF_DAY, calNuevaHora.get(Calendar.HOUR_OF_DAY));
+    calNuevaCita.set(Calendar.MINUTE, calNuevaHora.get(Calendar.MINUTE));
+    calNuevaCita.set(Calendar.SECOND, 0); // Opcional: limpiar segundos
+    calNuevaCita.set(Calendar.MILLISECOND, 0); // Opcional: limpiar milisegundos
 
-        try (Connection con = Conexion.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+    Calendar calAhora = Calendar.getInstance();
+    // Definimos un margen de 5 minutos para evitar problemas de concurrencia o de reloj
+    calAhora.add(Calendar.MINUTE, 5); 
 
-            ps.setDate(1, nuevaFecha);
-            ps.setTime(2, nuevaHora);
-            ps.setInt(3, idCita);
-
-            exito = ps.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            System.out.println("Error reprogramarCita(): " + e.getMessage());
-        }
-
-        return exito;
+    // 🛑 VALIDACIÓN CLAVE: La nueva fecha/hora NO debe ser anterior al tiempo actual + 5 minutos
+    if (calNuevaCita.before(calAhora)) {
+        System.out.println("❌ Error reprogramarCita(): La fecha y hora de la cita no pueden ser en el pasado o muy cercanas (margen de 5 min).");
+        return false;
     }
+    
+    // ⚠️ NOTA: Si necesitas validar también DÍA DOMINGO y HORARIO LABORAL (ej. 06:00 a 22:00), 
+    // esa lógica debería agregarse aquí o en un método de validación dedicado. 
+    // Por ahora, solo se implementa la restricción de tiempo actual/futuro.
+
+    // Ejecutar la actualización en la BD (si la validación es exitosa)
+    boolean exito = false;
+    // Se usa idEstado = 1 ('Pendiente') para reprogramar
+    String sql = "UPDATE citas SET fecha = ?, hora = ?, idEstado = 1 WHERE idCita = ?"; 
+
+    try (Connection con = Conexion.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setDate(1, nuevaFecha);
+        ps.setTime(2, nuevaHora);
+        ps.setInt(3, idCita);
+
+        exito = ps.executeUpdate() > 0;
+
+    } catch (SQLException e) {
+        System.out.println("Error reprogramarCita(): " + e.getMessage());
+    }
+
+    return exito;
+}
 
     // =========================================================================
     // 4️⃣ OBTENER DNI POR ID DE CITA

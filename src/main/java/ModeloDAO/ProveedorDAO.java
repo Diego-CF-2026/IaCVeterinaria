@@ -268,7 +268,7 @@ public class ProveedorDAO {
     // Obtiene los productos activos asociados a un proveedor
     private List<Producto> obtenerProductosProveedor(int idProveedor) {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, imagen, estado, idProveedor, fechaRegistro FROM Producto WHERE idProveedor = ? AND estado = 1";
+        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, imagen, estado, idProveedor, fechaRegistro FROM producto WHERE idProveedor = ? AND estado = 1";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProveedor);

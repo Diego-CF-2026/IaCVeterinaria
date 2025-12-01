@@ -177,17 +177,6 @@ body.modo-noche .form-detalles-proveedor input {
     display: inline;
 }
 
-.modal-contactos .acciones i {
-    font-size: 18px;
-    margin: 0 6px;
-    cursor: pointer;
-    transition: color 0.3s;
-}
-
-.modal-contactos .acciones i:hover {
-    color: #007BFF;
-}
-
 /* ==== ESTRUCTURA DEL MODAL ==== */
 .modal {
     display: none;
@@ -360,4 +349,42 @@ body.modo-noche .cerrar {
 
 body.modo-noche .cerrar:hover {
     color: red;
+}
+
+/* Asegúrate de que esta sección está en tu GestorProveedores.css */
+.modal-contactos .acciones button {
+    /* CLAVE 1: Eliminar el aspecto de botón estándar */
+    background: none; 
+    border: none;
+    padding: 0;
+    
+    /* CLAVE 2: Eliminar cualquier estilo de apariencia (que puede causar el efecto de casilla) */
+    appearance: none; 
+    -webkit-appearance: none;
+    
+    cursor: pointer;
+    vertical-align: middle; 
+    margin: 0 4px; 
+}
+
+/* Color y tamaño del ícono */
+.modal-contactos .acciones i {
+    font-size: 18px; 
+    color: #6c757d; /* Gris secundario para los iconos */
+    transition: color 0.3s;
+}
+
+/* Estilos de Hover (se aplica el color al pasar el mouse) */
+.modal-contactos .acciones button:hover i { 
+    color: #007BFF; /* Color de tu enlace principal */
+}
+
+/* Si quieres colores específicos al pasar el mouse (Editar en amarillo, Eliminar en rojo) */
+/* Botón Editar (primero en el HTML) */
+.modal-contactos .acciones button:first-child:hover i { 
+    color: #ffc107; 
+}
+/* Botón Eliminar (segundo en el HTML) */
+.modal-contactos .acciones button:last-child:hover i {
+    color: #dc3545;
 }
