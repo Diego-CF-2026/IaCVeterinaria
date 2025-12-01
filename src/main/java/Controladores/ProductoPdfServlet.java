@@ -81,12 +81,10 @@ public class ProductoPdfServlet extends HttpServlet {
             table.setSpacingBefore(10f);    // 17. Espacio antes de la tabla
             table.setSpacingAfter(10f);     // 18. Espacio después de la tabla
 
-            // 19. Definir ancho relativo de cada columna
-            float[] columnWidths = {0.8f, 2f, 3f, 1.2f, 1f, 2f, 1f};
+            float[] columnWidths = {0.8f, 2f, 3f, 1.2f, 1f, 2f, 1f};  // 19. Definir ancho relativo de cada columna
             table.setWidths(columnWidths);
 
-            // 20. Fuente para encabezados de tabla
-            Font fontHeader = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
+            Font fontHeader = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);              // 20. Fuente para encabezados de tabla
 
             // 21. Crear encabezados de tabla
             String[] headers = {"ID", "Nombre", "Descripción", "Precio", "Stock", "Proveedor", "Estado"};
@@ -106,8 +104,7 @@ public class ProductoPdfServlet extends HttpServlet {
                     table.addCell("S/ " + prod.getPrecio());                    // 29. Precio
                     table.addCell(String.valueOf(prod.getStock()));             // 30. Stock
 
-                    // 31. Obtener nombre del proveedor
-                    Proveedor proveedor = proveedorDAO.obtenerPorId(prod.getIdProveedor());
+                    Proveedor proveedor = proveedorDAO.obtenerPorId(prod.getIdProveedor());   // 31. Obtener nombre del proveedor
                     table.addCell(proveedor != null ? proveedor.getRazonSocial() : "N/A"); // 32. Proveedor
 
                     // 33. Estado activo/inactivo

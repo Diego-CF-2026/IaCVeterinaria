@@ -57,23 +57,17 @@ public class HistorialComprasServlet extends HttpServlet {
             return;
         }
 
-        // Obtener el ID del cliente de la sesión
-        int idCliente = (int) session.getAttribute("idClienteSesion");
+        int idCliente = (int) session.getAttribute("idClienteSesion");   // Obtener el ID del cliente de la sesión
 
-        // 🔹 Obtener el historial de compras del cliente usando el DAO
-        List<Carrito> historial = carritoDAO.obtenerHistorial(idCliente);
+        List<Carrito> historial = carritoDAO.obtenerHistorial(idCliente);  // 🔹 Obtener el historial de compras del cliente usando el DAO
 
-        // 🔹 Obtener la lista de tipos de pago disponibles
-        List<TipoDePago> tiposPago = tipoPagoDAO.listar();
+        List<TipoDePago> tiposPago = tipoPagoDAO.listar();  // 🔹 Obtener la lista de tipos de pago disponibles
+ 
+        request.setAttribute("historialCompras", historial);          // 🔹 Pasar el historial de compras a la JSP
 
-        // 🔹 Pasar el historial de compras a la JSP
-        request.setAttribute("historialCompras", historial);
+        request.setAttribute("tiposPago", tiposPago);  // 🔹 Pasar los tipos de pago a la JSP para poder mostrarlos en cada compra
 
-        // 🔹 Pasar los tipos de pago a la JSP para poder mostrarlos en cada compra
-        request.setAttribute("tiposPago", tiposPago);
-
-        // 🔹 Redirigir a la página JSP que muestra el historial de compras del cliente
-        request.getRequestDispatcher("/VistasWeb/VistasCliente/historialdecompras.jsp")
+        request.getRequestDispatcher("/VistasWeb/VistasCliente/historialdecompras.jsp")   // 🔹 Redirigir a la página JSP que muestra el historial de compras del cliente
                .forward(request, response);
 
     }

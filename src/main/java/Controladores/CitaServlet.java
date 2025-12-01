@@ -150,8 +150,7 @@ public class CitaServlet extends HttpServlet {
             }
             
             request.setAttribute("listaCitas", listaCitas);
-            // Combos para modales
-            request.setAttribute("listaClientes", clienteDAO.listarClientesParaDropdown());
+            request.setAttribute("listaClientes", clienteDAO.listarClientesParaDropdown()); // Combos para modales
             request.setAttribute("listaVeterinarios", veterinarioDAO.listarVeterinariosParaDropdown());
             
             request.getRequestDispatcher("/VistasWeb/VistasRecep/GestionCitas.jsp").forward(request, response);
