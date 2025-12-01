@@ -1,0 +1,428 @@
+/* ================== CONTENIDO GENERAL RECEPCIONISTA ================== */
+
+.contenido-general-recep {
+    margin-left: 280px;   /* mismo ancho que la sidebar */
+    padding: 30px;
+    min-height: 100vh;
+}
+
+/* ===== CABECERA SUPERIOR PANEL GENERAL ===== */
+
+.recep-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.recep-header-text h1 {
+    font-size: 28px;
+    margin: 0;
+    color: var(--text-color-dark);
+}
+
+.recep-subtitulo {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+/* Contenedor de los botones de la derecha */
+.recep-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ===== BOTONES DE ACCIONES SUPERIORES ===== */
+
+/* Reset fuerte para botones de esta vista */
+.recep-btn {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    outline: none;
+    font: inherit;
+    margin: 0;
+    background: none;
+}
+
+/* Estilo base */
+.recep-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    transition: transform 0.1s ease,
+                box-shadow 0.2s ease,
+                background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease;
+}
+
+.recep-btn i {
+    font-size: 16px;
+}
+
+/* Botón principal (Registrar venta) */
+.recep-btn-main {
+    background-color: var(--primary-color);   /* asegúrate que en :root sea algo oscurito, por ej. #4b576d */
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.recep-btn-main:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+    background-color: #232934; /* un poco más oscuro en hover */
+}
+
+/* Botón secundario (Citas de hoy) */
+.recep-btn-sec {
+    background-color: #fff;
+    color: var(--text-color-dark);
+    border-color: #e0e0e0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.recep-btn-sec:hover {
+    background-color: var(--primary-color-light);
+}
+
+/* ===== TARJETA DE AVISO DE HORARIO ===== */
+
+.card-aviso-horario {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    max-width: 550px;
+    background-color: #fff;
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    border-left: 5px solid var(--primary-color);
+}
+
+.icono-horario {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--primary-color-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.texto-horario h2 {
+    margin: 0 0 6px 0;
+    font-size: 20px;
+    color: var(--text-color-dark);
+}
+
+.texto-horario p {
+    margin: 0 0 4px 0;
+    color: var(--text-color);
+}
+
+.texto-horario small {
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+/* ===== SECCIÓN DE MENSAJES MOTIVACIONALES ===== */
+
+.mensajes-motivacionales {
+    margin-top: 10px;
+}
+
+.mensajes-motivacionales h2 {
+    font-size: 22px;
+    margin-bottom: 18px;
+    color: var(--text-color-dark);
+}
+
+/* Grid de tarjetas */
+.mensajes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    max-width: 1000px;
+}
+
+/* Tarjetas base */
+.mensaje-card {
+    background-color: #fff;
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    color: var(--text-color-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Tarjeta con imagen */
+.mensaje-imagen {
+    flex-direction: row;
+    align-items: center;
+}
+
+.mensaje-imagen img {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.mensaje-imagen h3 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+}
+
+/* Tarjeta con icono */
+.mensaje-icono i {
+    font-size: 28px;
+    margin-bottom: 6px;
+    color: var(--primary-color);
+}
+
+/* ==================   MODO NOCHE RECEPCIONISTA   ================== */
+/* Tu JS usa la clase body.modo-noche */
+
+body.modo-noche .contenido-general-recep {
+    background-color: #121212;
+}
+
+/* Títulos y subtítulo */
+body.modo-noche .recep-header-text h1,
+body.modo-noche .mensajes-motivacionales h2,
+body.modo-noche .recep-subtitulo {
+    color: #f5f5f5;
+}
+
+/* Tarjetas en modo noche */
+body.modo-noche .card-aviso-horario,
+body.modo-noche .mensaje-card {
+    background-color: #1f1f1f;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+}
+
+body.modo-noche .card-aviso-horario {
+    border-left-color: var(--primary-color-light);
+}
+
+body.modo-noche .texto-horario h2,
+body.modo-noche .texto-horario p,
+body.modo-noche .texto-horario small {
+    color: #f5f5f5;
+}
+
+body.modo-noche .mensaje-card {
+    color: #f5f5f5;
+}
+
+body.modo-noche .icono-horario {
+    background-color: #333;
+    color: #ffd27f;
+}
+
+/* Imágenes un poco más oscuras en modo noche */
+body.modo-noche .mensaje-imagen img {
+    filter: brightness(0.9);
+}
+
+
+/* Botones en modo noche */
+body.modo-noche .recep-btn-main {
+    background-color: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+}
+
+body.modo-noche .recep-btn-sec {
+    background-color: #222;
+    color: #f5f5f5;
+    border-color: #444;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+}
+
+body.modo-noche .recep-btn-sec:hover {
+    background-color: #333;
+}
+/* ===== RESUMEN RÁPIDO DEL DÍA ===== */
+
+.recep-resumen {
+    margin-top: 40px;
+}
+
+.recep-resumen h2 {
+    font-size: 22px;
+    margin-bottom: 18px;
+    color: var(--text-color-dark);
+}
+
+.recep-resumen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    max-width: 1000px;
+}
+
+/* Tarjetas de resumen */
+
+.resumen-card {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.resumen-icono {
+    font-size: 30px;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.resumen-texto h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    color: var(--text-color-dark);
+}
+
+.resumen-numero {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-color-dark);
+}
+
+.resumen-texto small {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--text-color);
+}
+
+/* ===== MODO NOCHE PARA EL RESUMEN ===== */
+
+body.modo-noche .recep-resumen h2 {
+    color: #f5f5f5;
+}
+
+body.modo-noche .resumen-card {
+    background-color: #1f1f1f;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+}
+
+body.modo-noche .resumen-texto h3,
+body.modo-noche .resumen-numero,
+body.modo-noche .resumen-texto small {
+    color: #f5f5f5;
+}
+
+body.modo-noche .resumen-texto small {
+    color: #d0d0d0;
+}
+/* ===== GALERÍA DE MASCOTAS FELICES ===== */
+
+.galeria-mascotas {
+    margin-top: 40px;
+    max-width: 1100px;
+}
+
+.galeria-mascotas h2 {
+    font-size: 22px;
+    margin-bottom: 14px;
+    color: var(--text-color-dark);
+}
+
+/* Contenedor principal del carrusel */
+.carousel-mascotas {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    background-color: #fff;
+}
+
+/* Contenedor de las diapositivas */
+.carousel-slides {
+    position: relative;
+    width: 100%;
+    height: 260px; /* puedes ajustar la altura */
+}
+
+/* Cada slide */
+.slide-mascota {
+    position: absolute;
+    inset: 0;
+    display: none;
+}
+
+.slide-mascota.active {
+    display: block;
+}
+
+.slide-mascota img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Botones de navegación */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(0,0,0,0.45);
+    color: #fff;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    z-index: 5;
+}
+
+.carousel-btn.prev {
+    left: 12px;
+}
+
+.carousel-btn.next {
+    right: 12px;
+}
+
+.carousel-btn:hover {
+    background-color: rgba(0,0,0,0.7);
+    transform: translateY(-50%) scale(1.05);
+}
+
+/* ===== MODO NOCHE ===== */
+body.dark .galeria-mascotas h2 {
+    color: #f5f5f5;
+}
+
+body.dark .carousel-mascotas {
+    background-color: #1f1f1f;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.8);
+}
