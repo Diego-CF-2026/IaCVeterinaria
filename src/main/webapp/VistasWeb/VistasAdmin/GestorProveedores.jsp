@@ -24,6 +24,15 @@
         <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
         <link rel="stylesheet" href="<%= request.getContextPath()%>/css/ModoNoche-Sidebar.css">
         <link rel="stylesheet" href="<%= request.getContextPath()%>/css/GestorProveedores.css">
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+        <link href='https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <style>
+            
+            
+            
+        </style>
+       
     </head>
      <body>
         <nav class="sidebar">
@@ -208,19 +217,19 @@
                             <td><input type="text" name="telefono" placeholder="Teléfono" value="<%= c.getTelefono()%>" required></td>
                             <td><input type="email" name="correoContacto" placeholder="Correo" value="<%= c.getCorreoContacto()%>" required></td>
                             <td class="acciones">
-                                <button type="submit">
-                                    <i class='bx bxs-edit'></i>
-                                </button>
-                        </form>
-                        <form action="ContactoProveedorServlet" method="post" onsubmit="return confirm('¿Eliminar este contacto?')" style="display:inline;">
-                            <input type="hidden" name="accion" value="eliminar">
-                            <input type="hidden" name="idContacto" value="<%= c.getIdContacto()%>">
-                            <input type="hidden" name="idProveedor" value="<%= proveedorSel.getIdProveedor()%>">
-                            <button type="submit">
-                                <i class='bx bxs-trash'></i>
-                            </button>
-                        </form>
-                        </td>
+                                <form action="..." method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-editar"> 
+                                        <i class='bx bxs-trash'>Editar </i>   
+                                    </button>
+                                </form>
+                                <form action="ContactoProveedorServlet" method="post" onsubmit="return confirm('¿Eliminar este contacto?')" style="display:inline;">
+                                    <input type="hidden" name="accion" value="eliminar">
+                                    <input type="hidden" name="idContacto" value="<%= c.getIdContacto()%>"> 
+
+                                    <button type="submit" class="btn btn-eliminar">
+                                        <i class='bx bxs-trash'>Eliminar</i>
+                            </form>
+                            </td>
                         </tr>
                         <% } %>
                         </tbody>
