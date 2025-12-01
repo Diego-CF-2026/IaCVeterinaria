@@ -113,6 +113,26 @@
                 <h2>Gestión rápida</h2>
 
                 <div class="quick-links-grid">
+                    <!-- Ganancias de citas -->
+                    <a href="<%= request.getContextPath()%>/ReporteGananciasServlet" class="quick-card">
+                        <div class="quick-card-image">
+                            <img src="<%= request.getContextPath()%>/Recursos/gananciastotales.png" alt="Veterinarios">
+                        </div>
+                        <div class="quick-card-content">
+                            <h3>Ganancias totales</h3>
+                            <p>Gestiona las ganancias de la empresa.</p>
+                        </div>
+                    </a>
+                        <!-- Productos entregados -->
+                    <a href="<%= request.getContextPath()%>/carritoservletAdmin" class="quick-card">
+                        <div class="quick-card-image">
+                            <img src="<%= request.getContextPath()%>/Recursos/productosentregados.webp" alt="Veterinarios">
+                        </div>
+                        <div class="quick-card-content">
+                            <h3>Productos entregados</h3>
+                            <p>Gestiona los productos entregados de la empresa.</p>
+                        </div>
+                    </a>
                     <!-- VETERINARIOS -->
                     <a href="<%= request.getContextPath()%>/AdminEmpleadoServlet" class="quick-card">
                         <div class="quick-card-image">
