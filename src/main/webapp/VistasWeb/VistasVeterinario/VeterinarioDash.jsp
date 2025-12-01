@@ -30,7 +30,7 @@
 
         <div class="menu-bar">
             <ul class="menu-links">
-                <li class="nav-link active">
+                <li class="nav-link">
                     <a href="${pageContext.request.contextPath}/VistasWeb/VistasVeterinario/VeterinarioDash.jsp">
                         <i class='bx bx-home-alt icon'></i><span class="text">General</span>
                     </a>
