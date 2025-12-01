@@ -1425,3 +1425,11 @@ body.modo-noche .footer-social a img:hover {
     filter: invert(1) brightness(1.5) contrast(1.2);
 }
 
+ /* Estilos para el mensaje de error */
+            /* Nota: Se usa la clase .alert.error definida en tu CSS para mantener la consistencia */
+            #mensajeErrorLogin {
+                color: red; /* Se asegura de que se vea el color del error */
+                font-weight: bold;
+                margin-top: 10px;
+                text-align: center;
+            }

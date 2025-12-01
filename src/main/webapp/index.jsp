@@ -20,16 +20,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>VeterinariaSantaCruz</title>
         <link rel="stylesheet" href="css/index.css">
-        <style>
-            /* Estilos para el mensaje de error */
-            /* Nota: Se usa la clase .alert.error definida en tu CSS para mantener la consistencia */
-            #mensajeErrorLogin {
-                color: red; /* Se asegura de que se vea el color del error */
-                font-weight: bold;
-                margin-top: 10px;
-                text-align: center;
-            }
-        </style>
+
     </head>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
