@@ -62,8 +62,8 @@ public class UsuarioDAO {
         String hashedPassword = hashearConSHA256(password_sin_hashear);
 
         // Sentencias SQL: primero Usuario, luego Cliente
-        String sqlUsuario = "INSERT INTO Usuario(idRol, correo, contra, intentos, Estado, tiempo_bloqueo) VALUES (?, ?, ?, ?, ?, NULL)";
-        String sqlCliente = "INSERT INTO Cliente(idUsuario, nombre, apellido, dni, telefono) VALUES (?, ?, ?, ?, ?)";
+        String sqlUsuario = "INSERT INTO usuario(idRol, correo, contra, intentos, Estado, tiempo_bloqueo) VALUES (?, ?, ?, ?, ?, NULL)";
+        String sqlCliente = "INSERT INTO cliente(idUsuario, nombre, apellido, dni, telefono) VALUES (?, ?, ?, ?, ?)";
 
         try {
             con = Conexion.getConnection();
@@ -156,8 +156,8 @@ public class UsuarioDAO {
             return null;
         }
 
-        String sql = "SELECT u.*, r.nombreRol FROM Usuario u " +
-                     "INNER JOIN Rol r ON u.idRol = r.idRol " +
+        String sql = "SELECT u.*, r.nombreRol FROM usuario u " +
+                     "INNER JOIN rol r ON u.idRol = r.idRol " +
                      "WHERE u.correo = ?";
 
         try {
@@ -277,8 +277,8 @@ public class UsuarioDAO {
 
     // Actualiza datos de usuario y cliente asociados.
     public boolean actualizarUsuario(Usuario usuario, Cliente cliente) {
-        String sqlUsuario = "UPDATE Usuario SET correo=? WHERE idUsuario=?";
-        String sqlCliente = "UPDATE Cliente SET nombre=?, apellido=?, dni=?, telefono=? WHERE idUsuario=?";
+        String sqlUsuario = "UPDATE usuario SET correo=? WHERE idUsuario=?";
+        String sqlCliente = "UPDATE cliente SET nombre=?, apellido=?, dni=?, telefono=? WHERE idUsuario=?";
         try {
             con = Conexion.getConnection();
             con.setAutoCommit(false);
@@ -315,7 +315,7 @@ public class UsuarioDAO {
 
     // Elimina un usuario por su ID.
     public boolean eliminarUsuario(int idUsuario) {
-        String sql = "DELETE FROM Usuario WHERE idUsuario=?";
+        String sql = "DELETE FROM usuario WHERE idUsuario=?";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
@@ -335,7 +335,7 @@ public class UsuarioDAO {
 
     // Actualiza solo el correo de un usuario.
     public boolean actualizarCorreo(Usuario u) {
-        String sql = "UPDATE Usuario SET correo=? WHERE idUsuario=?";
+        String sql = "UPDATE usuario SET correo=? WHERE idUsuario=?";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
