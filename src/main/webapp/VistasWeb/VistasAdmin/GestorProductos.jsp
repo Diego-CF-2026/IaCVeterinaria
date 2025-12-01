@@ -24,7 +24,7 @@
         <link rel="stylesheet" href="<%= request.getContextPath()%>/css/GestorProductos.css">
     </head>
      <body>
-        <nav class="sidebar">
+       <nav class="sidebar">
             <header>
                 <div class="image-text">
                     <span class="image">
@@ -39,7 +39,7 @@
 
             <div class="menu-bar">
                 <ul class="menu-links">
-                    <li class="nav-link">
+                    <li class="nav-link ">
                         <a href="<%= request.getContextPath()%>/VistasWeb/VistasAdmin/AdminDash.jsp">
                             <i class='bx bx-home-alt icon'></i><span class="text">General</span>
                         </a>
@@ -47,6 +47,11 @@
                     <li class="nav-link">
                             <a href="<%= request.getContextPath()%>/ReporteGananciasServlet">
                             <i class='bx bx-bar-chart-alt-2 icon'></i><span class="text">Ganancias de Citas</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="<%= request.getContextPath()%>/carritoservletAdmin">
+                            <i class='bx bx-check-circle icon'></i><span class="text">Productos Entregados</span>
                         </a>
                     </li>
                     <li class="nav-link">
@@ -65,11 +70,6 @@
                     <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/ProveedorServlet?accion=listar">
                             <i class='bx bx-store icon'></i><span class="text">Proveedores</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="<%= request.getContextPath() %>/ProductoRecepServlet?accion=listarEntregados">
-                            <i class='bx bx-check-circle icon'></i><span class="text">Productos Entregados</span>
                         </a>
                     </li>
                     <li class="nav-link">

@@ -33,7 +33,7 @@
 
             <div class="menu-bar">
                 <ul class="menu-links">
-                    <li class="nav-link">
+                    <li class="nav-link ">
                         <a href="<%= request.getContextPath()%>/VistasWeb/VistasAdmin/AdminDash.jsp">
                             <i class='bx bx-home-alt icon'></i><span class="text">General</span>
                         </a>
@@ -44,9 +44,14 @@
                         </a>
                     </li>
                     <li class="nav-link">
+                        <a href="<%= request.getContextPath()%>/carritoservletAdmin">
+                            <i class='bx bx-check-circle icon'></i><span class="text">Productos Entregados</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/AdminEmpleadoServlet"><i class='bx bx-group icon'></i><span class="text">Veterinarios</span></a>
                     </li>
-                    <li class="nav-link ">
+                    <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/AdminRecepServlet?accion=listar">
                             <i class='bx bx-user-check icon'></i> <span class="text">Recepcionistas</span>
                         </a>
@@ -59,11 +64,6 @@
                     <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/ProveedorServlet?accion=listar">
                             <i class='bx bx-store icon'></i><span class="text">Proveedores</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="<%= request.getContextPath() %>/ProductoRecepServlet?accion=listarEntregados">
-                            <i class='bx bx-check-circle icon'></i><span class="text">Productos Entregados</span>
                         </a>
                     </li>
                     <li class="nav-link">

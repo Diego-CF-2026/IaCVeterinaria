@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>VeterinariaSantaCruz</title>
         <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="../../css/ModoNoche-Sidebar.css">  
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ModoNoche-Sidebar.css"> 
     </head>
     <body>
         <nav class="sidebar">
@@ -37,6 +37,11 @@
                         </a>
                     </li>
                     <li class="nav-link">
+                        <a href="<%= request.getContextPath()%>/carritoservletAdmin">
+                            <i class='bx bx-check-circle icon'></i><span class="text">Productos Entregados</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/AdminEmpleadoServlet"><i class='bx bx-group icon'></i><span class="text">Veterinarios</span></a>
                     </li>
                     <li class="nav-link">
@@ -56,11 +61,6 @@
                     </li>
                     <li class="nav-link">
                         <a href="#"><i class='bx bx-cog icon'></i><span class="text">Ajustes</span></a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="<%= request.getContextPath() %>/ProductoRecepServlet?accion=listarEntregados">
-                            <i class='bx bx-check-circle icon'></i><span class="text">Productos Entregados</span>
-                        </a>
                     </li>
                     <li class="nav-link">
                         <a href="<%= request.getContextPath()%>/LogoutServlet">

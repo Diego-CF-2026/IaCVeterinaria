@@ -358,4 +358,72 @@ public class CarritoDAO {
         }
         return lista;
     }
+    
+    // ... (Tus métodos existentes: obtenerCarritosEntregados, etc.)
+
+    // =========================================================
+    // ⬇️ FUNCIONES PARA ADMINISTRACIÓN (Reporte de Ventas) ⬇️
+    // =========================================================
+
+    /**
+     * Obtiene la lista de carritos (ventas) con estado CERRADO y ENTREGADO,
+     * filtrados por mes y año, incluyendo los datos del Cliente.
+     * * @param mes El mes para filtrar (1-12).
+     * @param anio El año para filtrar (YYYY).
+     * @return Lista de objetos Carrito (ventas completadas).
+     */
+    public List<Carrito> adminObtenerVentasPorMesAnio(int mes, int anio) {
+        List<Carrito> ventas = new ArrayList<>();
+        
+        // 💡 Consulta SQL: Filtra por estado CERRADO/ENTREGADO y por Mes/Año. 
+        // Se une con Cliente para obtener el nombre completo.
+        String sql = "SELECT c.*, cl.nombre, cl.apellido, cl.dni " +
+                     "FROM carrito c " +
+                     "INNER JOIN cliente cl ON c.idCliente = cl.idCliente " +
+                     "WHERE c.estado = 'CERRADO' AND c.estadoEntrega = 'ENTREGADO' " +
+                     // Filtros de fecha (asumiendo MySQL/PostgreSQL/SQL Server compatible con YEAR/MONTH o similar)
+                     "AND EXTRACT(YEAR FROM c.fecha) = ? AND EXTRACT(MONTH FROM c.fecha) = ? " +
+                     "ORDER BY c.fecha DESC";
+        
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            // 🔹 Viculación de los parámetros de fecha
+            ps.setInt(1, anio);
+            ps.setInt(2, mes);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Carrito c = new Carrito();
+                    
+                    // Mapeo de Carrito (venta)
+                    c.setIdCarrito(rs.getInt("idCarrito"));
+                    c.setIdCliente(rs.getInt("idCliente"));
+                    c.setTotal(rs.getBigDecimal("total"));
+                    c.setEstado(rs.getString("estado"));
+                    c.setEstadoEntrega(rs.getString("estadoEntrega"));
+                    c.setFecha(rs.getTimestamp("fecha"));
+                    c.setIdPago(rs.getInt("idPago"));
+                    
+                    // Mapeo de Cliente (datos requeridos para el reporte)
+                    Cliente cliente = new Cliente();
+                    cliente.setNombre(rs.getString("nombre"));
+                    cliente.setApellido(rs.getString("apellido"));
+                    // Asumiendo que la clase Cliente tiene el método setDni(String)
+                    // Puedes obtener el DNI si lo necesitas, si no, omite esta línea.
+                    // cliente.setDni(rs.getString("dni")); 
+                    c.setCliente(cliente);
+                    
+                    // Nota: No cargamos los detalles (List<DetalleCarrito>) aquí
+                    // ya que para un reporte tabular sencillo, solo se necesita el resumen (total y cliente).
+                    
+                    ventas.add(c);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error en adminObtenerVentasPorMesAnio: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return ventas;
+    }
 }
+
