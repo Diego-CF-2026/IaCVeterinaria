@@ -32,7 +32,7 @@ public class RecepcionistaDAO {
         // Consulta para unir usuario con datos del recepcionista
         String sql = "SELECT U.idUsuario, U.correo, U.Estado, "
                    + "R.idRecepcionista, R.nombreRecepcionista, R.apellidoRecepcionista, R.telefonoRecepcionista "
-                   + "FROM Usuario U "
+                   + "FROM usuario U "
                    + "INNER JOIN recepcionista R ON U.idUsuario = R.idUsuario "
                    + "WHERE U.idRol = " + ID_ROL_RECEPCIONISTA + " "
                    + "ORDER BY R.apellidoRecepcionista ASC";
@@ -73,7 +73,7 @@ public class RecepcionistaDAO {
     public String agregarRecepcionista(Usuario usuario, Recepcionista recepcionista) {
         String resultado = "error";
         // SQL para crear usuario y recepcionista (transacción)
-        String sqlUser = "INSERT INTO Usuario (idRol, correo, contra, intentos, Estado) VALUES (?, ?, ?, 0, TRUE)";
+        String sqlUser = "INSERT INTO usuario (idRol, correo, contra, intentos, Estado) VALUES (?, ?, ?, 0, TRUE)";
         String sqlRecep = "INSERT INTO recepcionista (idUsuario, nombreRecepcionista, apellidoRecepcionista, telefonoRecepcionista) VALUES (LAST_INSERT_ID(), ?, ?, ?)";
         
         try {
@@ -128,7 +128,7 @@ public class RecepcionistaDAO {
     public String editarRecepcionista(Usuario usuario, Recepcionista recepcionista) {
         String resultado = "error";
         // Se actualiza tanto el usuario como la información del recepcionista
-        String sqlUpdateUser = "UPDATE Usuario SET correo = ?, contra = ? WHERE idUsuario = ?"; 
+        String sqlUpdateUser = "UPDATE usuario SET correo = ?, contra = ? WHERE idUsuario = ?"; 
         String sqlUpdateRecep = "UPDATE recepcionista SET nombreRecepcionista = ?, apellidoRecepcionista = ?, telefonoRecepcionista = ? WHERE idUsuario = ?";
         
         try {
@@ -172,7 +172,7 @@ public class RecepcionistaDAO {
         Connection con = null;
         PreparedStatement ps = null;
         // Solo cambia el estado del usuario a inactivo
-        String sql = "UPDATE Usuario SET Estado = FALSE WHERE idUsuario = ?";
+        String sql = "UPDATE usuario SET estado = FALSE WHERE idUsuario = ?";
         
         try {
             con = Conexion.getConnection();
@@ -195,7 +195,7 @@ public class RecepcionistaDAO {
     public String activarRecepcionista(int idUsuario) {
         Connection con = null;
         PreparedStatement ps = null;
-        String sql = "UPDATE Usuario SET Estado = TRUE WHERE idUsuario = ?";
+        String sql = "UPDATE usuario SET estado = TRUE WHERE idUsuario = ?";
         
         try {
             con = Conexion.getConnection();

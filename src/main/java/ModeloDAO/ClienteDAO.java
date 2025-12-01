@@ -23,7 +23,7 @@ public class ClienteDAO {
     // ------------------------------------------------------------
     public List<Cliente> listarCliente() {
         List<Cliente> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Cliente";
+        String sql = "SELECT * FROM cliente";
         try {
             con = Conexion.getConnection(); // Obtener conexión activa
             ps = con.prepareStatement(sql); // Preparar la consulta SQL
@@ -54,7 +54,7 @@ public class ClienteDAO {
     // ------------------------------------------------------------
     public Cliente buscarIdCliente(int id) {
         Cliente c = null;
-        String sql = "SELECT * FROM Cliente WHERE idCliente = ?";
+        String sql = "SELECT * FROM cliente WHERE idCliente = ?";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
@@ -83,7 +83,7 @@ public class ClienteDAO {
     // Devuelve true si la inserción fue exitosa.
     // ------------------------------------------------------------
     public boolean agregarCliente(Cliente c) {
-        String sql = "INSERT INTO Cliente (idUsuario, nombre, apellido, dni, telefono, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO cliente (idUsuario, nombre, apellido, dni, telefono, fechaRegistro) VALUES (?, ?, ?, ?, ?, ?)";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
@@ -107,7 +107,7 @@ public class ClienteDAO {
     // Actualiza todos los campos del cliente existente.
     // ------------------------------------------------------------
     public boolean editarCliente(Cliente c) {
-        String sql = "UPDATE Cliente SET idUsuario=?, nombre=?, apellido=?, dni=?, telefono=?, fechaRegistro=? WHERE idCliente=?";
+        String sql = "UPDATE cliente SET idUsuario=?, nombre=?, apellido=?, dni=?, telefono=?, fechaRegistro=? WHERE idCliente=?";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
@@ -131,7 +131,7 @@ public class ClienteDAO {
     // Se usa especialmente para actualizar datos personales desde MiPerfil.jsp
     // ------------------------------------------------------------
     public boolean editarClientePorUsuario(Cliente c) {
-        String sql = "UPDATE Cliente SET nombre=?, apellido=?, dni=?, telefono=? WHERE idUsuario=?";
+        String sql = "UPDATE cliente SET nombre=?, apellido=?, dni=?, telefono=? WHERE idUsuario=?";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
@@ -153,7 +153,7 @@ public class ClienteDAO {
     // Retorna true si la eliminación se realizó correctamente.
     // ------------------------------------------------------------
     public boolean eliminarCliente(int id) {
-        String sql = "DELETE FROM Cliente WHERE idCliente=?";
+        String sql = "DELETE FROM cliente WHERE idCliente=?";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
@@ -171,7 +171,7 @@ public class ClienteDAO {
     // Útil cuando se elimina una cuenta de usuario completa.
     // ------------------------------------------------------------
     public boolean eliminarClientePorUsuario(int idUsuario) {
-        String sql = "DELETE FROM Cliente WHERE idUsuario=?";
+        String sql = "DELETE FROM cliente WHERE idUsuario=?";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
@@ -190,7 +190,7 @@ public class ClienteDAO {
     // ------------------------------------------------------------
     public Cliente buscarPorIdUsuario(int idUsuario) {
         Cliente c = null;
-        String sql = "SELECT * FROM Cliente WHERE idUsuario = ?";
+        String sql = "SELECT * FROM cliente WHERE idUsuario = ?";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
@@ -219,7 +219,7 @@ public class ClienteDAO {
     // ------------------------------------------------------------
     public Cliente buscarClientePorDni(String dni) {
         Cliente c = null;
-        String sql = "SELECT * FROM Cliente WHERE dni = ?";
+        String sql = "SELECT * FROM cliente WHERE dni = ?";
         try {
             con = Conexion.getConnection();
             ps = con.prepareStatement(sql);
@@ -251,7 +251,7 @@ public class ClienteDAO {
     // ------------------------------------------------------------
     public List<Cliente> buscarClientes(String termino) {
         List<Cliente> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Cliente WHERE nombre LIKE ? OR apellido LIKE ? OR dni LIKE ?";
+        String sql = "SELECT * FROM cliente WHERE nombre LIKE ? OR apellido LIKE ? OR dni LIKE ?";
         String patron = "%" + termino + "%"; // Patrón para búsqueda parcial
         
         try {

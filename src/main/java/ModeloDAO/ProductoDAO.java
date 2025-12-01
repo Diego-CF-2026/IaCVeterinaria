@@ -17,7 +17,7 @@ public class ProductoDAO {
     // Lista todos los productos activos (estado = 1)
     public List<Producto> listarTodos() {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM Producto WHERE estado = 1";
+        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM producto WHERE estado = 1";
 
         try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -33,7 +33,7 @@ public class ProductoDAO {
     // Lista los productos inactivos (estado = 0)
     public List<Producto> listarInactivos() {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM Producto WHERE estado = 0";
+        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM producto WHERE estado = 0";
 
         try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -49,7 +49,7 @@ public class ProductoDAO {
     // Busca productos por nombre y según su estado (activo o inactivo)
     public List<Producto> buscarPorNombre(String nombre, boolean inactivos) {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM Producto WHERE nombreProducto LIKE ? AND estado = ?";
+        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM producto WHERE nombreProducto LIKE ? AND estado = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, "%" + nombre + "%");
@@ -69,7 +69,7 @@ public class ProductoDAO {
     // Lista productos por proveedor (solo los activos)
     public List<Producto> listarPorProveedor(int idProveedor) {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM Producto WHERE idProveedor = ? AND estado = 1";
+        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM producto WHERE idProveedor = ? AND estado = 1";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProveedor);
@@ -87,7 +87,7 @@ public class ProductoDAO {
 
     // Obtiene un producto por su ID
     public Producto obtenerPorId(int id) {
-        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM Producto WHERE idProducto = ?";
+        String sql = "SELECT idProducto, nombreProducto, descripcion, precio, stock, unidadMedida, estado, idProveedor, imagen, fechaRegistro FROM producto WHERE idProducto = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -123,7 +123,7 @@ public class ProductoDAO {
             return false;
         }
 
-        String sql = "INSERT INTO Producto (nombreProducto, descripcion, precio, stock, unidadMedida, estado, fechaRegistro, idProveedor, imagen) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?)";
+        String sql = "INSERT INTO producto (nombreProducto, descripcion, precio, stock, unidadMedida, estado, fechaRegistro, idProveedor, imagen) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, producto.getNombreProducto());
@@ -147,7 +147,7 @@ public class ProductoDAO {
 
     // Actualiza los datos de un producto existente
     public boolean actualizar(Producto producto) {
-        String sql = "UPDATE Producto SET nombreProducto=?, descripcion=?, precio=?, stock=?, unidadMedida=?, estado=?, idProveedor=?, imagen=? WHERE idProducto=?";
+        String sql = "UPDATE producto SET nombreProducto=?, descripcion=?, precio=?, stock=?, unidadMedida=?, estado=?, idProveedor=?, imagen=? WHERE idProducto=?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, producto.getNombreProducto());
@@ -169,7 +169,7 @@ public class ProductoDAO {
 
     // Eliminación lógica (cambia el estado a 0)
     public boolean eliminar(int id) {
-        String sql = "UPDATE Producto SET estado = 0 WHERE idProducto = ?";
+        String sql = "UPDATE producto SET estado = 0 WHERE idProducto = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -183,7 +183,7 @@ public class ProductoDAO {
 
     // Eliminación física (borra el registro definitivamente)
     public boolean eliminarDefinitivo(int id) {
-        String sql = "DELETE FROM Producto WHERE idProducto = ?";
+        String sql = "DELETE FROM producto WHERE idProducto = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);

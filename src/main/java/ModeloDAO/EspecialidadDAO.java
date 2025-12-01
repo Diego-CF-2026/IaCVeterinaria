@@ -25,7 +25,7 @@ public class EspecialidadDAO {
     public List<Especialidad> listar() {
         List<Especialidad> lista = new ArrayList<>();
         String sql1 = "SELECT idEspecialidad, nombreEspecialidad, precio FROM especialidad ORDER BY nombreEspecialidad";
-        String sql2 = "SELECT idEspecialidad, nombreEspecialidad, precio FROM Especialidad ORDER BY nombreEspecialidad";
+        String sql2 = "SELECT idEspecialidad, nombreEspecialidad, precio FROM especialidad ORDER BY nombreEspecialidad";
 
         // Primer intento con tabla en minúsculas (más común en MySQL)
         try (Connection con = Conexion.getConnection();
@@ -59,7 +59,7 @@ public class EspecialidadDAO {
     public Especialidad obtenerPorId(int id) {
         String[] sqls = {
             "SELECT idEspecialidad, nombreEspecialidad, precio FROM especialidad WHERE idEspecialidad=?",
-            "SELECT idEspecialidad, nombreEspecialidad, precio FROM Especialidad WHERE idEspecialidad=?"
+            "SELECT idEspecialidad, nombreEspecialidad, precio FROM especialidad WHERE idEspecialidad=?"
         };
 
         for (String sql : sqls) {
@@ -83,7 +83,7 @@ public class EspecialidadDAO {
     public boolean agregar(Especialidad e) {
         String[] sqls = {
             "INSERT INTO especialidad (nombreEspecialidad, precio) VALUES (?, ?)",
-            "INSERT INTO Especialidad (nombreEspecialidad, precio) VALUES (?, ?)"
+            "INSERT INTO especialidad (nombreEspecialidad, precio) VALUES (?, ?)"
         };
 
         for (String sql : sqls) {
@@ -112,7 +112,7 @@ public class EspecialidadDAO {
     public boolean actualizar(Especialidad e) {
         String[] sqls = {
             "UPDATE especialidad SET nombreEspecialidad=?, precio=? WHERE idEspecialidad=?",
-            "UPDATE Especialidad SET nombreEspecialidad=?, precio=? WHERE idEspecialidad=?"
+            "UPDATE especialidad SET nombreEspecialidad=?, precio=? WHERE idEspecialidad=?"
         };
         for (String sql : sqls) {
             try (Connection con = Conexion.getConnection();
@@ -135,7 +135,7 @@ public class EspecialidadDAO {
     public boolean eliminar(int id) {
         String[] sqls = {
             "DELETE FROM especialidad WHERE idEspecialidad=?",
-            "DELETE FROM Especialidad WHERE idEspecialidad=?"
+            "DELETE FROM especialidad WHERE idEspecialidad=?"
         };
         for (String sql : sqls) {
             try (Connection con = Conexion.getConnection();

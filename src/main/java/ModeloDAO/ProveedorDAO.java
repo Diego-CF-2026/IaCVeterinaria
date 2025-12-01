@@ -18,7 +18,7 @@ public class ProveedorDAO {
     // Lista los proveedores activos con sus contactos y productos
     public List<Proveedor> listar() {
         List<Proveedor> lista = new ArrayList<>();
-        String sql = "SELECT idProveedor, razonSocial, ruc, direccion, correo, estado, fechaRegistro FROM Proveedor WHERE estado = 1";
+        String sql = "SELECT idProveedor, razonSocial, ruc, direccion, correo, estado, fechaRegistro FROM proveedor WHERE estado = 1";
 
         try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -38,7 +38,7 @@ public class ProveedorDAO {
     public List<Proveedor> buscarPorNombreODireccion(String filtro) {
         List<Proveedor> lista = new ArrayList<>();
         String sql = "SELECT idProveedor, razonSocial, ruc, direccion, correo, estado, fechaRegistro "
-                   + "FROM Proveedor WHERE estado = 1 AND (razonSocial LIKE ? OR direccion LIKE ? OR ruc LIKE ? OR correo LIKE ?)";
+                   + "FROM proveedor WHERE estado = 1 AND (razonSocial LIKE ? OR direccion LIKE ? OR ruc LIKE ? OR correo LIKE ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             String criterio = "%" + filtro + "%";
@@ -66,7 +66,7 @@ public class ProveedorDAO {
     public List<Proveedor> buscarPorNombreODireccionInactivos(String filtro) {
         List<Proveedor> lista = new ArrayList<>();
         String sql = "SELECT idProveedor, razonSocial, ruc, direccion, correo, estado, fechaRegistro "
-                   + "FROM Proveedor WHERE estado = 0 AND (razonSocial LIKE ? OR direccion LIKE ? OR ruc LIKE ? OR correo LIKE ?)";
+                   + "FROM proveedor WHERE estado = 0 AND (razonSocial LIKE ? OR direccion LIKE ? OR ruc LIKE ? OR correo LIKE ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             String criterio = "%" + filtro + "%";
@@ -93,7 +93,7 @@ public class ProveedorDAO {
     // Lista proveedores inactivos
     public List<Proveedor> listarInactivos() {
         List<Proveedor> lista = new ArrayList<>();
-        String sql = "SELECT idProveedor, razonSocial, ruc, direccion, correo, estado, fechaRegistro FROM Proveedor WHERE estado = 0";
+        String sql = "SELECT idProveedor, razonSocial, ruc, direccion, correo, estado, fechaRegistro FROM proveedor WHERE estado = 0";
 
         try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -111,7 +111,7 @@ public class ProveedorDAO {
 
     // Reactiva un proveedor (estado = 1)
     public boolean reactivar(int id) {
-        String sql = "UPDATE Proveedor SET estado = 1 WHERE idProveedor = ?";
+        String sql = "UPDATE proveedor SET estado = 1 WHERE idProveedor = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() == 1;
@@ -123,7 +123,7 @@ public class ProveedorDAO {
 
     // Obtiene un proveedor por su ID
     public Proveedor obtenerPorId(int id) {
-        String sql = "SELECT idProveedor, razonSocial, ruc, direccion, correo, estado, fechaRegistro FROM Proveedor WHERE idProveedor = ?";
+        String sql = "SELECT idProveedor, razonSocial, ruc, direccion, correo, estado, fechaRegistro FROM proveedor WHERE idProveedor = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -143,7 +143,7 @@ public class ProveedorDAO {
 
     // Obtiene un proveedor por su RUC
     public Proveedor obtenerPorRuc(String ruc) {
-        String sql = "SELECT idProveedor, razonSocial, ruc, direccion, correo, estado, fechaRegistro FROM Proveedor WHERE ruc = ?";
+        String sql = "SELECT idProveedor, razonSocial, ruc, direccion, correo, estado, fechaRegistro FROM proveedor WHERE ruc = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, ruc);
             try (ResultSet rs = ps.executeQuery()) {
@@ -177,7 +177,7 @@ public class ProveedorDAO {
             throw new IllegalArgumentException("El correo no es válido");
         }
 
-        String sql = "INSERT INTO Proveedor (razonSocial, ruc, direccion, correo, estado) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO proveedor (razonSocial, ruc, direccion, correo, estado) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, p.getRazonSocial());
             ps.setString(2, p.getRuc());
@@ -193,7 +193,7 @@ public class ProveedorDAO {
 
     // Actualiza los datos de un proveedor
     public boolean actualizar(Proveedor p) {
-        String sql = "UPDATE Proveedor SET razonSocial=?, ruc=?, direccion=?, correo=?, estado=? WHERE idProveedor=?";
+        String sql = "UPDATE proveedor SET razonSocial=?, ruc=?, direccion=?, correo=?, estado=? WHERE idProveedor=?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, p.getRazonSocial());
             ps.setString(2, p.getRuc());
@@ -211,7 +211,7 @@ public class ProveedorDAO {
 
     // Eliminación lógica (estado = 0)
     public boolean eliminar(int id) {
-        String sql = "UPDATE Proveedor SET estado = 0 WHERE idProveedor = ?";
+        String sql = "UPDATE proveedor SET estado = 0 WHERE idProveedor = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() == 1;
@@ -242,7 +242,7 @@ public class ProveedorDAO {
     // Obtiene los contactos asociados a un proveedor
     private List<ContactoProveedor> obtenerContactosProveedor(int idProveedor) {
         List<ContactoProveedor> contactos = new ArrayList<>();
-        String sql = "SELECT idContacto, idProveedor, nombreContacto, cargo, telefono, correoContacto FROM ContactoProveedor WHERE idProveedor = ?";
+        String sql = "SELECT idContacto, idProveedor, nombreContacto, cargo, telefono, correoContacto FROM contactoproveedor WHERE idProveedor = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProveedor);
