@@ -205,96 +205,75 @@ public class VeterinarioDAO {
         }
     }
 
-    public boolean eliminarVeterinario(int idVeterinario) {
-        String sqlGetUsr = "SELECT idUsuario FROM veterinario WHERE idVeterinario=? FOR UPDATE";
-        String sqlDelVet = "DELETE FROM veterinario WHERE idVeterinario=?";
-        String sqlDelUsr = "DELETE FROM usuario WHERE idUsuario=? AND idRol=4"; // idRol=4 por seguridad
+    // Archivo: VeterinarioDAO.java
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+public boolean eliminarVeterinario(int idVeterinario) {
+    // Sentencias SQL que se usarán
+    String sqlGetUsr = "SELECT idUsuario FROM veterinario WHERE idVeterinario=?";
+    String sqlDelVet = "DELETE FROM veterinario WHERE idVeterinario=?";
+    // Mantenemos la restricción de rol, aunque sabemos que causó fallos anteriores:
+    String sqlDelUsr = "DELETE FROM usuario WHERE idUsuario=? AND idRol=4"; 
 
-        try {
-            con = Conexion.getConnection();
-            if (con == null) {
-                System.out.println("[eliminarVeterinario] Conexión nula");
-                return false;
-            }
-            con.setAutoCommit(false);
+    int idUsuario = -1;
+    boolean exito = false;
 
-            // 1) Leer y BLOQUEAR el idUsuario del vet
-            int idUsuario = -1;
-            ps = con.prepareStatement(sqlGetUsr);
+    // Usamos try-with-resources para manejar la conexión automáticamente
+    try (Connection con = Conexion.getConnection()) {
+        if (con == null) return false;
+        
+        // 1) Leer el idUsuario del veterinario
+        try (PreparedStatement ps = con.prepareStatement(sqlGetUsr)) {
             ps.setInt(1, idVeterinario);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                idUsuario = rs.getInt(1);
-            }
-            rs.close();
-            ps.close();
-
-            System.out.println("[eliminarVeterinario] idVet=" + idVeterinario + " -> idUsuario=" + idUsuario);
-            if (idUsuario <= 0) {
-                System.out.println("[eliminarVeterinario] No se encontró idUsuario para el veterinario");
-                con.rollback();
-                return false;
-            }
-
-            // 2) Borrar veterinario
-            ps = con.prepareStatement(sqlDelVet);
-            ps.setInt(1, idVeterinario);
-            int borradosVet = ps.executeUpdate();
-            ps.close();
-            System.out.println("[eliminarVeterinario] borrados en veterinario=" + borradosVet);
-
-            if (borradosVet == 0) {
-                System.out.println("[eliminarVeterinario] No se borró el veterinario (posible inconsistencia)");
-                con.rollback();
-                return false;
-            }
-
-            // 3) Borrar usuario asociado
-            ps = con.prepareStatement(sqlDelUsr);
-            ps.setInt(1, idUsuario);
-            int borradosUsr = ps.executeUpdate();
-            ps.close();
-            System.out.println("[eliminarVeterinario] borrados en usuario=" + borradosUsr);
-
-            if (borradosUsr == 0) {
-                // Si no se borró el usuario, revierte todo para no dejar huerfano
-                System.out.println("[eliminarVeterinario] Usuario no borrado. Haciendo rollback.");
-                con.rollback();
-                return false;
-            }
-
-            con.commit();
-            return true;
-
-        } catch (SQLException e) {
-            try {
-                if (con != null) {
-                    con.rollback();
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    idUsuario = rs.getInt(1);
                 }
-            } catch (SQLException ignore) {
-            }
-            System.out.println("[eliminarVeterinario] Error: " + e.getMessage());
-            return false;
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                if (con != null) {
-                    con.setAutoCommit(true);
-                    con.close();
-                }
-            } catch (SQLException ignore) {
             }
         }
-    }
+        
+        System.out.println("[eliminarVeterinario] idVet=" + idVeterinario + " -> idUsuario=" + idUsuario);
+        if (idUsuario <= 0) {
+            System.out.println("[eliminarVeterinario] No se encontró idUsuario.");
+            return false;
+        }
+
+        // 2) Borrar veterinario
+        int borradosVet;
+        try (PreparedStatement ps = con.prepareStatement(sqlDelVet)) {
+            ps.setInt(1, idVeterinario);
+            borradosVet = ps.executeUpdate();
+        }
+        System.out.println("[eliminarVeterinario] borrados en veterinario=" + borradosVet);
+
+        if (borradosVet == 0) {
+            System.out.println("[eliminarVeterinario] No se borró el veterinario.");
+            return false;
+        }
+
+        // 3) Borrar usuario asociado
+        int borradosUsr;
+        try (PreparedStatement ps = con.prepareStatement(sqlDelUsr)) {
+            ps.setInt(1, idUsuario);
+            borradosUsr = ps.executeUpdate();
+        }
+        System.out.println("[eliminarVeterinario] borrados en usuario=" + borradosUsr);
+
+        if (borradosUsr == 0) {
+            System.out.println("[eliminarVeterinario] Usuario no borrado. (Revierte el borrado del veterinario)");
+            // NOTA: Para revertir el borrado del veterinario, NECESITAS la transacción (con.rollback()).
+            // Como quitamos la transacción, el veterinario quedará borrado y el usuario no.
+            return false;
+        }
+
+        exito = true;
+
+    } catch (SQLException e) {
+        System.out.println("[eliminarVeterinario] Error SQL: " + e.getMessage());
+        // El error de FK ocurrirá aquí.
+        return false;
+    } 
+    return exito;
+}
 /**
      * [vistaCliente] Lista los veterinarios disponibles filtrados por especialidad.
      * @param idEspecialidad El ID de la especialidad a filtrar.

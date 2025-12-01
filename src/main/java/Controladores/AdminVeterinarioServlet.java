@@ -67,9 +67,6 @@ public class AdminVeterinarioServlet extends HttpServlet {
             case "editar": // compatibilidad con vistas antiguas
                 prepararEdicionVeterinario(request, response);
                 break;
-            case "eliminar":
-                eliminarEmpleado(request, response);
-                break;
             case "nuevo":
                 mostrarFormularioNuevo(request, response);
                 break;
@@ -78,12 +75,11 @@ public class AdminVeterinarioServlet extends HttpServlet {
         }
     }
 
-    /** Enrutador de peticiones POST para operaciones CRUD. */
+    // Código Modificado en doPost:
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Asegura soporte de caracteres multibyte
         request.setCharacterEncoding("UTF-8");
 
         String accion = paramOr(request.getParameter("accion"), "listar");
@@ -94,6 +90,9 @@ public class AdminVeterinarioServlet extends HttpServlet {
                 break;
             case "actualizar":
                 actualizarEmpleado(request, response);
+                break;
+            case "eliminar": // ⬅️ AGREGAR ESTE CASE PARA VETERINARIOS
+                eliminarEmpleado(request, response);
                 break;
             case "agregarEspecialidad":
                 agregarEspecialidad(request, response);
@@ -366,10 +365,7 @@ public class AdminVeterinarioServlet extends HttpServlet {
                 response, request.getContextPath() + "/AdminEmpleadoServlet?accion=listar&currentTab=" + activeTab);
     }
 
-    /**
-     * Elimina un veterinario por ID. La lógica de eliminación de usuario asociado
-     * (en cascada/transacción) debe implementarse en la capa DAO/BD si corresponde.
-     */
+
     private void eliminarEmpleado(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String activeTab = paramOr(request.getParameter("currentTab"), "veterinarios");
@@ -379,9 +375,22 @@ public class AdminVeterinarioServlet extends HttpServlet {
         try {
             int idVet = Integer.parseInt(paramOr(request.getParameter("idVeterinario"),
                                                  request.getParameter("idEmpleado")));
+            
+            // 🚨 LOG DE ENTRADA A ELIMINAR 🚨
+            LOGGER.log(Level.INFO, "Intentando eliminar veterinario con ID: {0}", idVet);
+            
             boolean exito = new VeterinarioDAO().eliminarVeterinario(idVet);
+            
+            // 🚨 LOG DE RESULTADO DEL DAO 🚨
+            LOGGER.log(Level.INFO, "Resultado del DAO para ID {0}: {1}", new Object[]{idVet, exito ? "ÉXITO" : "FALLO"});
+            
             ok  = exito ? "Veterinario eliminado exitosamente." : "";
             err = exito ? "" : "No se pudo eliminar (posibles registros asociados).";
+        
+        } catch (NumberFormatException e) {
+            // Maneja el caso en que el ID no sea un número (muy importante)
+            LOGGER.log(Level.WARNING, "ID de veterinario inválido o faltante.", e);
+            err = "ID de veterinario inválido o faltante.";
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error al eliminar veterinario", e);
             err = "Error interno al eliminar.";

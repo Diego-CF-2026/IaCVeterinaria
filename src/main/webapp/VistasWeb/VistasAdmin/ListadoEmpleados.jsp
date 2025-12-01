@@ -71,359 +71,9 @@
         <title>Gestión de Empleados</title>
         <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ModoNoche-Sidebar.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/estiloAdminEmpleados.css">
         <style>
-            /* Estilos CSS existentes */
-            main {
-                margin-left: 280px;
-                padding: 20px;
-            }
-
-            .tab-container {
-                background: white;
-                border-radius: 8px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                overflow: hidden;
-            }
-
-            .tab-header {
-                display: flex;
-                border-bottom: 1px solid #eee;
-            }
-
-            .tab-button {
-                padding: 12px 20px;
-                background: none;
-                border: none;
-                cursor: pointer;
-                font-weight: 500;
-                color: #555;
-                transition: all 0.3s;
-            }
-
-            .tab-button.active {
-                color: #2196F3;
-                border-bottom: 2px solid #2196F3;
-            }
-
-            .tab-button:hover:not(.active) {
-                background-color: #f5f5f5;
-            }
-
-            .tab-content {
-                display: none;
-                padding: 20px;
-            }
-
-            .tab-content.active {
-                display: block;
-            }
-
-            .tabla-empleados {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            .tabla-empleados th, .tabla-empleados td {
-                padding: 12px 15px;
-                text-align: left;
-                border-bottom: 1px solid #eee;
-            }
-
-            .tabla-empleados th {
-                background-color: #f8f9fa;
-                color: #555;
-                font-weight: 600;
-            }
-
-            .tabla-empleados tr:hover {
-                background-color: #f5f5f5;
-            }
-
-            .acciones {
-                display: flex;
-                gap: 10px;
-            }
-
-            .btn-accion {
-                padding: 6px 12px;
-                border-radius: 4px;
-                text-decoration: none;
-                font-size: 14px;
-                transition: all 0.3s;
-                border: none;
-                cursor: pointer;
-            }
-
-            .btn-ver {
-                background-color: #2196F3;
-                color: white;
-            }
-
-            .btn-editar {
-                background-color: #FFC107;
-                color: #212529;
-            }
-
-            .btn-eliminar {
-                background-color: #F44336;
-                color: white;
-            }
-
-            .btn-agregar {
-                display: inline-block;
-                padding: 10px 15px;
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                text-decoration: none;
-                margin-bottom: 15px;
-                font-weight: 500;
-            }
-
-            .btn-agregar:hover {
-                background-color: #45a049;
-            }
-
-            /* Estilos para el nuevo botón PDF */
-            .btn-pdf {
-                display: inline-flex; /* Usar flexbox para alinear icono y texto */
-                align-items: center; /* Centrar verticalmente */
-                gap: 5px; /* Espacio entre icono y texto */
-                padding: 10px 15px;
-                background-color: #dc3545; /* Un rojo para PDF */
-                color: white;
-                border: none;
-                border-radius: 4px;
-                text-decoration: none;
-                margin-left: 10px; /* Espacio a la izquierda del botón de búsqueda */
-                font-weight: 500;
-                transition: background-color 0.3s ease;
-            }
-
-            .btn-pdf:hover {
-                background-color: #c82333; /* Un rojo más oscuro al pasar el ratón */
-            }
-
-            /* Estilos para el nuevo botón Excel */
-            .btn-excel {
-                display: inline-flex; /* Usar flexbox para alinear icono y texto */
-                align-items: center; /* Centrar verticalmente */
-                gap: 5px; /* Espacio entre icono y texto */
-                padding: 10px 15px;
-                background-color: #28a745; /* Un verde para Excel */
-                color: white;
-                border: none;
-                border-radius: 4px;
-                text-decoration: none;
-                margin-left: 10px; /* Espacio a la izquierda del botón PDF */
-                font-weight: 500;
-                transition: background-color 0.3s ease;
-            }
-
-            .btn-excel:hover {
-                background-color: #218838; /* Un verde más oscuro al pasar el ratón */
-            }
-
-
-            /* Estilos para modo noche */
-            body.modo-noche .tab-container {
-                background: #2d3748;
-                color: #e2e8f0;
-            }
-
-            body.modo-noche .tab-header {
-                border-bottom-color: #4a5568;
-            }
-
-            body.modo-noche .tab-button {
-                color: #e2e8f0;
-            }
-
-            body.modo-noche .tab-button.active {
-                color: #63b3ed;
-                border-bottom-color: #63b3ed;
-            }
-
-            body.modo-noche .tab-button:hover:not(.active) {
-                background-color: #4a5568;
-            }
-
-            body.modo-noche .tabla-empleados th {
-                background-color: #1a202c;
-                color: #ffffff;
-            }
-
-            body.modo-noche .tabla-empleados td {
-                color: #e2e8f0;
-                border-bottom-color: #4a5568;
-            }
-
-            body.modo-noche .tabla-empleados tr:hover {
-                background-color: #4a5568;
-            }
-
-            /* Modal base */
-            .modal {
-                display: none;
-                position: fixed;
-                z-index: 1000;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0,0,0,0.5);
-                justify-content: center;
-                align-items: center;
-            }
-
-            .modal-content {
-                background-color: #fefefe;
-                margin: auto;
-                padding: 20px;
-                border-radius: 8px;
-                width: 50%;
-                max-width: 600px;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                position: relative;
-            }
-
-            body.modo-noche .modal-content {
-                background-color: #2d3748;
-                color: #e2e8f0;
-            }
-
-            .close {
-                color: #aaa;
-                float: right;
-                font-size: 28px;
-                font-weight: bold;
-                cursor: pointer;
-                position: absolute;
-                top: 10px;
-                right: 20px;
-            }
-
-            .close:hover {
-                color: black;
-            }
-
-            body.modo-noche .close:hover {
-                color: white;
-            }
-
-            /* Formulario */
-            .form-group {
-                margin-bottom: 15px;
-            }
-
-            .form-group label {
-                display: block;
-                margin-bottom: 5px;
-                font-weight: 500;
-            }
-
-            .form-group input, .form-group select {
-                width: 100%;
-                padding: 8px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                box-sizing: border-box;
-            }
-
-            body.modo-noche .form-group input,
-            body.modo-noche .form-group select {
-                background-color: #4a5568;
-                border-color: #4a5568;
-                color: #e2e8f0;
-            }
-
-            .form-actions {
-                text-align: right;
-                margin-top: 20px;
-            }
-
-            .btn {
-                padding: 8px 16px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-weight: 500;
-            }
-
-            .btn-primary {
-                background-color: #2196F3;
-                color: white;
-            }
-
-            .btn-secondary {
-                background-color: #6c757d;
-                color: white;
-                margin-right: 10px;
-            }
-
-            /* Estilos específicos para el modal de confirmación/mensaje */
-            .modal-message-content {
-                text-align: center;
-            }
-
-            .modal-message-content h2 {
-                margin-bottom: 15px;
-            }
-
-            .modal-message-content p {
-                margin-bottom: 20px;
-                font-size: 1.1em;
-            }
-
-            .modal-message-content .btn-group {
-                display: flex;
-                justify-content: center;
-                gap: 15px;
-            }
-
-            /* Estilos para la barra de búsqueda */
-            .search-bar {
-                margin-bottom: 20px;
-                display: flex;
-                gap: 10px;
-                align-items: center;
-            }
-
-            .search-bar form {
-                display: flex;
-                gap: 10px;
-                width: 100%;
-            }
-
-            .search-bar input[type="text"] {
-                flex-grow: 1;
-                padding: 8px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-            }
-
-            body.modo-noche .search-bar input[type="text"] {
-                background-color: #4a5568;
-                border-color: #4a5568;
-                color: #e2e8f0;
-            }
-            .btn-especialidad{
-                display:inline-block;
-                padding:10px 15px;
-                background-color:#6f42c1;
-                color:white;
-                border:none;
-                border-radius:4px;
-                text-decoration:none;
-                margin-left:10px;
-                font-weight:500;
-                transition:background-color .3s ease;
-            }
-            .btn-especialidad:hover{
-                background-color:#5a379e;
-            }
-
+            
         </style>
     </head>
      <body>
@@ -503,72 +153,78 @@
                     </a>
                     
                 </div>
-                <div id="veterinarios" class="tab-content active">
-                    <button type="button" class="btn-agregar" onclick="mostrarModalAgregar()">
-                        <i class='bx bx-plus'></i> Agregar Veterinario
-                    </button>
-                    <p style="opacity:.7">Especialidades cargadas: <%= (listaEspecialidades != null ? listaEspecialidades.size() : 0)%></p>
+                    <div id="veterinarios" class="tab-content active">
+                        <button type="button" class="btn-agregar" onclick="mostrarModalAgregar()">
+                            <i class='bx bx-plus'></i> Agregar Veterinario
+                        </button>
+                        <p style="opacity:.7">Especialidades cargadas: <%= (listaEspecialidades != null ? listaEspecialidades.size() : 0)%></p>
 
-                    <table class="tabla-empleados">
-                        <thead>
-                            <tr>
+                        <table class="tabla-empleados">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Teléfono</th>
+                                    <th>Correo</th>
+                                    <th>Especialidad</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%
+                                    // **********************************
+                                    // 1. Usar función para obtener el nombre de la especialidad
+                                    // Esto es más limpio que usar out.print() dentro del <td>
+                                    // Se asume que tienes una función Lambda 'escapeHtmlAttribute'
+                                    // **********************************
+                                    java.util.function.Function<Integer, String> getNombreEspecialidad = (  
+                                        id) -> {
+                                        String nomEsp = (mapaEspecialidad != null) ? mapaEspecialidad.get(id) : "Sin asignar";
+                                        return escapeHtmlAttribute.apply(nomEsp);
+                                    };
 
-                                <th>Nombre</th>
-                                <th>Apellido</th>
-                                <th>Teléfono</th>
-                                <th>Correo</th>
-                                <th>Especialidad</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <%
-                                if (listaVeterinarios != null && !listaVeterinarios.isEmpty()) {
-                                    for (Veterinario v : listaVeterinarios) {
-                            %>
-                            <tr>
+                                    if (listaVeterinarios != null && !listaVeterinarios.isEmpty()) {
+                                        for (Veterinario v : listaVeterinarios) {
+                                %>
+                                <tr>
+                                    <td><%= escapeHtmlAttribute.apply(v.getNombreVeterinario())%></td>
+                                    <td><%= escapeHtmlAttribute.apply(v.getApellidoVeterinario())%></td>
+                                    <td><%= escapeHtmlAttribute.apply(v.getTelefonoVeterinario())%></td>
+                                    <td><%= escapeHtmlAttribute.apply(v.getCorreoVeterinario())%></td>
+                                    <td>
+                                        <%= getNombreEspecialidad.apply(v.getIdEspecialidad())%>
+                                    </td>
 
-                                <td><%=escapeHtmlAttribute.apply(v.getNombreVeterinario())%></td>
-                                <td><%=escapeHtmlAttribute.apply(v.getApellidoVeterinario())%></td>
-                                <td><%=escapeHtmlAttribute.apply(v.getTelefonoVeterinario())%></td>
-                                <td><%=escapeHtmlAttribute.apply(v.getCorreoVeterinario())%></td>
-                                <td>
-                                    <%
-                                        String nomEsp = (mapaEspecialidad != null) ? mapaEspecialidad.get(v.getIdEspecialidad()) : null;
-                                        out.print((nomEsp == null || nomEsp.trim().isEmpty())
-                                                ? "Sin asignar"
-                                                : escapeHtmlAttribute.apply(nomEsp));
-                                    %>
-                                </td>
+                                    <td class="acciones">
+                                        <button type="button" class="btn btn-editar"
+                                                onclick="mostrarModalEditar(<%= v.getIdVeterinario()%>)">
+                                            Editar
+                                        </button>
 
+                                        <form method="POST" action="<%= request.getContextPath()%>/AdminEmpleadoServlet" style="display:inline;">
+                                            <input type="hidden" name="accion" value="eliminar">
+                                            <input type="hidden" name="idVeterinario" value="<%= v.getIdVeterinario()%>">
+                                            <input type="hidden" name="currentTab" value="veterinarios">
 
-
-                                <td class="acciones">
-                                    <button href="#" class="btn btn-editar"
-                                            onclick="event.preventDefault(); mostrarModalEditar(<%= v.getIdVeterinario()%>)">
-                                        Editar
-                                    </button>O
-                                    <a class="btn btn-eliminar"
-                                       href="<%= request.getContextPath()%>/AdminEmpleadoServlet?accion=eliminar&idVeterinario=<%= v.getIdVeterinario()%>&currentTab=veterinarios"
-                                       onclick="return confirm('¿Eliminar este veterinario?');">
-                                        Eliminar
-                                    </a>
-
-
-                                </td>
-                            </tr>
-                            <%
-                                }
-                            } else {
-                            %>
-                            <tr><td colspan="7">No hay veterinarios registrados.</td></tr>
-                            <%
-                                }
-                            %>
-                        </tbody>
-                    </table>
-                </div>
-
+                                            <button type="submit" 
+                                                    class="btn btn-eliminar"
+                                                    onclick="return confirm('¿Está seguro de que desea ELIMINAR al veterinario: <%= escapeHtmlAttribute.apply(v.getNombreVeterinario())%>?');">
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <%
+                                    }
+                                } else {
+                                %>
+                                <tr><td colspan="7">No hay veterinarios registrados.</td></tr>
+                                <%
+                                    }
+                                %>
+                            </tbody>
+                        </table>
+                    </div>
                 <!-- especialidades -->
                 <div id="especialidades" class="tab-content">
                     <button type="button" class="btn-especialidad" onclick="mostrarModalEspecialidad()">
@@ -595,7 +251,6 @@
                                     for (Especialidad e : listaEspecialidades) {
                             %>
                             <tr>
-                                
                                 <td><%= escapeHtmlAttribute.apply(e.getNombreEspecialidad())%></td>
                                 <td><%= String.format(java.util.Locale.US, "%.2f", e.getPrecio())%></td>
                                 <td class="acciones">
@@ -603,8 +258,6 @@
                                             onclick="event.preventDefault(); mostrarModalEditarEspecialidad(<%= e.getIdEspecialidad()%>)">
                                         Editar
                                     </button>
-                                    O
-
                                     <form action="${pageContext.request.contextPath}/AdminEmpleadoServlet" method="POST" style="display:inline">
                                         <input type="hidden" name="accion" value="eliminarEspecialidad">
                                         <input type="hidden" name="idEspecialidad" value="<%= e.getIdEspecialidad()%>">
@@ -627,9 +280,6 @@
                         </tbody>
                     </table>
                 </div>
-
-
-
             </div>
         </main>
 
@@ -734,9 +384,7 @@
 
             </div>
         </div>
-
-
-
+                    
         <div id="modalVer" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="cerrarModalVer()">&times;</span>

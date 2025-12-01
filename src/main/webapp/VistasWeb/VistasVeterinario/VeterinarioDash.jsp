@@ -10,7 +10,7 @@
     <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ModoNoche-Sidebar.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/VeterinarioMenu.css">
-
+    
 </head>
 
 <body>
