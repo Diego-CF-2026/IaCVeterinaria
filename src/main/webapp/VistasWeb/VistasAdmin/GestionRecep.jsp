@@ -18,7 +18,6 @@
 
     </head>
     <body>
-        //sidebar
         <nav class="sidebar">
             <header>
                 <div class="image-text">
@@ -31,7 +30,6 @@
                     </div>
                 </div>
             </header>
-//header
             <div class="menu-bar">
                 <ul class="menu-links">
                     <li class="nav-link ">

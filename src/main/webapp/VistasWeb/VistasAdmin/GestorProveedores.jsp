@@ -32,7 +32,6 @@
        
     </head>
      <body>
-         //sidebar 
        <nav class="sidebar">
             <header>
                 <div class="image-text">
@@ -288,7 +287,6 @@
                 </div>
             </div>
             <% }%>
-// modal para agregar proveedores
             <div id="modalAgregarProveedor" class="modal">
                 <div class="modal-content animado">
                     <span class="cerrar" onclick="cerrarModal('modalAgregarProveedor')">&times;</span>

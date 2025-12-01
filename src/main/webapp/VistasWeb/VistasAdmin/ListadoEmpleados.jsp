@@ -77,7 +77,6 @@
         </style>
     </head>
      <body>
-         //sidebar
         <nav class="sidebar">
             <header>
                 <div class="image-text">
