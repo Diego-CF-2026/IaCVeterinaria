@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public class Conexion {
 //datos de la base de datos
     private static final String URL = "jdbc:mysql://localhost:3306/VeterinariaDB2";
-    private static final String USER = "root";
+    private static final String USER = "root1";
     private static final String PASSWORD = "abc123";
 //funcion de coneccion
     public static Connection getConnection() {
