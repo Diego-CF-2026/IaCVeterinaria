@@ -1,0 +1,32 @@
+name: CI - Validación de Infraestructura (Bicep)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    name: Validar Plantilla Bicep
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Traer el código al contenedor
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      # 2. Instalar el compilador oficial de Azure Bicep
+      - name: Instalar Bicep CLI
+        run: |
+          curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+          chmod +x ./bicep
+          sudo mv ./bicep /usr/local/bin/bicep
+          bicep --version
+
+      # 3. Compilar el archivo Bicep (Validación Sintáctica Completa)
+      - name: Compilar y Validar Bicep
+        run: |
+          bicep build ./main.bicep
