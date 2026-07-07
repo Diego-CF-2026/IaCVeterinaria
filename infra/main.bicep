@@ -165,6 +165,7 @@ resource virtualMachines_vm_veterinaria_test_resource 'Microsoft.Compute/virtual
         provisionVMAgent: true
       }
       adminUsername: 'Diegoupn123'
+      adminPassword: 'VeterinariaPassword2026*'
     }
     networkProfile: {
       networkInterfaces: [
