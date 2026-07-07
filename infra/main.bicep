@@ -6,6 +6,9 @@ param virtualNetworks_vm_veterinaria_test_vnet_name string = 'vm-veterinaria-tes
 param flexibleServers_mysql_vet_sc_test2026_name string = 'mysql-vet-sc-test2026'
 param networkSecurityGroups_vm_veterinaria_test_nsg_name string = 'vm-veterinaria-test-nsg'
 
+@secure()
+param adminPassword string = 'VeterinariaPassword2026*'
+
 resource flexibleServers_mysql_vet_sc_test2026_resource 'Microsoft.DBforMySQL/flexibleServers@2025-06-01-preview' = {
   name: flexibleServers_mysql_vet_sc_test2026_name
   location: 'Chile Central'
@@ -160,12 +163,12 @@ resource virtualMachines_vm_veterinaria_test_resource 'Microsoft.Compute/virtual
     }
     osProfile: {
       computerName: virtualMachines_vm_veterinaria_test_name
+      adminUsername: 'Diegoupn123'
+      adminPassword: adminPassword
       linuxConfiguration: {
         disablePasswordAuthentication: false
         provisionVMAgent: true
       }
-      adminUsername: 'Diegoupn123'
-      adminPassword: 'VeterinariaPassword2026*'
     }
     networkProfile: {
       networkInterfaces: [
