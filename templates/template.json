@@ -32,7 +32,7 @@
     },
     "adminPassword": {
       "type": "securestring",
-      "defaultValue": "VeterinariaPassword2026*"
+      "defaultValue": "Mascotas2026*"
     }
   },
   "resources": [
@@ -47,6 +47,7 @@
       },
       "properties": {
         "administratorLogin": "sqldiegoupn",
+        "administratorLoginPassword": "[parameters('adminPassword')]",
         "storage": {
           "storageSizeGB": 20,
           "iops": 360,
